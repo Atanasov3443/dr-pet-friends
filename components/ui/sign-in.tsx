@@ -29,6 +29,8 @@ interface SignInPageProps {
   onGoogleSignIn?: () => void
   onResetPassword?: () => void
   onCreateAccount?: () => void
+  error?: string
+  loading?: boolean
 }
 
 const GlassInput = ({ children }: { children: React.ReactNode }) => (
@@ -44,6 +46,8 @@ export function SignInPage({
   onGoogleSignIn,
   onResetPassword,
   onCreateAccount,
+  error,
+  loading,
 }: SignInPageProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [emailFocused, setEmailFocused] = useState(false)
@@ -126,9 +130,14 @@ export function SignInPage({
               </button>
             </div>
 
-            <button type="submit"
-              className="sign-in-element sign-in-d600 w-full rounded-2xl bg-[#1083BD] hover:bg-[#0a6fa0] py-3.5 font-semibold text-white transition-colors text-sm">
-              Влез в акаунта
+            {error && (
+              <div className="bg-red-500/20 border border-red-400/30 rounded-xl px-4 py-2.5 text-red-200 text-sm text-center">
+                {error}
+              </div>
+            )}
+            <button type="submit" disabled={loading}
+              className="sign-in-element sign-in-d600 w-full rounded-2xl bg-[#1083BD] hover:bg-[#0a6fa0] py-3.5 font-semibold text-white transition-colors text-sm disabled:opacity-60 disabled:cursor-not-allowed">
+              {loading ? "Зареждане..." : "Влез в акаунта"}
             </button>
           </form>
 
