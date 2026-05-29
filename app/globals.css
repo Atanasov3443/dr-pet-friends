@@ -1,0 +1,342 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Dr. Pet Friends Brand Colors */
+  --background: #1083BD;
+  --foreground: #FFFFFF;
+  --card: #FFFFFF;
+  --card-foreground: #1083BD;
+  --popover: #FFFFFF;
+  --popover-foreground: #1083BD;
+  --primary: #1083BD;
+  --primary-foreground: #FFFFFF;
+  --secondary: #DAF467;
+  --secondary-foreground: #1083BD;
+  --muted: #0D67F7;
+  --muted-foreground: #FFFFFF;
+  --accent: #EF3988;
+  --accent-foreground: #FFFFFF;
+  --destructive: #EF3988;
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(255, 255, 255, 0.2);
+  --input: #FFFFFF;
+  --ring: #EF3988;
+  --chart-1: #1083BD;
+  --chart-2: #EF3988;
+  --chart-3: #DAF467;
+  --chart-4: #10B83D;
+  --chart-5: #0D67F7;
+  --radius: 1rem;
+  
+  /* Custom brand colors */
+  --lime: #DAF467;
+  --green: #10B83D;
+  --pink: #EF3988;
+  --blue: #1083BD;
+  --blue-dark: #0D67F7;
+  --orange: #FF6B35;
+  
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #1083BD;
+  --sidebar-primary: #1083BD;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #DAF467;
+  --sidebar-accent-foreground: #1083BD;
+  --sidebar-border: rgba(16, 131, 189, 0.1);
+  --sidebar-ring: #EF3988;
+
+  /* Notify/toast design-system tokens */
+  --geist-background: #ffffff;
+  --ds-gray-1000: hsla(0, 0%, 9%, 1);
+  --ds-gray-1000-h: hsl(0, 0%, 22%);
+  --ds-gray-alpha-200: hsla(0, 0%, 0%, 0.08);
+  --ds-gray-alpha-400: hsla(0, 0%, 0%, 0.12);
+  --ds-background-100: hsla(0, 0%, 100%, 1);
+  --ds-red-800: oklch(58.19% 0.2482 25.15);
+  --ds-red-900: oklch(54.99% 0.232 25.29);
+  --ds-shadow-border: 0 0 0 1px rgba(0, 0, 0, 0.08);
+  --ds-shadow-menu: var(--ds-shadow-border), 0px 1px 1px rgba(0,0,0,0.02), 0px 4px 8px -4px rgba(0,0,0,0.04), 0px 16px 24px -8px rgba(0,0,0,0.06);
+  --ds-focus-ring: 0 0 0 2px #fff, 0 0 0 4px #1083BD;
+  --ds-shadow-border-small: var(--ds-shadow-border), 0px 2px 2px rgba(0,0,0,0.04);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-display: var(--font-inter-tight), 'Inter Tight', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-lime: var(--lime);
+  --color-green: var(--green);
+  --color-pink: var(--pink);
+  --color-blue: var(--blue);
+  --color-blue-dark: var(--blue-dark);
+  --color-orange: var(--orange);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Notify tokens */
+  --color-geist-background: var(--geist-background);
+  --color-gray-1000: var(--ds-gray-1000);
+  --color-gray-1000-h: var(--ds-gray-1000-h);
+  --color-gray-alpha-200: var(--ds-gray-alpha-200);
+  --color-gray-alpha-400: var(--ds-gray-alpha-400);
+  --color-background-100: var(--ds-background-100);
+  --shadow-menu: var(--ds-shadow-menu);
+  --shadow-focus-ring: var(--ds-focus-ring);
+  --shadow-border-small: var(--ds-shadow-border-small);
+  --animate-fade-spin: fade-spin 1.2s linear infinite;
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  --animate-scroll-right: scroll-right 22s linear infinite;
+}
+
+@utility container {
+  margin-inline: auto;
+  max-width: 1280px;
+  padding-inline: 1rem;
+
+  @media (width >= 640px) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 1024px) {
+    padding-inline: 2.5rem;
+  }
+  @media (width >= 1280px) {
+    padding-inline: 4rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Sticker animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(var(--rotate, 0deg)); }
+  50% { transform: translateY(-10px) rotate(var(--rotate, 0deg)); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(var(--rotate, -5deg)); }
+  50% { transform: rotate(calc(var(--rotate, -5deg) + 10deg)); }
+}
+
+.sticker {
+  animation: float 3s ease-in-out infinite;
+}
+
+.sticker:hover {
+  animation: wiggle 0.5s ease-in-out infinite;
+}
+
+/* Wavy blob animation */
+@keyframes morph {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  50% { border-radius: 50% 60% 30% 50% / 40% 50% 60% 50%; }
+  75% { border-radius: 40% 60% 50% 40% / 60% 40% 50% 60%; }
+}
+
+.blob {
+  animation: morph 8s ease-in-out infinite;
+}
+
+/* Bone loading animation */
+@keyframes bone-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bone-pulse {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+}
+
+.bone-spin {
+  animation: bone-spin 1s linear infinite;
+}
+
+.bone-pulse {
+  animation: bone-pulse 1.2s ease-in-out infinite;
+}
+
+/* Font utility classes */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Marquee scroll */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-100% - var(--gap))); }
+}
+
+@keyframes marquee-vertical {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(-100% - var(--gap))); }
+}
+
+.dachshund-bg {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.91), rgba(255,255,255,0.91)),
+    url('/dachshund.jpg');
+  background-size: auto, 130px;
+  background-repeat: repeat;
+}
+
+.dachshund-bg-gray {
+  background-image:
+    linear-gradient(rgba(249,250,251,0.91), rgba(249,250,251,0.91)),
+    url('/dachshund.jpg');
+  background-size: auto, 130px;
+  background-repeat: repeat;
+}
+
+@keyframes scroll-right {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes scroll-left {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+.animate-scroll-left {
+  animation: scroll-left 28s linear infinite;
+}
+
+/* Floating pet illustration */
+@keyframes petFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+.pet-float {
+  animation: petFloat 4s ease-in-out infinite;
+}
+.pet-float-slow {
+  animation: petFloat 5.5s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+/* Spinner bars fade animation */
+@keyframes fade-spin {
+  0%   { opacity: 1; }
+  100% { opacity: 0.15; }
+}
+
+/* Sign-in page animations */
+@keyframes signInFadeSlide {
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+@keyframes signInSlideRight {
+  to { opacity: 1; filter: blur(0); transform: translateX(0); }
+}
+@keyframes signInTestimonialIn {
+  to { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+}
+
+.sign-in-element {
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateY(12px);
+  animation: signInFadeSlide 0.5s ease forwards;
+}
+.sign-in-slide-right {
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateX(20px);
+  animation: signInSlideRight 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.sign-in-testimonial {
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateY(16px) scale(0.97);
+  animation: signInTestimonialIn 0.5s ease forwards;
+}
+
+.sign-in-d100  { animation-delay: 0.10s; }
+.sign-in-d200  { animation-delay: 0.18s; }
+.sign-in-d300  { animation-delay: 0.26s; }
+.sign-in-d400  { animation-delay: 0.34s; }
+.sign-in-d500  { animation-delay: 0.42s; }
+.sign-in-d600  { animation-delay: 0.50s; }
+.sign-in-d700  { animation-delay: 0.58s; }
+.sign-in-d800  { animation-delay: 0.66s; }
+.sign-in-d900  { animation-delay: 0.74s; }
+.sign-in-d1000 { animation-delay: 0.82s; }
+.sign-in-d1200 { animation-delay: 1.00s; }

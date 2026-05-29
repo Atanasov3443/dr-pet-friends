@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  OWNER
+  VET
+  CLINIC_ADMIN
+  ADMIN
+}
+
+enum PetSpecies {
+  DOG
+  CAT
+  BIRD
+  RABBIT
+  EXOTIC
+  OTHER
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PlaceType {
+  VET
+  GROOMING
+}
+
+// ─── Auth (NextAuth v5) ───────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          Role      @default(OWNER)
+  phone         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts     Account[]
+  sessions     Session[]
+  pets         Pet[]
+  appointments Appointment[]
+  reviews      Review[]
+  vet          Vet?
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Core Platform ───────────────────────────────────────────────────────────
+
+model Vet {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  displayName String
+  specialty   String
+  bio         String? @db.Text
+  image       String?
+  phone       String?
+  experience  Int     @default(0)
+  rating      Float   @default(0)
+  reviewCount Int     @default(0)
+  isEmergency Boolean @default(false)
+  isActive    Boolean @default(true)
+  lat         Float?
+  lng         Float?
+
+  clinicId String?
+  clinic   Clinic? @relation(fields: [clinicId], references: [id])
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  appointments Appointment[]
+  reviews      Review[]
+  services     VetService[]
+  schedule     Schedule[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Clinic {
+  id          String    @id @default(cuid())
+  name        String
+  type        PlaceType @default(VET)
+  address     String
+  city        String
+  phone       String?
+  email       String?
+  website     String?
+  description String?   @db.Text
+  image       String?
+  hours       String?
+  isEmergency Boolean   @default(false)
+  isActive    Boolean   @default(true)
+  rating      Float     @default(0)
+  reviewCount Int       @default(0)
+  lat         Float?
+  lng         Float?
+
+  vets         Vet[]
+  appointments Appointment[]
+  reviews      Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VetService {
+  id          String  @id @default(cuid())
+  vetId       String
+  name        String
+  description String? @db.Text
+  price       Float
+  duration    Int     @default(30)
+
+  vet          Vet           @relation(fields: [vetId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+}
+
+model Schedule {
+  id        String  @id @default(cuid())
+  vetId     String
+  dayOfWeek Int
+  startTime String
+  endTime   String
+  isActive  Boolean @default(true)
+
+  vet Vet @relation(fields: [vetId], references: [id], onDelete: Cascade)
+}
+
+// ─── Pets & Appointments ──────────────────────────────────────────────────────
+
+model Pet {
+  id        String     @id @default(cuid())
+  ownerId   String
+  name      String
+  species   PetSpecies @default(DOG)
+  breed     String?
+  birthDate DateTime?
+  weight    Float?
+  image     String?
+  notes     String?    @db.Text
+
+  owner        User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+  vaccinations Vaccination[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Appointment {
+  id        String            @id @default(cuid())
+  ownerId   String
+  vetId     String
+  petId     String
+  clinicId  String?
+  serviceId String?
+  date      DateTime
+  status    AppointmentStatus @default(PENDING)
+  notes     String?           @db.Text
+  price     Float?
+
+  owner   User        @relation(fields: [ownerId], references: [id])
+  vet     Vet         @relation(fields: [vetId], references: [id])
+  pet     Pet         @relation(fields: [petId], references: [id])
+  clinic  Clinic?     @relation(fields: [clinicId], references: [id])
+  service VetService? @relation(fields: [serviceId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vaccination {
+  id       String    @id @default(cuid())
+  petId    String
+  name     String
+  date     DateTime
+  nextDate DateTime?
+  notes    String?
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  vetId     String?
+  clinicId  String?
+  rating    Int
+  comment   String?  @db.Text
+  isVisible Boolean  @default(true)
+
+  user   User    @relation(fields: [userId], references: [id])
+  vet    Vet?    @relation(fields: [vetId], references: [id])
+  clinic Clinic? @relation(fields: [clinicId], references: [id])
+
+  createdAt DateTime @default(now())
+}
