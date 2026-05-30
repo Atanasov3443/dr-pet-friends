@@ -188,6 +188,7 @@ model Pet {
   ownerId   String
   name      String
   species   PetSpecies @default(DOG)
+  gender    String?
   breed     String?
   birthDate DateTime?
   weight    Float?

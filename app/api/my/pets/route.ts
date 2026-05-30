@@ -22,15 +22,16 @@ export async function POST(req: Request) {
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const userId = (session.user as any).id
-  const { name, species, breed, birthDate, weight, notes } = await req.json()
+  const { name, species, gender, breed, birthDate, weight, notes } = await req.json()
 
-  if (!name) return NextResponse.json({ error: "Името е задължително" }, { status: 400 })
+  if (!name?.trim()) return NextResponse.json({ error: "Името е задължително" }, { status: 400 })
 
   const pet = await db.pet.create({
     data: {
       ownerId: userId,
-      name,
+      name:      name.trim(),
       species:   species   || "DOG",
+      gender:    gender    || null,
       breed:     breed     || null,
       birthDate: birthDate ? new Date(birthDate) : null,
       weight:    weight    ? parseFloat(weight)  : null,
@@ -45,7 +46,9 @@ export async function PATCH(req: Request) {
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const userId = (session.user as any).id
-  const { id, name, species, breed, birthDate, weight, notes } = await req.json()
+  const { id, name, species, gender, breed, birthDate, weight, notes } = await req.json()
+
+  if (!name?.trim()) return NextResponse.json({ error: "Името е задължително" }, { status: 400 })
 
   const pet = await db.pet.findFirst({ where: { id, ownerId: userId } })
   if (!pet) return NextResponse.json({ error: "Not found" }, { status: 404 })
@@ -53,8 +56,9 @@ export async function PATCH(req: Request) {
   const updated = await db.pet.update({
     where: { id },
     data: {
-      name,
+      name:      name.trim(),
       species:   species   || "DOG",
+      gender:    gender    || null,
       breed:     breed     || null,
       birthDate: birthDate ? new Date(birthDate) : null,
       weight:    weight    ? parseFloat(weight)  : null,
