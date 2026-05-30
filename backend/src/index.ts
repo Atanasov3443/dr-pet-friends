@@ -19,6 +19,7 @@ import adminUsersRouter      from "./routes/admin/users"
 import adminRequestsRouter   from "./routes/admin/requests"
 import adminContentRouter    from "./routes/admin/content"
 import adminStatsRouter      from "./routes/admin/stats"
+import adminSeedRouter       from "./routes/admin/seed"
 import registerRouter        from "./routes/register"
 import authRouter            from "./routes/auth"
 import contentRouter         from "./routes/content"
@@ -58,6 +59,7 @@ app.use("/api/admin/users",          adminUsersRouter)
 app.use("/api/admin/requests",       adminRequestsRouter)
 app.use("/api/admin/content",        adminContentRouter)
 app.use("/api/admin/stats",          adminStatsRouter)
+app.use("/api/admin/seed",           adminSeedRouter)
 app.use("/api/auth",                 authRouter)
 app.use("/api/content",              contentRouter)
 app.use("/api/register",             registerRouter)
