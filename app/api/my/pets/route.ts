@@ -26,19 +26,24 @@ export async function POST(req: Request) {
 
   if (!name?.trim()) return NextResponse.json({ error: "Името е задължително" }, { status: 400 })
 
-  const pet = await db.pet.create({
-    data: {
-      ownerId: userId,
-      name:      name.trim(),
-      species:   species   || "DOG",
-      gender:    gender    || null,
-      breed:     breed     || null,
-      birthDate: birthDate ? new Date(birthDate) : null,
-      weight:    weight    ? parseFloat(weight)  : null,
-      notes:     notes     || null,
-    },
-  })
-  return NextResponse.json(pet)
+  try {
+    const pet = await db.pet.create({
+      data: {
+        ownerId: userId,
+        name:      name.trim(),
+        species:   species   || "DOG",
+        gender:    gender    || null,
+        breed:     breed     || null,
+        birthDate: birthDate ? new Date(birthDate) : null,
+        weight:    weight    ? parseFloat(weight)  : null,
+        notes:     notes     || null,
+      },
+    })
+    return NextResponse.json(pet)
+  } catch (e: any) {
+    console.error("Pet create error:", e?.message)
+    return NextResponse.json({ error: "Грешка при записване: " + (e?.message ?? "неизвестна") }, { status: 500 })
+  }
 }
 
 export async function PATCH(req: Request) {
