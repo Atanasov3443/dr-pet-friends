@@ -43,8 +43,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, account }) {
+      if (user && account?.provider === "google") {
+        try {
+          const res = await fetch(`${API_URL}/api/auth/ensure-user`, {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify({ email: user.email, name: user.name, image: user.image }),
+          })
+          if (res.ok) {
+            const dbUser = await res.json()
+            token.id   = dbUser.id
+            token.role = dbUser.role
+          }
+        } catch {}
+      }
+      if (user && !token.id) {
         token.id   = user.id
         token.role = (user as any).role
       }
