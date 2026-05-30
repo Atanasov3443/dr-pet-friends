@@ -34,6 +34,15 @@ const nextConfig = {
         tls: false,
         dns: false,
         crypto: false,
+        string_decoder: false,
+        util: false,
+        buffer: false,
+        events: false,
+        assert: false,
+        os: false,
+        querystring: false,
+        url: false,
+        zlib: false,
       }
     }
     return config
