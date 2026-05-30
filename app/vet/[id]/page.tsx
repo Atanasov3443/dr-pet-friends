@@ -4,8 +4,9 @@ import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { MapPin, Phone, Star, Clock, Stethoscope, Shield, CalendarCheck, ChevronLeft } from "lucide-react"
+import { MapPin, Phone, Star, Clock, Stethoscope, Shield, ChevronLeft } from "lucide-react"
 import Link from "next/link"
+import { BookingButton } from "@/components/booking-button"
 
 const DAYS = ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"]
 
@@ -166,9 +167,12 @@ export default async function VetProfilePage({ params }: { params: { id: string 
               <div className="bg-[#1083BD] rounded-2xl p-5 text-white">
                 <h3 className="font-bold text-lg mb-1">Запази час</h3>
                 <p className="text-white/70 text-sm mb-4">Онлайн резервация без телефон</p>
-                <button className="w-full py-3 bg-white text-[#1083BD] rounded-xl font-bold text-sm hover:bg-white/90 transition-colors flex items-center justify-center gap-2">
-                  <CalendarCheck className="w-4 h-4" /> Избери дата и час
-                </button>
+                <BookingButton
+                  vetId={vet.id}
+                  vetName={vet.displayName}
+                  services={vet.services.map(s => ({ id: s.id, name: s.name, price: s.price, duration: s.duration }))}
+                  schedule={vet.schedule.map(s => ({ dayOfWeek: s.dayOfWeek, startTime: s.startTime, endTime: s.endTime, isActive: s.isActive }))}
+                />
               </div>
 
               {/* Schedule */}
