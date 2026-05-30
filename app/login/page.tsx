@@ -1,7 +1,7 @@
 "use client"
 
 import { SignInPage, Testimonial } from "@/components/ui/sign-in"
-import { signIn } from "next-auth/react"
+import { signIn, getSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
 
@@ -55,7 +55,15 @@ export default function LoginPage() {
     if (result?.error) {
       setError("Грешен имейл или парола. Опитай отново.")
     } else {
-      router.push(callback)
+      if (callback && callback !== "/") {
+        router.push(callback)
+      } else {
+        const sess = await getSession()
+        const role = (sess?.user as any)?.role
+        if      (role === "ADMIN")                       router.push("/admin")
+        else if (role === "VET" || role === "CLINIC_ADMIN") router.push("/dashboard")
+        else                                             router.push("/my")
+      }
       router.refresh()
     }
   }

@@ -15,14 +15,14 @@ export { Logo }
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const vetSpecialties = [
-  { name: "Обща медицина",  icon: Stethoscope, color: "#1083BD", price: "от 40лв",  href: "/specialnosti/obsha-medicina" },
-  { name: "Хирургия",       icon: Activity,    color: "#EF3988", price: "от 150лв", href: "/specialnosti/hirurgiya" },
-  { name: "Ваксинации",     icon: Syringe,     color: "#10B83D", price: "от 25лв",  href: "/specialnosti/vaksinacii" },
-  { name: "Офталмология",   icon: Eye,         color: "#FF6B35", price: "от 50лв",  href: "/specialnosti/oftalmologia" },
-  { name: "Дерматология",   icon: Shield,      color: "#EF3988", price: "от 60лв",  href: "/specialnosti/dermatologia" },
-  { name: "Кардиология",    icon: Heart,       color: "#1083BD", price: "от 90лв",  href: "/specialnosti/kardiologia" },
-  { name: "Ортопедия",      icon: Bone,        color: "#FF6B35", price: "от 120лв", href: "/specialnosti/ortopedia" },
-  { name: "Неврология",     icon: Zap,         color: "#10B83D", price: "от 100лв", href: "/specialnosti/nevrologia" },
+  { name: "Обща медицина",  icon: Stethoscope, color: "#1083BD", price: "от 40лв",  href: "/search?specialty=Обща+практика" },
+  { name: "Хирургия",       icon: Activity,    color: "#EF3988", price: "от 150лв", href: "/search?specialty=Хирургия" },
+  { name: "Ваксинации",     icon: Syringe,     color: "#10B83D", price: "от 25лв",  href: "/search?specialty=Ваксинации" },
+  { name: "Офталмология",   icon: Eye,         color: "#FF6B35", price: "от 50лв",  href: "/search?specialty=Офталмология" },
+  { name: "Дерматология",   icon: Shield,      color: "#EF3988", price: "от 60лв",  href: "/search?specialty=Дерматология" },
+  { name: "Кардиология",    icon: Heart,       color: "#1083BD", price: "от 90лв",  href: "/search?specialty=Кардиология" },
+  { name: "Ортопедия",      icon: Bone,        color: "#FF6B35", price: "от 120лв", href: "/search?specialty=Ортопедия" },
+  { name: "Неврология",     icon: Zap,         color: "#10B83D", price: "от 100лв", href: "/search?specialty=Неврология" },
 ]
 
 const groomingServices = [
@@ -35,12 +35,12 @@ const groomingServices = [
 ]
 
 const cities = [
-  { name: "София",         count: "120+", href: "/veterinari/sofia" },
-  { name: "Пловдив",      count: "45+",  href: "/veterinari/plovdiv" },
-  { name: "Варна",        count: "38+",  href: "/veterinari/varna" },
-  { name: "Бургас",       count: "22+",  href: "/veterinari/burgas" },
-  { name: "Стара Загора", count: "15+",  href: "/veterinari/stara-zagora" },
-  { name: "Русе",         count: "12+",  href: "/veterinari/ruse" },
+  { name: "София",         count: "120+", href: "/search?city=София" },
+  { name: "Пловдив",      count: "45+",  href: "/search?city=Пловдив" },
+  { name: "Варна",        count: "38+",  href: "/search?city=Варна" },
+  { name: "Бургас",       count: "22+",  href: "/search?city=Бургас" },
+  { name: "Стара Загора", count: "15+",  href: "/search?city=Стара+Загора" },
+  { name: "Русе",         count: "12+",  href: "/search?city=Русе" },
 ]
 
 type MenuKey = "specialnosti" | "veterinari" | "kliniki" | "grooming"
@@ -50,7 +50,7 @@ const navItems: { label: string; menu?: MenuKey; href?: string; highlight?: bool
   { label: "Ветеринари",   menu: "veterinari" },
   { label: "Клиники",      menu: "kliniki" },
   { label: "Груминг",      menu: "grooming" },
-  { label: "Спешни 24/7",  href: "/speshni", highlight: true },
+  { label: "Спешни 24/7",  href: "/search?emergency=true", highlight: true },
 ]
 
 // ─── Mega panels ─────────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ function PanelSpecialities() {
             )
           })}
         </div>
-        <Link href="/specialnosti"
+        <Link href="/search"
           className="inline-flex items-center gap-1.5 mt-5 text-[#1083BD] text-sm font-semibold hover:gap-2.5 transition-all">
           Виж всички специалности <ArrowRight className="w-3.5 h-3.5" />
         </Link>
@@ -96,7 +96,7 @@ function PanelSpecialities() {
             <p className="font-black text-base leading-tight">Запиши час онлайн</p>
             <p className="text-white/70 text-xs mt-1 leading-relaxed">Без чакане по телефона — избери специалист и резервирай за минути.</p>
           </div>
-          <Link href="/zapis"
+          <Link href="/search"
             className="inline-flex items-center gap-1.5 bg-white text-[#1083BD] text-xs font-bold px-4 py-2 rounded-full w-fit hover:bg-[#DAF467] transition-colors">
             Запази сега <ArrowRight className="w-3 h-3" />
           </Link>
@@ -148,7 +148,7 @@ function PanelVeternari() {
             )
           })}
         </div>
-        <Link href="/veterinari"
+        <Link href="/search"
           className="inline-flex items-center gap-1.5 mt-4 text-[#1083BD] text-sm font-semibold hover:gap-2.5 transition-all">
           Всички ветеринари <ArrowRight className="w-3.5 h-3.5" />
         </Link>
@@ -232,7 +232,7 @@ function PanelKliniki() {
       {/* Col 3: Map CTA */}
       <div className="p-8 flex flex-col gap-4">
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Карта на клиниките</p>
-        <Link href="/karta" className="block relative rounded-2xl overflow-hidden group hover:shadow-lg transition-shadow">
+        <Link href="/search" className="block relative rounded-2xl overflow-hidden group hover:shadow-lg transition-shadow">
           <img
             src="https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=400&h=180&fit=crop"
             alt="Карта" className="w-full h-32 object-cover"
@@ -267,7 +267,7 @@ function PanelGrooming() {
           {groomingServices.map((s) => {
             const Icon = s.icon
             return (
-              <Link key={s.name} href="/grooming"
+              <Link key={s.name} href="/search?type=GROOMING"
                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                   style={{ background: s.color + "18" }}>
@@ -281,7 +281,7 @@ function PanelGrooming() {
             )
           })}
         </div>
-        <Link href="/grooming"
+        <Link href="/search?type=GROOMING"
           className="inline-flex items-center gap-1.5 mt-5 text-[#EF3988] text-sm font-semibold hover:gap-2.5 transition-all">
           Виж всички салони <ArrowRight className="w-3.5 h-3.5" />
         </Link>
@@ -303,7 +303,7 @@ function PanelGrooming() {
             </div>
             <p className="font-bold text-sm text-[#191919]">Пухкаво студио</p>
             <p className="text-xs text-gray-400 mb-3">ул. Раковски 22 · София</p>
-            <Link href="/grooming/puhkavo-studio"
+            <Link href="/search?type=GROOMING"
               className="inline-flex items-center gap-1.5 bg-[#EF3988] text-white text-xs font-bold px-4 py-1.5 rounded-full hover:bg-[#d42f77] transition-colors">
               Запази час <ArrowRight className="w-3 h-3" />
             </Link>

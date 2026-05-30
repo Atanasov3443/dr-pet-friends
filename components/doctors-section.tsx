@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Star, CalendarCheck, Scissors, Stethoscope } from "lucide-react"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import SphereImageGrid, { ImageData } from "@/components/ui/img-sphere"
+import Link from "next/link"
 
 const vetServices = [
   { name: "Офталмология",       price: "от 50лв",  image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300&h=300&fit=crop",      bgColor: "bg-[#DAF467]",  textColor: "text-[#1083BD]" },
@@ -275,9 +276,11 @@ export function DoctorsSection() {
               </div>
 
               <div className="flex items-center gap-3">
-                <Button className={`text-white rounded-full px-8 font-bold h-11 shadow-lg transition-all hover:scale-[1.02] ${tab === "vet" ? "bg-[#1083BD] hover:bg-[#0D67F7]" : "bg-[#EF3988] hover:bg-[#d42f77]"}`}>
-                  {tab === "vet" ? "Виж всички ветеринари" : "Виж всички салони"}
-                </Button>
+                <Link href={tab === "vet" ? "/search?type=VET" : "/search?type=GROOMING"}>
+                  <Button className={`text-white rounded-full px-8 font-bold h-11 shadow-lg transition-all hover:scale-[1.02] ${tab === "vet" ? "bg-[#1083BD] hover:bg-[#0D67F7]" : "bg-[#EF3988] hover:bg-[#d42f77]"}`}>
+                    {tab === "vet" ? "Виж всички ветеринари" : "Виж всички салони"}
+                  </Button>
+                </Link>
               </div>
 
             </div>

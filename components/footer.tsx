@@ -7,25 +7,25 @@ import { Sticker, PawSticker } from "@/components/sticker"
 
 const footerLinks = {
   services: [
-    { label: "Общ преглед", href: "/specialnosti/obsh-pregled" },
-    { label: "Ваксинации", href: "/specialnosti/vaksinacii" },
-    { label: "Хирургия", href: "/specialnosti/hirurgiya" },
-    { label: "Спешни случаи", href: "/speshni" },
-    { label: "Офталмология", href: "/specialnosti/oftalmologia" },
-    { label: "Кардиология", href: "/specialnosti/kardiologia" },
+    { label: "Общ преглед",   href: "/search?specialty=Обща+практика" },
+    { label: "Ваксинации",    href: "/search?specialty=Ваксинации" },
+    { label: "Хирургия",      href: "/search?specialty=Хирургия" },
+    { label: "Спешни случаи", href: "/search?emergency=true" },
+    { label: "Офталмология",  href: "/search?specialty=Офталмология" },
+    { label: "Кардиология",   href: "/search?specialty=Кардиология" },
   ],
   company: [
-    { label: "За нас", href: "/za-nas" },
-    { label: "Как работи", href: "/kak-raboti" },
-    { label: "За клиники", href: "/za-kliniki" },
-    { label: "Контакти", href: "/kontakti" },
-    { label: "Блог", href: "/blog" },
-    { label: "Кариери", href: "/kariery" },
+    { label: "За нас",        href: "/#how-it-works" },
+    { label: "Как работи",    href: "/#how-it-works" },
+    { label: "За клиники",    href: "/#for-vets" },
+    { label: "Контакти",      href: "mailto:info@drpetfriends.bg" },
+    { label: "Блог",          href: "/" },
+    { label: "Регистрация",   href: "/register" },
   ],
   legal: [
-    { label: "Условия за ползване", href: "/usloviya" },
-    { label: "Поверителност", href: "/poveritelnost" },
-    { label: "Бисквитки", href: "/biskvitki" },
+    { label: "Условия за ползване", href: "/" },
+    { label: "Поверителност",       href: "/" },
+    { label: "Бисквитки",           href: "/" },
   ],
 }
 

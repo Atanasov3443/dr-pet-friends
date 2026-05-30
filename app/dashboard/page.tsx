@@ -13,7 +13,7 @@ type Appointment = {
 }
 
 type VetProfile = {
-  displayName: string; specialty: string; rating: number
+  id: string; displayName: string; specialty: string; rating: number
   reviewCount: number; experience: number; isActive: boolean
 }
 
@@ -63,11 +63,19 @@ export default function DashboardPage() {
 
   return (
     <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Здравей, {profile.displayName} 👋
-        </h1>
-        <p className="text-gray-500 text-sm mt-1">{profile.specialty}</p>
+      <div className="mb-8 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Здравей, {profile.displayName} 👋
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">{profile.specialty}</p>
+        </div>
+        {profile.id && (
+          <Link href={`/vet/${profile.id}`} target="_blank"
+            className="flex items-center gap-1.5 text-sm text-[#1083BD] hover:underline bg-[#1083BD]/5 px-3 py-1.5 rounded-lg border border-[#1083BD]/20">
+            <ArrowRight className="w-3.5 h-3.5" /> Виж публичния профил
+          </Link>
+        )}
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
