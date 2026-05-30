@@ -237,7 +237,7 @@ export default function SearchPage() {
             Намери ветеринар или груминг салон
           </h1>
 
-          <form onSubmit={handleSearch} className="flex gap-2">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
             <div className="flex-1 flex items-center gap-3 bg-white rounded-2xl px-4 py-3 shadow-lg">
               <Search className="w-5 h-5 text-gray-400 shrink-0" />
               <input
@@ -246,34 +246,36 @@ export default function SearchPage() {
                 className="flex-1 bg-transparent text-sm focus:outline-none text-gray-900 placeholder:text-gray-400" />
             </div>
 
-            <div className="flex items-center gap-2 bg-white rounded-2xl px-4 py-3 shadow-lg min-w-[160px]">
-              <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
-              <select value={city} onChange={e => setCity(e.target.value)}
-                className="flex-1 bg-transparent text-sm focus:outline-none text-gray-700">
-                <option value="">Всички градове</option>
-                {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+            <div className="flex gap-2">
+              <div className="flex-1 flex items-center gap-2 bg-white rounded-2xl px-4 py-3 shadow-lg">
+                <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+                <select value={city} onChange={e => setCity(e.target.value)}
+                  className="flex-1 bg-transparent text-sm focus:outline-none text-gray-700 min-w-0">
+                  <option value="">Всички градове</option>
+                  {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+
+              <button type="submit"
+                className="bg-[#EF3988] hover:bg-[#d42f77] text-white px-5 py-3 rounded-2xl font-semibold text-sm transition-colors shadow-lg whitespace-nowrap">
+                Търси
+              </button>
+
+              <button type="button" onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-medium transition-colors shadow-lg ${
+                  showFilters || activeFilters.length > 0
+                    ? "bg-white text-[#1083BD]"
+                    : "bg-white/20 text-white hover:bg-white/30"
+                }`}>
+                <SlidersHorizontal className="w-4 h-4" />
+                <span className="hidden sm:inline">Филтри</span>
+                {activeFilters.length > 0 && (
+                  <span className="w-5 h-5 rounded-full bg-[#EF3988] text-white text-xs flex items-center justify-center font-bold">
+                    {activeFilters.length}
+                  </span>
+                )}
+              </button>
             </div>
-
-            <button type="submit"
-              className="bg-[#EF3988] hover:bg-[#d42f77] text-white px-6 py-3 rounded-2xl font-semibold text-sm transition-colors shadow-lg whitespace-nowrap">
-              Търси
-            </button>
-
-            <button type="button" onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-medium transition-colors shadow-lg ${
-                showFilters || activeFilters.length > 0
-                  ? "bg-white text-[#1083BD]"
-                  : "bg-white/20 text-white hover:bg-white/30"
-              }`}>
-              <SlidersHorizontal className="w-4 h-4" />
-              Филтри
-              {activeFilters.length > 0 && (
-                <span className="w-5 h-5 rounded-full bg-[#EF3988] text-white text-xs flex items-center justify-center font-bold">
-                  {activeFilters.length}
-                </span>
-              )}
-            </button>
           </form>
 
           {/* Filters panel */}

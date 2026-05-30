@@ -141,7 +141,7 @@ export function BookingModal({ isOpen, onClose, vetId, vetName, services, schedu
                   className="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50">
                   Затвори
                 </button>
-                <button onClick={() => { reset(); onClose(); router.push("/dashboard/appointments") }}
+                <button onClick={() => { reset(); onClose(); router.push("/my/appointments") }}
                   className="flex-1 py-2.5 bg-[#1083BD] text-white rounded-xl text-sm font-medium">
                   Моите часове
                 </button>

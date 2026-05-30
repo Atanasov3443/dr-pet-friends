@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button"
 import {
   Menu, X, ChevronDown, Stethoscope, Scissors, MapPin, Phone,
   Clock, Star, ArrowRight, Syringe, Eye, Activity, Shield,
-  Heart, Zap, Bone, Sparkles, Bath, CalendarCheck,
+  Heart, Zap, Bone, Sparkles, Bath, CalendarCheck, User,
 } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
+import { useSession } from "next-auth/react"
 import { Logo } from "@/components/logo"
 export { Logo }
 
@@ -331,6 +332,9 @@ export function Navbar() {
   const [scrolled, setScrolled]     = useState(false)
   const [activeMenu, setActiveMenu] = useState<MenuKey | null>(null)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const { data: session } = useSession()
+  const role = (session?.user as any)?.role as string | undefined
+  const dashboardHref = role === "VET" || role === "CLINIC_ADMIN" ? "/dashboard" : "/my"
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40)
@@ -396,10 +400,17 @@ export function Navbar() {
 
             {/* CTA */}
             <div className="hidden md:flex items-center gap-3">
-              <Link href="/login"
-                className="inline-flex items-center justify-center border-2 border-white/50 hover:border-white hover:bg-white/10 text-white text-sm font-bold rounded-full px-5 py-1.5 transition-all">
-                Вход
-              </Link>
+              {session ? (
+                <Link href={dashboardHref}
+                  className="inline-flex items-center gap-1.5 border-2 border-white/50 hover:border-white hover:bg-white/10 text-white text-sm font-bold rounded-full px-4 py-1.5 transition-all">
+                  <User className="w-3.5 h-3.5" /> Профил
+                </Link>
+              ) : (
+                <Link href="/login"
+                  className="inline-flex items-center justify-center border-2 border-white/50 hover:border-white hover:bg-white/10 text-white text-sm font-bold rounded-full px-5 py-1.5 transition-all">
+                  Вход
+                </Link>
+              )}
               <Link href="/search">
                 <Button className="bg-[#EF3988] hover:bg-[#d92d75] text-white font-semibold rounded-full px-5 gap-1.5 text-sm cursor-pointer">
                   <CalendarCheck className="w-4 h-4" /> Намери специалист
@@ -433,11 +444,19 @@ export function Navbar() {
                   <CalendarCheck className="w-4 h-4 mr-1.5" /> Намери специалист
                 </Button>
               </Link>
-              <Link href="/login"
-                className="w-full text-center py-2.5 text-white/80 font-semibold text-sm"
-                onClick={() => setMobileOpen(false)}>
-                Вход в профила
-              </Link>
+              {session ? (
+                <Link href={dashboardHref}
+                  className="w-full text-center py-2.5 text-white/80 font-semibold text-sm flex items-center justify-center gap-1.5"
+                  onClick={() => setMobileOpen(false)}>
+                  <User className="w-4 h-4" /> Моят профил
+                </Link>
+              ) : (
+                <Link href="/login"
+                  className="w-full text-center py-2.5 text-white/80 font-semibold text-sm"
+                  onClick={() => setMobileOpen(false)}>
+                  Вход в профила
+                </Link>
+              )}
             </div>
           </nav>
         )}

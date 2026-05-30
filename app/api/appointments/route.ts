@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic"
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { db } from "@/lib/db"
+import { sendAppointmentConfirmation } from "@/lib/email"
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -22,6 +23,7 @@ export async function POST(req: Request) {
   }
 
   const service = serviceId ? await db.vetService.findUnique({ where: { id: serviceId } }) : null
+  const vet = await db.vet.findUnique({ where: { id: vetId }, select: { displayName: true } })
 
   const appointment = await db.appointment.create({
     data: {
@@ -35,6 +37,19 @@ export async function POST(req: Request) {
       status:    "PENDING",
     },
   })
+
+  // Send confirmation email (fire-and-forget, don't block response)
+  const user = await db.user.findUnique({ where: { id: userId }, select: { name: true, email: true } })
+  if (user?.email) {
+    sendAppointmentConfirmation({
+      to:          user.email,
+      ownerName:   user.name ?? "Потребител",
+      vetName:     vet?.displayName ?? "Специалист",
+      date:        new Date(date),
+      serviceName: service?.name ?? "Общ преглед",
+      petName:     petName || "Любимец",
+    }).catch(() => {})
+  }
 
   return NextResponse.json(appointment)
 }

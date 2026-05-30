@@ -17,9 +17,28 @@ const interTight = Inter_Tight({
 })
 
 export const metadata: Metadata = {
-  title: 'Dr. Pet Friends | Ветеринарна платформа',
-  description: 'Намерете най-добрите ветеринарни специалисти за вашия любимец. Търсене по специалност, град и вид животно.',
-  generator: 'v0.app',
+  title: {
+    default:  'Dr. Pet Friends — Намери ветеринар онлайн',
+    template: '%s | Dr. Pet Friends',
+  },
+  description: 'Намерете най-добрите ветеринари и груминг салони за вашия любимец. Онлайн резервации, реални отзиви, спешни 24/7 клиники.',
+  keywords: ['ветеринар', 'ветеринарна клиника', 'груминг', 'домашни любимци', 'онлайн запис', 'Bulgaria'],
+  authors: [{ name: 'Dr. Pet Friends' }],
+  openGraph: {
+    type:        'website',
+    locale:      'bg_BG',
+    siteName:    'Dr. Pet Friends',
+    title:       'Dr. Pet Friends — Намери ветеринар онлайн',
+    description: 'Намерете най-добрите ветеринари и груминг салони за вашия любимец. Онлайн резервации без телефон.',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Dr. Pet Friends' }],
+  },
+  twitter: {
+    card:        'summary_large_image',
+    title:       'Dr. Pet Friends — Намери ветеринар онлайн',
+    description: 'Онлайн платформа за ветеринарни услуги в България.',
+    images:      ['/og-image.png'],
+  },
+  generator: 'Next.js',
   icons: {
     icon: [
       {
