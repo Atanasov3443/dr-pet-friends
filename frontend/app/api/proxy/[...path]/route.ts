@@ -18,20 +18,27 @@ async function handler(req: NextRequest) {
   const hasBody = req.method !== "GET" && req.method !== "HEAD"
   const body    = hasBody ? await req.arrayBuffer() : undefined
 
-  const res = await fetch(url, {
-    method:  req.method,
-    headers,
-    body:    body ? body : undefined,
-  })
+  try {
+    const res = await fetch(url, {
+      method:  req.method,
+      headers,
+      body:    body ? body : undefined,
+    })
 
-  const resHeaders = new Headers()
-  const resCt = res.headers.get("content-type")
-  if (resCt) resHeaders.set("content-type", resCt)
+    const resHeaders = new Headers()
+    const resCt = res.headers.get("content-type")
+    if (resCt) resHeaders.set("content-type", resCt)
 
-  return new NextResponse(res.body, {
-    status:  res.status,
-    headers: resHeaders,
-  })
+    return new NextResponse(res.body, {
+      status:  res.status,
+      headers: resHeaders,
+    })
+  } catch {
+    return NextResponse.json(
+      { error: "Сървърът не отговори. Опитай след 30 секунди." },
+      { status: 503 }
+    )
+  }
 }
 
 export const GET    = handler
