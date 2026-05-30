@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: dr-pet-friends-api
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm install && npm run db:generate && npm run build
+    startCommand: npm run db:migrate && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3001"
+      - key: DATABASE_URL
+        sync: false
+      - key: AUTH_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false

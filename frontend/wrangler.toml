@@ -1,0 +1,16 @@
+name = "dr-pet-friends"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+[vars]
+NODE_ENV = "production"
+
+# Set these in Cloudflare Pages dashboard → Settings → Environment variables:
+# DATABASE_URL        — PostgreSQL connection string
+# AUTH_SECRET         — Same secret as backend
+# NEXTAUTH_SECRET     — Same value as AUTH_SECRET
+# NEXTAUTH_URL        — Your Cloudflare Pages domain (e.g. https://dr-pet-friends.pages.dev)
+# GOOGLE_CLIENT_ID    — Google OAuth
+# GOOGLE_CLIENT_SECRET — Google OAuth
+# NEXT_PUBLIC_API_URL — Your Render backend URL (e.g. https://dr-pet-friends-api.onrender.com)
