@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
+import { apiUrl } from "@/lib/api"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Search, MapPin, Star, Clock, Phone, SlidersHorizontal, X, ChevronRight, Stethoscope, Scissors, List, Map } from "lucide-react"
@@ -150,7 +151,7 @@ export default function SearchPage() {
 
     router.replace(`/search?${qs.toString()}`, { scroll: false })
 
-    const res  = await fetch(`/api/search?${qs.toString()}`)
+    const res  = await fetch(`${apiUrl("/api/search")}?${qs.toString()}`)
     const data = await res.json()
     setResults(Array.isArray(data) ? data : [])
     setLoading(false)
@@ -168,7 +169,7 @@ export default function SearchPage() {
     const qs = new URLSearchParams()
     if (type === "vet") qs.set("type", "VET")
     if (type === "grooming") qs.set("type", "GROOMING")
-    fetch(`/api/clinics?${qs}`)
+    fetch(`${apiUrl("/api/clinics")}?${qs}`)
       .then(r => r.json())
       .then(data => setClinics(Array.isArray(data) ? data : []))
   }, [viewMode, type])
