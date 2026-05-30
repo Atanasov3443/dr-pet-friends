@@ -131,13 +131,13 @@ export function ForVetsSection() {
                     return (
                   <div className="grid grid-cols-2 gap-3">
                     <div className="col-span-2">
-                      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Вашето име</label>
+                      <label className="text-xs font-semibold text-white/80 uppercase tracking-wide block mb-1">Вашето име</label>
                       <Input placeholder="Д-р Иванова" value={form.name}
                         onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required
                         className={inputCls} />
                     </div>
                     <div className="col-span-2">
-                      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">
+                      <label className="text-xs font-semibold text-white/80 uppercase tracking-wide block mb-1">
                         {type === "vet" ? "Клиника / Практика" : "Название на салона"}
                       </label>
                       <Input placeholder={type === "vet" ? "Вет клиника Здраве" : "Груминг студио Пух"}
@@ -145,19 +145,19 @@ export function ForVetsSection() {
                         className={inputCls} />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Град</label>
+                      <label className="text-xs font-semibold text-white/80 uppercase tracking-wide block mb-1">Град</label>
                       <Input placeholder="София" value={form.city}
                         onChange={e => setForm(f => ({ ...f, city: e.target.value }))} required
                         className={inputCls} />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Телефон</label>
+                      <label className="text-xs font-semibold text-white/80 uppercase tracking-wide block mb-1">Телефон</label>
                       <Input placeholder="+359 88..." value={form.phone}
                         onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} required
                         className={inputCls} />
                     </div>
                     <div className="col-span-2">
-                      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Имейл</label>
+                      <label className="text-xs font-semibold text-white/80 uppercase tracking-wide block mb-1">Имейл</label>
                       <Input type="email" placeholder="email@example.com" value={form.email}
                         onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required
                         className={inputCls} />
