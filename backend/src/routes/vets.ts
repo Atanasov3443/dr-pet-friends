@@ -3,7 +3,7 @@ import { db } from "../lib/db"
 
 const router = Router()
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params
 
   try {
