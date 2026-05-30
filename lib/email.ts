@@ -1,7 +1,5 @@
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function sendAppointmentConfirmation({
   to,
   ownerName,
@@ -18,6 +16,8 @@ export async function sendAppointmentConfirmation({
   petName: string
 }) {
   if (!process.env.RESEND_API_KEY) return
+
+  const resend = new Resend(process.env.RESEND_API_KEY)
 
   const dateStr = date.toLocaleDateString("bg-BG", {
     weekday: "long", day: "numeric", month: "long", year: "numeric",
