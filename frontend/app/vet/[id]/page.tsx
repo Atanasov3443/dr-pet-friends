@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic"
 export const runtime = "edge"
 
-import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
@@ -11,28 +10,24 @@ import { BookingButton } from "@/components/booking-button"
 
 const DAYS = ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"]
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"
+
 export default async function VetProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const vet = await db.vet.findUnique({
-    where: { id },
-    include: {
-      clinic:   true,
-      services: { orderBy: { price: "asc" } },
-      schedule: { orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }], where: { isActive: true } },
-      reviews:  { include: { user: { select: { name: true, image: true } } }, orderBy: { createdAt: "desc" }, take: 5 },
-      user:     { select: { name: true, email: true } },
-    },
-  })
 
-  if (!vet) notFound()
+  const res = await fetch(`${API_URL}/api/vets/${id}`, { cache: "no-store" })
+  if (res.status === 404) notFound()
+  if (!res.ok) notFound()
 
-  const scheduleByDay = vet.schedule.reduce((acc, s) => {
+  const vet = await res.json()
+
+  const scheduleByDay = (vet.schedule ?? []).reduce((acc: Record<number, typeof vet.schedule>, s: any) => {
     if (!acc[s.dayOfWeek]) acc[s.dayOfWeek] = []
     acc[s.dayOfWeek].push(s)
     return acc
-  }, {} as Record<number, typeof vet.schedule>)
+  }, {})
 
-  const todayDay  = new Date().getDay()
+  const todayDay    = new Date().getDay()
   const isOpenToday = !!scheduleByDay[todayDay]?.length
 
   return (
@@ -77,7 +72,7 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
                 <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
                   <div className="flex items-center gap-1.5">
                     <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                    <span className="font-bold text-gray-900">{vet.rating.toFixed(1)}</span>
+                    <span className="font-bold text-gray-900">{vet.rating?.toFixed(1)}</span>
                     <span>({vet.reviewCount} отзива)</span>
                   </div>
                   {vet.experience > 0 && (
@@ -110,13 +105,13 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
             {/* Left column */}
             <div className="lg:col-span-2 space-y-6">
               {/* Services */}
-              {vet.services.length > 0 && (
+              {vet.services?.length > 0 && (
                 <div className="bg-white rounded-2xl border border-gray-100 p-6">
                   <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <Stethoscope className="w-5 h-5 text-[#1083BD]" /> Услуги
                   </h2>
                   <div className="space-y-3">
-                    {vet.services.map(s => (
+                    {vet.services.map((s: any) => (
                       <div key={s.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
                         <div>
                           <p className="font-medium text-gray-900 text-sm">{s.name}</p>
@@ -130,13 +125,13 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
               )}
 
               {/* Reviews */}
-              {vet.reviews.length > 0 && (
+              {vet.reviews?.length > 0 && (
                 <div className="bg-white rounded-2xl border border-gray-100 p-6">
                   <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <Star className="w-5 h-5 text-yellow-400" /> Отзиви
                   </h2>
                   <div className="space-y-4">
-                    {vet.reviews.map(r => (
+                    {vet.reviews.map((r: any) => (
                       <div key={r.id} className="flex gap-3">
                         {r.user.image ? (
                           <img src={r.user.image} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
@@ -172,21 +167,21 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
                 <BookingButton
                   vetId={vet.id}
                   vetName={vet.displayName}
-                  services={vet.services.map(s => ({ id: s.id, name: s.name, price: s.price, duration: s.duration }))}
-                  schedule={vet.schedule.map(s => ({ dayOfWeek: s.dayOfWeek, startTime: s.startTime, endTime: s.endTime, isActive: s.isActive }))}
+                  services={(vet.services ?? []).map((s: any) => ({ id: s.id, name: s.name, price: s.price, duration: s.duration }))}
+                  schedule={(vet.schedule ?? []).map((s: any) => ({ dayOfWeek: s.dayOfWeek, startTime: s.startTime, endTime: s.endTime, isActive: s.isActive }))}
                 />
               </div>
 
               {/* Schedule */}
-              {vet.schedule.length > 0 && (
+              {vet.schedule?.length > 0 && (
                 <div className="bg-white rounded-2xl border border-gray-100 p-5">
                   <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4 text-[#1083BD]" /> Работно време
                   </h3>
                   <div className="space-y-2">
                     {[1,2,3,4,5,6,0].map(day => {
-                      const slots    = scheduleByDay[day]
-                      const isToday  = day === todayDay
+                      const slots   = scheduleByDay[day]
+                      const isToday = day === todayDay
                       return (
                         <div key={day} className={`flex items-center justify-between text-sm py-1.5 px-2 rounded-lg ${isToday ? "bg-[#1083BD]/5" : ""}`}>
                           <span className={`font-medium ${isToday ? "text-[#1083BD]" : "text-gray-600"}`}>
@@ -194,7 +189,7 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
                           </span>
                           {slots?.length ? (
                             <span className="text-gray-700 text-xs">
-                              {slots.map(s => `${s.startTime}–${s.endTime}`).join(", ")}
+                              {slots.map((s: any) => `${s.startTime}–${s.endTime}`).join(", ")}
                             </span>
                           ) : (
                             <span className="text-gray-300 text-xs">Почивен</span>

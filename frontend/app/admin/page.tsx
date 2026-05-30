@@ -1,28 +1,43 @@
 export const dynamic = "force-dynamic"
 export const runtime = "edge"
 
-import { db } from "@/lib/db"
 import { Users, Stethoscope, ClipboardList, CalendarCheck } from "lucide-react"
+import { cookies } from "next/headers"
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"
 
 export default async function AdminDashboard() {
-  const [totalUsers, totalVets, pendingRequests, totalAppointments] = await Promise.all([
-    db.user.count(),
-    db.vet.count(),
-    db.profileRequest.count({ where: { status: "PENDING" } }),
-    db.appointment.count(),
-  ])
+  const cookieStore = await cookies()
+  const allCookies  = cookieStore.getAll()
+  const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join("; ")
+
+  let totalUsers        = 0
+  let totalVets         = 0
+  let pendingRequests   = 0
+  let totalAppointments = 0
+  let recentRequests: any[] = []
+
+  try {
+    const res = await fetch(`${API_URL}/api/admin/stats`, {
+      headers: { Cookie: cookieHeader },
+      cache: "no-store",
+    })
+    if (res.ok) {
+      const data = await res.json()
+      totalUsers        = data.totalUsers
+      totalVets         = data.totalVets
+      pendingRequests   = data.pendingRequests
+      totalAppointments = data.totalAppointments
+      recentRequests    = data.recentRequests ?? []
+    }
+  } catch {}
 
   const stats = [
-    { label: "Потребители",       value: totalUsers,        icon: Users,          color: "bg-blue-50 text-[#1083BD]"  },
-    { label: "Ветеринари",        value: totalVets,         icon: Stethoscope,    color: "bg-pink-50 text-[#EF3988]"  },
+    { label: "Потребители",       value: totalUsers,        icon: Users,          color: "bg-blue-50 text-[#1083BD]"    },
+    { label: "Ветеринари",        value: totalVets,         icon: Stethoscope,    color: "bg-pink-50 text-[#EF3988]"    },
     { label: "Чакащи заявки",     value: pendingRequests,   icon: ClipboardList,  color: "bg-yellow-50 text-yellow-600" },
-    { label: "Резервации",        value: totalAppointments, icon: CalendarCheck,  color: "bg-green-50 text-green-600"  },
+    { label: "Резервации",        value: totalAppointments, icon: CalendarCheck,  color: "bg-green-50 text-green-600"   },
   ]
-
-  const recentRequests = await db.profileRequest.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  })
 
   return (
     <div className="p-8">
@@ -49,7 +64,7 @@ export default async function AdminDashboard() {
           <p className="text-gray-400 text-sm">Няма заявки все още.</p>
         ) : (
           <div className="space-y-3">
-            {recentRequests.map((r) => (
+            {recentRequests.map((r: any) => (
               <div key={r.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                 <div>
                   <p className="text-sm font-medium text-gray-900">{r.name}</p>

@@ -1,5 +1,3 @@
-import { db } from "@/lib/db"
-
 export const CONTENT_DEFAULTS: Record<string, string> = {
   // Hero slides
   "hero.slide.1.image":       "/Untitled%20design%20(1).png",
@@ -64,8 +62,11 @@ export const CONTENT_DEFAULTS: Record<string, string> = {
 export type SiteContent = Record<string, string>
 
 export async function getContent(): Promise<SiteContent> {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"
   try {
-    const rows = await db.siteContent.findMany()
+    const res = await fetch(`${API_URL}/api/content`, { cache: "no-store" })
+    if (!res.ok) return { ...CONTENT_DEFAULTS }
+    const rows: { key: string; value: string }[] = await res.json()
     const dbMap = Object.fromEntries(rows.map(r => [r.key, r.value]))
     return { ...CONTENT_DEFAULTS, ...dbMap }
   } catch {
