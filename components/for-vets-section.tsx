@@ -89,7 +89,7 @@ export function ForVetsSection() {
           </div>
 
           {/* Right — form card */}
-          <GlowCard customSize glowColor="purple" className="bg-white rounded-3xl p-4 w-full">
+          <GlowCard customSize glowColor="purple" className="bg-white/10 backdrop-blur-md rounded-3xl p-4 w-full border border-white/20">
             {submitted ? (
               <div className="flex flex-col items-center text-center gap-4 py-12">
                 <div className="w-16 h-16 rounded-full bg-[#10B83D] flex items-center justify-center">
@@ -128,16 +128,18 @@ export function ForVetsSection() {
                 <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
                   {(() => {
                     const inputCls = `h-8 rounded-xl border-gray-200 ${type === "vet" ? "focus-visible:ring-[#1083BD] focus-visible:border-[#1083BD]" : "focus-visible:ring-[#EF3988] focus-visible:border-[#EF3988]"}`
+                    const labelCls = "text-xs font-semibold uppercase tracking-wide block mb-1"
+                    const labelStyle = { color: "rgba(255,255,255,0.9)" }
                     return (
                   <div className="grid grid-cols-2 gap-3">
                     <div className="col-span-2">
-                      <label className="text-xs font-semibold text-white/80 uppercase tracking-wide block mb-1">Вашето име</label>
+                      <label className={labelCls} style={labelStyle}>Вашето име</label>
                       <Input placeholder="Д-р Иванова" value={form.name}
                         onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required
                         className={inputCls} />
                     </div>
                     <div className="col-span-2">
-                      <label className="text-xs font-semibold text-white/80 uppercase tracking-wide block mb-1">
+                      <label className={labelCls} style={labelStyle}>
                         {type === "vet" ? "Клиника / Практика" : "Название на салона"}
                       </label>
                       <Input placeholder={type === "vet" ? "Вет клиника Здраве" : "Груминг студио Пух"}
@@ -145,19 +147,19 @@ export function ForVetsSection() {
                         className={inputCls} />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-white/80 uppercase tracking-wide block mb-1">Град</label>
+                      <label className={labelCls} style={labelStyle}>Град</label>
                       <Input placeholder="София" value={form.city}
                         onChange={e => setForm(f => ({ ...f, city: e.target.value }))} required
                         className={inputCls} />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-white/80 uppercase tracking-wide block mb-1">Телефон</label>
+                      <label className={labelCls} style={labelStyle}>Телефон</label>
                       <Input placeholder="+359 88..." value={form.phone}
                         onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} required
                         className={inputCls} />
                     </div>
                     <div className="col-span-2">
-                      <label className="text-xs font-semibold text-white/80 uppercase tracking-wide block mb-1">Имейл</label>
+                      <label className={labelCls} style={labelStyle}>Имейл</label>
                       <Input type="email" placeholder="email@example.com" value={form.email}
                         onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required
                         className={inputCls} />

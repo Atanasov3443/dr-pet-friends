@@ -48,7 +48,7 @@ export function FAQSection() {
       
       {/* Sticker */}
       <div className="absolute bottom-20 left-[10%] hidden lg:block">
-        <PawSticker color="pink" icon="paw" rotation={-12} />
+        <PawSticker color="pink" icon="heart" rotation={-12} />
       </div>
 
       <div className="container relative z-10">
