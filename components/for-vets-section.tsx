@@ -170,7 +170,7 @@ export function ForVetsSection() {
                     className="h-9 rounded-xl font-bold text-white bg-[#1083BD] hover:bg-[#0a6fa0]">
                     Изпрати заявка
                   </Button>
-                  <p className="text-gray-400 text-xs text-center">Ще се свържем с вас до 24 часа.</p>
+                  <p className="text-white/70 text-xs text-center">Ще се свържем с вас до 24 часа.</p>
                 </form>
               </>
             )}
