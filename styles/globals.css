@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+button, a, [role="button"], select, label[for] { cursor: pointer; }
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
