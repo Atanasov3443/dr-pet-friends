@@ -30,9 +30,17 @@ export default auth((req) => {
     }
   }
 
+  if (pathname.startsWith("/my")) {
+    if (!req.auth) {
+      const url = new URL("/login", req.url)
+      url.searchParams.set("callbackUrl", pathname)
+      return NextResponse.redirect(url)
+    }
+  }
+
   return NextResponse.next()
 })
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*"],
+  matcher: ["/admin/:path*", "/dashboard/:path*", "/my/:path*", "/my"],
 }

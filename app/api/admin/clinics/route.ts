@@ -1,15 +1,30 @@
 export const dynamic = "force-dynamic"
 
 import { NextResponse } from "next/server"
+import { auth } from "@/auth"
 import { db } from "@/lib/db"
 
+async function requireAdmin() {
+  const session = await auth()
+  if (!session || (session.user as any).role !== "ADMIN") throw new Error("Unauthorized")
+}
+
 export async function GET() {
-  const clinics = await db.clinic.findMany({ orderBy: { name: "asc" } })
-  return NextResponse.json(clinics)
+  try {
+    await requireAdmin()
+    const clinics = await db.clinic.findMany({ orderBy: { name: "asc" } })
+    return NextResponse.json(clinics)
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 }
 
 export async function POST(req: Request) {
+  try { await requireAdmin() } catch { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }) }
   const body = await req.json()
+  if (!body.name || !body.city || !body.address) {
+    return NextResponse.json({ error: "Задължителни полета липсват" }, { status: 400 })
+  }
   const clinic = await db.clinic.create({
     data: {
       name:        body.name,
@@ -30,8 +45,10 @@ export async function POST(req: Request) {
 }
 
 export async function PATCH(req: Request) {
+  try { await requireAdmin() } catch { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }) }
   const body = await req.json()
   const { id, ...data } = body
+  if (!id) return NextResponse.json({ error: "ID е задължително" }, { status: 400 })
   const clinic = await db.clinic.update({
     where: { id },
     data: {
@@ -53,7 +70,9 @@ export async function PATCH(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  try { await requireAdmin() } catch { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }) }
   const { id } = await req.json()
+  if (!id) return NextResponse.json({ error: "ID е задължително" }, { status: 400 })
   await db.clinic.delete({ where: { id } })
   return NextResponse.json({ ok: true })
 }
