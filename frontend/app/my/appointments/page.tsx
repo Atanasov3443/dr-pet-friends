@@ -78,10 +78,11 @@ export default function MyAppointmentsPage() {
 
   const load = () => {
     setLoading(true)
-    fetch(apiUrl("/api/my/appointments"), { credentials: "include" }).then(r => r.json()).then(data => {
-      setAppointments(Array.isArray(data) ? data : [])
-      setLoading(false)
-    })
+    fetch(apiUrl("/api/my/appointments"), { credentials: "include" })
+      .then(r => r.ok ? r.json() : [])
+      .then(data => setAppointments(Array.isArray(data) ? data : []))
+      .catch(() => {})
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => { load() }, [])

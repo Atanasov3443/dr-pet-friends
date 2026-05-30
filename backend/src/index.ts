@@ -26,8 +26,14 @@ import contentRouter         from "./routes/content"
 const app  = express()
 const PORT = process.env.PORT ?? 3001
 
+const allowedOrigins = [
+  "https://dr-pet-friends.pages.dev",
+  process.env.NEXT_PUBLIC_APP_URL,
+  "http://localhost:3000",
+].filter(Boolean) as string[]
+
 app.use(cors({
-  origin:      process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  origin:      (origin, cb) => cb(null, !origin || allowedOrigins.includes(origin)),
   credentials: true,
 }))
 app.use(express.json())

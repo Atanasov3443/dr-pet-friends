@@ -24,13 +24,12 @@ export default function MyPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch(apiUrl("/api/my/appointments?upcoming=true"), { credentials: "include" }).then(r => r.json()),
-      fetch(apiUrl("/api/my/pets"), { credentials: "include" }).then(r => r.json()),
+      fetch(apiUrl("/api/my/appointments?upcoming=true"), { credentials: "include" }).then(r => r.ok ? r.json() : []),
+      fetch(apiUrl("/api/my/pets"), { credentials: "include" }).then(r => r.ok ? r.json() : []),
     ]).then(([appts, p]) => {
       setAppointments(Array.isArray(appts) ? appts : [])
       setPets(Array.isArray(p) ? p : [])
-      setLoading(false)
-    })
+    }).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   if (loading) return <div className="p-8 text-center text-gray-400">Зарежда...</div>
