@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import {
   Menu, X, ChevronDown, Stethoscope, Scissors, MapPin, Phone,
   Clock, Star, ArrowRight, Syringe, Eye, Activity, Shield,
-  Heart, Zap, Bone, Sparkles, Bath, CalendarCheck, AlertTriangle,
+  Heart, Zap, Bone, Sparkles, Bath, CalendarCheck,
 } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { Logo } from "@/components/logo"
@@ -368,7 +368,7 @@ export function Navbar() {
                   <button
                     key={item.label}
                     onMouseEnter={() => openMenu(item.menu!)}
-                    className={`flex items-center gap-1 px-3 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-1 px-3 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
                       activeMenu === item.menu
                         ? "bg-white/15 text-white"
                         : "text-white/90 hover:text-white hover:bg-white/10"
@@ -400,9 +400,11 @@ export function Navbar() {
                 className="inline-flex items-center justify-center border-2 border-white/50 hover:border-white hover:bg-white/10 text-white text-sm font-bold rounded-full px-5 py-1.5 transition-all">
                 Вход
               </Link>
-              <Button className="bg-[#EF3988] hover:bg-[#d92d75] text-white font-semibold rounded-full px-5 gap-1.5 text-sm">
-                <CalendarCheck className="w-4 h-4" /> Намери специалист
-              </Button>
+              <Link href="/search">
+                <Button className="bg-[#EF3988] hover:bg-[#d92d75] text-white font-semibold rounded-full px-5 gap-1.5 text-sm cursor-pointer">
+                  <CalendarCheck className="w-4 h-4" /> Намери специалист
+                </Button>
+              </Link>
             </div>
 
             {/* Mobile toggle */}
@@ -426,9 +428,11 @@ export function Navbar() {
               </Link>
             ))}
             <div className="mt-4 flex flex-col gap-2 px-1">
-              <Button className="w-full bg-[#EF3988] hover:bg-[#d92d75] text-white font-semibold rounded-full">
-                <CalendarCheck className="w-4 h-4 mr-1.5" /> Намери специалист
-              </Button>
+              <Link href="/search" onClick={() => setMobileOpen(false)}>
+                <Button className="w-full bg-[#EF3988] hover:bg-[#d92d75] text-white font-semibold rounded-full">
+                  <CalendarCheck className="w-4 h-4 mr-1.5" /> Намери специалист
+                </Button>
+              </Link>
               <Link href="/login"
                 className="w-full text-center py-2.5 text-white/80 font-semibold text-sm"
                 onClick={() => setMobileOpen(false)}>

@@ -18,8 +18,20 @@ export function ForVetsSection() {
   const [submitted, setSubmitted] = useState(false)
   const [form, setForm] = useState({ name: "", clinic: "", city: "", phone: "", email: "" })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    await fetch("/api/profile-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name:       form.name,
+        email:      form.email,
+        phone:      form.phone,
+        clinicName: form.clinic,
+        city:       form.city,
+        type:       type === "vet" ? "VET" : "GROOMING",
+      }),
+    })
     setSubmitted(true)
   }
 

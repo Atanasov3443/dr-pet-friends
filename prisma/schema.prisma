@@ -36,6 +36,12 @@ enum PlaceType {
   GROOMING
 }
 
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 // ─── Auth (NextAuth v5) ───────────────────────────────────────────────────────
 
 model User {
@@ -227,6 +233,30 @@ model Vaccination {
   notes    String?
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model ProfileRequest {
+  id          String        @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  type        PlaceType     @default(VET)
+  clinicName  String?
+  specialty   String?
+  city        String?
+  message     String?       @db.Text
+  status      RequestStatus @default(PENDING)
+  reviewedById String?
+  reviewedAt  DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
 }
 
 model Review {

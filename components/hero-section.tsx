@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Search, MapPin, PawPrint, ChevronRight } from "lucide-react"
@@ -36,7 +37,18 @@ const carouselSlides = [
 ]
 
 export function HeroSection() {
+  const router = useRouter()
   const [searchType, setSearchType] = useState<"vet" | "grooming">("vet")
+  const [query, setQuery]   = useState("")
+  const [city, setCity]     = useState("")
+
+  const handleSearch = () => {
+    const params = new URLSearchParams()
+    if (query) params.set("q", query)
+    if (city)  params.set("city", city)
+    params.set("type", searchType === "vet" ? "VET" : "GROOMING")
+    router.push(`/search?${params.toString()}`)
+  }
   const [scrollProgress, setScrollProgress] = useState(0)
   const [activeSlide, setActiveSlide] = useState(0)
   const [displaySlide, setDisplaySlide] = useState(0)
@@ -209,21 +221,25 @@ export function HeroSection() {
               </div>
 
               <div className="bg-white rounded-2xl p-3 shadow-2xl max-w-xl mx-auto lg:mx-0">
-                <div className="grid md:grid-cols-3 gap-2">
+                <div className="grid md:grid-cols-2 gap-2">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
-                    <Input placeholder={searchType === "vet" ? "Специалност" : "Вид груминг"} className="pl-9 border-gray-100 rounded-xl h-11 text-sm text-gray-700 bg-gray-50" />
+                    <Input
+                      value={query} onChange={e => setQuery(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && handleSearch()}
+                      placeholder={searchType === "vet" ? "Специалност, д-р..." : "Вид груминг..."}
+                      className="pl-9 border-gray-100 rounded-xl h-11 text-sm text-gray-700 bg-gray-50" />
                   </div>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
-                    <Input placeholder="Град" className="pl-9 border-gray-100 rounded-xl h-11 text-sm text-gray-700 bg-gray-50" />
-                  </div>
-                  <div className="relative">
-                    <PawPrint className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
-                    <Input placeholder="Животно" className="pl-9 border-gray-100 rounded-xl h-11 text-sm text-gray-700 bg-gray-50" />
+                    <Input
+                      value={city} onChange={e => setCity(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && handleSearch()}
+                      placeholder="Град"
+                      className="pl-9 border-gray-100 rounded-xl h-11 text-sm text-gray-700 bg-gray-50" />
                   </div>
                 </div>
-                <Button className="w-full mt-2 bg-[#EF3988] hover:bg-[#d42f77] text-white font-semibold rounded-xl h-11 text-sm">
+                <Button onClick={handleSearch} className="w-full mt-2 bg-[#EF3988] hover:bg-[#d42f77] text-white font-semibold rounded-xl h-11 text-sm">
                   {searchType === "vet" ? "Търси ветеринар" : "Търси груминг салон"}
                 </Button>
               </div>

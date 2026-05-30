@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Inter_Tight } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { NavigationLoader } from '@/components/navigation-loader'
+import { AuthSessionProvider } from '@/components/session-provider'
 import './globals.css'
 
 const inter = Inter({ 
@@ -46,9 +47,11 @@ export default function RootLayout({
   return (
     <html lang="bg" className={`${inter.variable} ${interTight.variable} bg-background`}>
       <body className="font-sans antialiased">
-        <NavigationLoader />
-        {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <AuthSessionProvider>
+          <NavigationLoader />
+          {children}
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+        </AuthSessionProvider>
       </body>
     </html>
   )
