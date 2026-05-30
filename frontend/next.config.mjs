@@ -23,6 +23,21 @@ const nextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }]
   },
+  webpack: (config, { nextRuntime }) => {
+    if (nextRuntime === "edge") {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        stream: false,
+        net: false,
+        tls: false,
+        dns: false,
+        crypto: false,
+      }
+    }
+    return config
+  },
 }
 
 export default nextConfig
