@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, MapPin, PawPrint, ChevronRight } from "lucide-react"
+import { ChevronRight, Stethoscope, Scissors, ArrowRight, Clock, Shield, Star } from "lucide-react"
 import { Sticker, PawSticker } from "@/components/sticker"
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
 import { GlowCard } from "@/components/ui/spotlight-card"
+import Link from "next/link"
 
 const carouselSlides = [
   {
@@ -37,18 +36,6 @@ const carouselSlides = [
 ]
 
 export function HeroSection() {
-  const router = useRouter()
-  const [searchType, setSearchType] = useState<"vet" | "grooming">("vet")
-  const [query, setQuery]   = useState("")
-  const [city, setCity]     = useState("")
-
-  const handleSearch = () => {
-    const params = new URLSearchParams()
-    if (query) params.set("q", query)
-    if (city)  params.set("city", city)
-    params.set("type", searchType === "vet" ? "VET" : "GROOMING")
-    router.push(`/search?${params.toString()}`)
-  }
   const [scrollProgress, setScrollProgress] = useState(0)
   const [activeSlide, setActiveSlide] = useState(0)
   const [displaySlide, setDisplaySlide] = useState(0)
@@ -203,46 +190,59 @@ export function HeroSection() {
               ))}
             </div>
 
-            {/* Toggle + Search */}
-            <div>
-              <div className="flex gap-2 mb-3 max-w-xl mx-auto lg:mx-0">
-                <button
-                  onClick={() => setSearchType("vet")}
-                  className={`flex-1 py-2.5 px-4 rounded-full font-semibold text-sm transition-all ${searchType === "vet" ? "bg-white text-[#1083BD] shadow-lg" : "bg-white/15 text-white hover:bg-white/25"}`}
-                >
-                  🐾 Търси ветеринар
-                </button>
-                <button
-                  onClick={() => setSearchType("grooming")}
-                  className={`flex-1 py-2.5 px-4 rounded-full font-semibold text-sm transition-all ${searchType === "grooming" ? "bg-white text-[#EF3988] shadow-lg" : "bg-white/15 text-white hover:bg-white/25"}`}
-                >
-                  ✂️ Груминг салон
-                </button>
-              </div>
+            {/* Intent cards */}
+            <div className="grid grid-cols-2 gap-3 max-w-xl mx-auto lg:mx-0">
 
-              <div className="bg-white rounded-2xl p-3 shadow-2xl max-w-xl mx-auto lg:mx-0">
-                <div className="grid md:grid-cols-2 gap-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
-                    <Input
-                      value={query} onChange={e => setQuery(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && handleSearch()}
-                      placeholder={searchType === "vet" ? "Специалност, д-р..." : "Вид груминг..."}
-                      className="pl-9 border-gray-100 rounded-xl h-11 text-sm text-gray-700 bg-gray-50" />
-                  </div>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
-                    <Input
-                      value={city} onChange={e => setCity(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && handleSearch()}
-                      placeholder="Град"
-                      className="pl-9 border-gray-100 rounded-xl h-11 text-sm text-gray-700 bg-gray-50" />
-                  </div>
+              {/* Vet card */}
+              <Link href="/search?type=vet" className="group relative bg-white rounded-2xl p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col gap-3">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#1083BD]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-12 h-12 rounded-xl bg-[#1083BD]/10 flex items-center justify-center group-hover:bg-[#1083BD]/15 transition-colors">
+                  <Stethoscope className="w-6 h-6 text-[#1083BD]" />
                 </div>
-                <Button onClick={handleSearch} className="w-full mt-2 bg-[#EF3988] hover:bg-[#d42f77] text-white font-semibold rounded-xl h-11 text-sm">
-                  {searchType === "vet" ? "Търси ветеринар" : "Търси груминг салон"}
-                </Button>
-              </div>
+                <div>
+                  <h3 className="font-black text-gray-900 text-base leading-tight mb-1">Ветеринар</h3>
+                  <p className="text-gray-400 text-xs leading-relaxed">Преглед · Ваксини · Хирургия · 24/7 спешна помощ</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  {[
+                    { icon: Shield, text: "Проверени лекари" },
+                    { icon: Clock,  text: "Онлайн запис" },
+                  ].map(({ icon: Icon, text }) => (
+                    <span key={text} className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <Icon className="w-3 h-3 text-[#1083BD]" /> {text}
+                    </span>
+                  ))}
+                </div>
+                <span className="mt-auto flex items-center gap-1 text-[#1083BD] font-bold text-sm group-hover:gap-2 transition-all">
+                  Намери ветеринар <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </Link>
+
+              {/* Grooming card */}
+              <Link href="/search?type=grooming" className="group relative bg-[#EF3988] rounded-2xl p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col gap-3">
+                <div className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-white/10" />
+                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                  <Scissors className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-black text-white text-base leading-tight mb-1">Груминг салон</h3>
+                  <p className="text-white/70 text-xs leading-relaxed">Подстригване · Пране · Маникюр · SPA</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  {[
+                    { icon: Star,  text: "Реални отзиви" },
+                    { icon: Clock, text: "Гъвкав график" },
+                  ].map(({ icon: Icon, text }) => (
+                    <span key={text} className="flex items-center gap-1.5 text-xs text-white/80">
+                      <Icon className="w-3 h-3 text-white" /> {text}
+                    </span>
+                  ))}
+                </div>
+                <span className="mt-auto flex items-center gap-1 text-white font-bold text-sm group-hover:gap-2 transition-all">
+                  Намери салон <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </Link>
+
             </div>
           </div>
 
