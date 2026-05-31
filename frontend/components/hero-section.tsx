@@ -216,15 +216,6 @@ export function HeroSection() {
                 </Link>
               </div>
 
-              {/* Quick specialty links */}
-              <div className="flex flex-wrap gap-2 mt-3 justify-center lg:justify-start">
-                {["Общ преглед", "Ваксинации", "Хирургия", "Кардиология", "Спешен 24/7"].map((s) => (
-                  <Link key={s} href={`/search?q=${encodeURIComponent(s)}`}
-                    className="text-xs bg-white/15 hover:bg-white/25 text-white border border-white/20 px-3 py-1.5 rounded-full font-medium transition-colors whitespace-nowrap">
-                    {s}
-                  </Link>
-                ))}
-              </div>
             </div>
           </div>
 
