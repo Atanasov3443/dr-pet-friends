@@ -50,7 +50,7 @@ export function ForVetsSection() {
       {/* Top diagonal — pink from HowItWorks */}
       <div className="absolute top-0 left-0 w-full leading-none pointer-events-none z-20">
         <svg viewBox="0 0 1440 50" fill="white" preserveAspectRatio="none" className="w-full h-12 block">
-          <polygon points="0,50 1440,0 0,0" />
+          <polygon points="0,0 1440,0 1440,50" />
         </svg>
       </div>
 
@@ -168,7 +168,7 @@ export function ForVetsSection() {
       {/* Bottom diagonal — white to match ServicesSection */}
       <div className="w-full leading-none pointer-events-none">
         <svg viewBox="0 0 1440 50" fill="#1083BD" preserveAspectRatio="none" className="w-full h-12 block">
-          <polygon points="0,0 1440,50 0,50" />
+          <polygon points="1440,0 1440,50 0,50" />
         </svg>
       </div>
 
