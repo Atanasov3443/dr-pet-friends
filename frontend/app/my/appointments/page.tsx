@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { CalendarDays, Star, X } from "lucide-react"
+import { CalendarDays, Star, X, CreditCard } from "lucide-react"
 import Link from "next/link"
 import { EventManager, type Event as CalEvent } from "@/components/ui/event-manager"
 import { apiUrl } from "@/lib/api"
@@ -75,6 +75,7 @@ export default function MyAppointmentsPage() {
   const [tab, setTab]                   = useState<"upcoming" | "past">("upcoming")
   const [reviewTarget, setReviewTarget] = useState<{ vetId: string; vetName: string } | null>(null)
   const [reviewed, setReviewed]         = useState<Set<string>>(new Set())
+  const [paying,   setPaying]           = useState<string | null>(null)
 
   const load = () => {
     setLoading(true)
@@ -83,6 +84,22 @@ export default function MyAppointmentsPage() {
       .then(data => setAppointments(Array.isArray(data) ? data : []))
       .catch(() => {})
       .finally(() => setLoading(false))
+  }
+
+  const startPayment = async (appointmentId: string) => {
+    setPaying(appointmentId)
+    try {
+      const res  = await fetch(apiUrl("/api/stripe/checkout"), {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ appointmentId }),
+      })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+    } finally {
+      setPaying(null)
+    }
   }
 
   useEffect(() => { load() }, [])
@@ -158,6 +175,7 @@ export default function MyAppointmentsPage() {
             const d = new Date(a.date)
             const s = statusLabel[a.status] ?? statusLabel.PENDING
             const canReview = a.status === "COMPLETED" && !reviewed.has(a.vetId)
+            const canPay    = (a.status === "PENDING" || a.status === "CONFIRMED") && (a.price ?? a.service?.price)
             return (
               <div key={a.id} className="bg-white rounded-2xl border border-gray-100 p-5">
                 <div className="flex items-start gap-4">
@@ -181,13 +199,22 @@ export default function MyAppointmentsPage() {
                     </div>
                   </div>
                 </div>
-                {canReview && (
-                  <button
-                    onClick={() => setReviewTarget({ vetId: a.vetId, vetName: a.vet.displayName })}
-                    className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-yellow-600 hover:text-yellow-700 bg-yellow-50 px-3 py-1.5 rounded-lg">
-                    <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" /> Остави отзив
-                  </button>
-                )}
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {canPay && (
+                    <button onClick={() => startPayment(a.id)} disabled={paying === a.id}
+                      className="flex items-center gap-1.5 text-xs font-semibold text-white bg-[#10B83D] hover:bg-[#0da033] disabled:opacity-60 px-3 py-1.5 rounded-lg transition-colors">
+                      <CreditCard className="w-3.5 h-3.5" />
+                      {paying === a.id ? "Зарежда..." : `Плати ${(a.price ?? a.service?.price ?? 0)} лв.`}
+                    </button>
+                  )}
+                  {canReview && (
+                    <button
+                      onClick={() => setReviewTarget({ vetId: a.vetId, vetName: a.vet.displayName })}
+                      className="flex items-center gap-1.5 text-xs font-semibold text-yellow-600 hover:text-yellow-700 bg-yellow-50 px-3 py-1.5 rounded-lg">
+                      <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" /> Остави отзив
+                    </button>
+                  )}
+                </div>
               </div>
             )
           })}

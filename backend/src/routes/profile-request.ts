@@ -5,7 +5,7 @@ const router = Router()
 
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { name, email, phone, clinicName, city, type, specialty, message } = req.body
+    const { name, email, phone, clinicName, city, type, specialty, message, licenseUrl } = req.body
 
     if (!name || !email) {
       res.status(400).json({ error: "Името и имейлът са задължителни" })
@@ -13,7 +13,7 @@ router.post("/", async (req: Request, res: Response) => {
     }
 
     const request = await db.profileRequest.create({
-      data: { name, email, phone, clinicName, city, type: type ?? "VET", specialty, message },
+      data: { name, email, phone, clinicName, city, type: type ?? "VET", specialty, message, licenseUrl },
     })
 
     res.status(201).json({ ok: true, id: request.id })

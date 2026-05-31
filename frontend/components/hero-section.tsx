@@ -1,13 +1,11 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import { useRouter } from "next/navigation"
-import { ChevronRight, Stethoscope, MapPin, Search } from "lucide-react"
+import { Stethoscope, MapPin, Search } from "lucide-react"
 import { Sticker, PawSticker } from "@/components/sticker"
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 
 const carouselSlides = [
   {

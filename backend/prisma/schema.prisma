@@ -42,6 +42,21 @@ enum RequestStatus {
   REJECTED
 }
 
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum NotificationType {
+  APPOINTMENT_CONFIRMED
+  APPOINTMENT_CANCELLED
+  APPOINTMENT_REMINDER
+  REVIEW_RECEIVED
+  PAYMENT_RECEIVED
+}
+
 // ─── Auth (NextAuth v5) ───────────────────────────────────────────────────────
 
 model User {
@@ -56,12 +71,13 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts     Account[]
-  sessions     Session[]
-  pets         Pet[]
-  appointments Appointment[]
-  reviews      Review[]
-  vet          Vet?
+  accounts      Account[]
+  sessions      Session[]
+  pets          Pet[]
+  appointments  Appointment[]
+  reviews       Review[]
+  notifications Notification[]
+  vet           Vet?
 }
 
 model Account {
@@ -118,14 +134,17 @@ model Vet {
   lat         Float?
   lng         Float?
 
-  clinicId String?
-  clinic   Clinic? @relation(fields: [clinicId], references: [id])
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  licenseUrl  String?
+  clinicId    String?
+  clinic      Clinic? @relation(fields: [clinicId], references: [id])
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  appointments Appointment[]
-  reviews      Review[]
-  services     VetService[]
-  schedule     Schedule[]
+  appointments       Appointment[]
+  reviews            Review[]
+  services           VetService[]
+  schedule           Schedule[]
+  medicalRecords     MedicalRecord[]
+  unavailabilities   VetUnavailability[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -195,9 +214,10 @@ model Pet {
   image     String?
   notes     String?    @db.Text
 
-  owner        User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  appointments Appointment[]
-  vaccinations Vaccination[]
+  owner          User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  appointments   Appointment[]
+  vaccinations   Vaccination[]
+  medicalRecords MedicalRecord[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -215,11 +235,13 @@ model Appointment {
   notes     String?           @db.Text
   price     Float?
 
-  owner   User        @relation(fields: [ownerId], references: [id])
-  vet     Vet         @relation(fields: [vetId], references: [id])
-  pet     Pet         @relation(fields: [petId], references: [id])
-  clinic  Clinic?     @relation(fields: [clinicId], references: [id])
-  service VetService? @relation(fields: [serviceId], references: [id])
+  owner         User        @relation(fields: [ownerId], references: [id])
+  vet           Vet         @relation(fields: [vetId], references: [id])
+  pet           Pet         @relation(fields: [petId], references: [id])
+  clinic        Clinic?     @relation(fields: [clinicId], references: [id])
+  service       VetService? @relation(fields: [serviceId], references: [id])
+  medicalRecord MedicalRecord?
+  payment       Payment?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -246,6 +268,7 @@ model ProfileRequest {
   specialty   String?
   city        String?
   message     String?       @db.Text
+  licenseUrl  String?
   status      RequestStatus @default(PENDING)
   reviewedById String?
   reviewedAt  DateTime?
@@ -272,6 +295,75 @@ model Review {
   user   User    @relation(fields: [userId], references: [id])
   vet    Vet?    @relation(fields: [vetId], references: [id])
   clinic Clinic? @relation(fields: [clinicId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Medical Records ──────────────────────────────────────────────────────────
+
+model MedicalRecord {
+  id            String    @id @default(cuid())
+  appointmentId String    @unique
+  petId         String
+  vetId         String
+  diagnosis     String?   @db.Text
+  treatment     String?   @db.Text
+  medications   String?   @db.Text
+  notes         String?   @db.Text
+  weight        Float?
+  temperature   Float?
+  nextVisit     DateTime?
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  pet         Pet         @relation(fields: [petId], references: [id])
+  vet         Vet         @relation(fields: [vetId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Payments ─────────────────────────────────────────────────────────────────
+
+model Payment {
+  id              String        @id @default(cuid())
+  appointmentId   String        @unique
+  amount          Float
+  currency        String        @default("BGN")
+  status          PaymentStatus @default(PENDING)
+  stripeSessionId String?       @unique
+  stripePaymentId String?
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Vet Unavailability ───────────────────────────────────────────────────────
+
+model VetUnavailability {
+  id     String   @id @default(cuid())
+  vetId  String
+  date   DateTime @db.Date
+  reason String?
+
+  vet Vet @relation(fields: [vetId], references: [id], onDelete: Cascade)
+
+  @@unique([vetId, date])
+}
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String
+  isRead    Boolean          @default(false)
+  data      String?          @db.Text
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 }

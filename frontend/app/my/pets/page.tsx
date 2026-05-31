@@ -3,7 +3,7 @@
 import { apiUrl } from "@/lib/api"
 
 import { useEffect, useRef, useState } from "react"
-import { PawPrint, Plus, Pencil, Trash2, AlertCircle } from "lucide-react"
+import { PawPrint, Plus, Pencil, Trash2, AlertCircle, Camera, Upload } from "lucide-react"
 
 const SPECIES = [
   { v: "DOG",    l: "🐕 Куче"      },
@@ -21,17 +21,38 @@ const GENDER = [
 
 const EMOJI: Record<string, string> = { DOG:"🐕", CAT:"🐈", BIRD:"🦜", RABBIT:"🐇", EXOTIC:"🦎", OTHER:"🐾" }
 
-type PetData = { id?: string; name: string; species: string; gender: string; breed: string; birthDate: string; weight: string; notes: string }
+type PetData = { id?: string; name: string; species: string; gender: string; breed: string; birthDate: string; weight: string; notes: string; image?: string }
 
 function PetForm({ initial, onSave, onCancel }: {
   initial: PetData
   onSave: (data: PetData) => Promise<string | null>
   onCancel: () => void
 }) {
-  const [species, setSpecies] = useState(initial.species || "DOG")
-  const [gender,  setGender]  = useState(initial.gender  || "")
-  const [error,   setError]   = useState("")
-  const [saving,  setSaving]  = useState(false)
+  const [species,    setSpecies]    = useState(initial.species || "DOG")
+  const [gender,     setGender]     = useState(initial.gender  || "")
+  const [image,      setImage]      = useState(initial.image   || "")
+  const [uploading,  setUploading]  = useState(false)
+  const [error,      setError]      = useState("")
+  const [saving,     setSaving]     = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const fd = new FormData()
+    fd.append("image", file)
+    try {
+      const res = await fetch(`/api/proxy/api/upload/image?folder=pets`, { method: "POST", body: fd, credentials: "include" })
+      const data = await res.json()
+      if (data.url) setImage(data.url)
+      else setError(data.error ?? "Upload failed")
+    } catch {
+      setError("Upload failed")
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -49,6 +70,7 @@ function PetForm({ initial, onSave, onCancel }: {
       weight:    (fd.get("weight")    as string) || "",
       birthDate: (fd.get("birthDate") as string) || "",
       notes:     (fd.get("notes")     as string) || "",
+      image,
     })
     setSaving(false)
     if (err) setError(err)
@@ -60,6 +82,29 @@ function PetForm({ initial, onSave, onCancel }: {
 
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-3 mb-4">
+
+          {/* Photo upload */}
+          <div className="col-span-2 flex items-center gap-4">
+            <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden shrink-0">
+              {image
+                ? <img src={image} alt="" className="w-full h-full object-cover" />
+                : <PawPrint className="w-7 h-7 text-gray-300" />
+              }
+            </div>
+            <div>
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+              <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-medium transition-colors disabled:opacity-60">
+                {uploading ? <><Upload className="w-3 h-3 animate-pulse" /> Качва...</> : <><Camera className="w-3 h-3" /> Качи снимка</>}
+              </button>
+              {image && (
+                <button type="button" onClick={() => setImage("")}
+                  className="ml-2 text-xs text-red-400 hover:text-red-600">
+                  Премахни
+                </button>
+              )}
+            </div>
+          </div>
 
           <div className="col-span-2">
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Име *</label>
@@ -270,14 +315,18 @@ export default function MyPetsPage() {
                     birthDate: p.birthDate ? p.birthDate.slice(0, 10) : "",
                     weight:    p.weight != null ? String(p.weight) : "",
                     notes:     p.notes     ?? "",
+                    image:     p.image     ?? "",
                   }}
                   onSave={save}
                   onCancel={() => setEditing(null)}
                 />
               ) : (
                 <div className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#1083BD]/10 flex items-center justify-center text-2xl shrink-0">
-                    {EMOJI[p.species] ?? "🐾"}
+                  <div className="w-12 h-12 rounded-xl bg-[#1083BD]/10 flex items-center justify-center text-2xl shrink-0 overflow-hidden">
+                    {p.image
+                      ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                      : EMOJI[p.species] ?? "🐾"
+                    }
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900">

@@ -13,6 +13,12 @@ import myPetsRouter          from "./routes/my/pets"
 import dashAppointmentsRouter from "./routes/dashboard/appointments"
 import dashProfileRouter     from "./routes/dashboard/profile"
 import dashScheduleRouter    from "./routes/dashboard/schedule"
+import dashMedicalRouter     from "./routes/dashboard/medical-records"
+import dashStatsRouter       from "./routes/dashboard/stats"
+import myMedicalRouter       from "./routes/my/medical-records"
+import myProfileRouter       from "./routes/my/profile"
+import uploadRouter          from "./routes/upload"
+import stripeRouter          from "./routes/stripe"
 import adminVetsRouter       from "./routes/admin/vets"
 import adminClinicsRouter    from "./routes/admin/clinics"
 import adminUsersRouter      from "./routes/admin/users"
@@ -37,6 +43,8 @@ app.use(cors({
   origin:      (origin, cb) => cb(null, !origin || allowedOrigins.includes(origin)),
   credentials: true,
 }))
+// Raw body required for Stripe webhook signature verification
+app.use("/api/stripe/webhook", express.raw({ type: "application/json" }))
 app.use(express.json())
 app.use(cookieParser())
 
@@ -50,9 +58,15 @@ app.use("/api/reviews",              reviewsRouter)
 app.use("/api/profile-request",      profileRequestRouter)
 app.use("/api/my/appointments",      myAppointmentsRouter)
 app.use("/api/my/pets",              myPetsRouter)
-app.use("/api/dashboard/appointments", dashAppointmentsRouter)
-app.use("/api/dashboard/profile",    dashProfileRouter)
-app.use("/api/dashboard/schedule",   dashScheduleRouter)
+app.use("/api/my/medical-records",   myMedicalRouter)
+app.use("/api/my/profile",           myProfileRouter)
+app.use("/api/upload",               uploadRouter)
+app.use("/api/stripe",               stripeRouter)
+app.use("/api/dashboard/appointments",    dashAppointmentsRouter)
+app.use("/api/dashboard/profile",        dashProfileRouter)
+app.use("/api/dashboard/schedule",       dashScheduleRouter)
+app.use("/api/dashboard/medical-records", dashMedicalRouter)
+app.use("/api/dashboard/stats",           dashStatsRouter)
 app.use("/api/admin/vets",           adminVetsRouter)
 app.use("/api/admin/clinics",        adminClinicsRouter)
 app.use("/api/admin/users",          adminUsersRouter)

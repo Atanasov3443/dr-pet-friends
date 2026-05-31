@@ -3,14 +3,16 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
-import { LayoutDashboard, CalendarDays, PawPrint, LogOut, ChevronRight, Heart, Menu, X } from "lucide-react"
+import { LayoutDashboard, CalendarDays, PawPrint, LogOut, ChevronRight, Heart, Menu, X, FileText, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 
 const nav = [
-  { href: "/my",              label: "Начало",       icon: LayoutDashboard },
-  { href: "/my/appointments", label: "Моите часове",  icon: CalendarDays    },
-  { href: "/my/pets",         label: "Моите любимци", icon: PawPrint        },
+  { href: "/my",                   label: "Начало",           icon: LayoutDashboard },
+  { href: "/my/profile",           label: "Моят профил",      icon: User            },
+  { href: "/my/appointments",      label: "Моите часове",     icon: CalendarDays    },
+  { href: "/my/pets",              label: "Моите любимци",    icon: PawPrint        },
+  { href: "/my/medical-history",   label: "Здравна история",  icon: FileText        },
 ]
 
 export default function MyLayout({ children }: { children: React.ReactNode }) {

@@ -16,7 +16,7 @@ router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
 
 router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
   const userId = req.user!.id
-  const { name, species, gender, breed, birthDate, weight, notes } = req.body
+  const { name, species, gender, breed, birthDate, weight, notes, image } = req.body
 
   if (!name?.trim()) { res.status(400).json({ error: "Името е задължително" }); return }
 
@@ -31,6 +31,7 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
         birthDate: birthDate ? new Date(birthDate) : null,
         weight:    weight    ? parseFloat(weight)  : null,
         notes:     notes     || null,
+        image:     image     || null,
       },
     })
     res.json(pet)
@@ -41,7 +42,7 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
 
 router.patch("/", authenticate, async (req: AuthRequest, res: Response) => {
   const userId = req.user!.id
-  const { id, name, species, gender, breed, birthDate, weight, notes } = req.body
+  const { id, name, species, gender, breed, birthDate, weight, notes, image } = req.body
 
   if (!name?.trim()) { res.status(400).json({ error: "Името е задължително" }); return }
 
@@ -59,6 +60,7 @@ router.patch("/", authenticate, async (req: AuthRequest, res: Response) => {
         birthDate: birthDate ? new Date(birthDate) : null,
         weight:    weight    ? parseFloat(weight)  : null,
         notes:     notes     || null,
+        image:     image     !== undefined ? (image || null) : pet.image,
       },
     })
     res.json(updated)
