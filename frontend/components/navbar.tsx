@@ -27,8 +27,25 @@ export function Navbar() {
       <div className="w-full px-4 md:px-8">
         <div className="grid grid-cols-3 items-center h-16">
 
-          {/* Left — Вход / Профил */}
+          {/* Left — Намери специалист */}
           <div className="flex items-center">
+            <Link href="/search"
+              className="hidden md:inline-flex items-center gap-1.5 bg-[#EF3988] hover:bg-[#d92d75] text-white text-sm font-bold rounded-full px-5 py-2 transition-colors">
+              <CalendarCheck className="w-4 h-4" /> Намери специалист
+            </Link>
+            {/* Mobile hamburger */}
+            <button className="md:hidden p-2 text-white" onClick={() => setMobileOpen(!mobileOpen)}>
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
+
+          {/* Center — Logo */}
+          <div className="flex justify-center">
+            <Logo variant="light" />
+          </div>
+
+          {/* Right — Вход / Профил */}
+          <div className="flex justify-end">
             {session ? (
               <Link href={dashboardHref}
                 className="hidden md:inline-flex items-center gap-1.5 border-2 border-white/50 hover:border-white hover:bg-white/10 text-white text-sm font-bold rounded-full px-4 py-1.5 transition-all">
@@ -41,23 +58,6 @@ export function Navbar() {
                 <User className="w-3.5 h-3.5" /> Вход
               </Link>
             )}
-            {/* Mobile hamburger */}
-            <button className="md:hidden p-2 text-white" onClick={() => setMobileOpen(!mobileOpen)}>
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-
-          {/* Center — Logo */}
-          <div className="flex justify-center">
-            <Logo variant="light" />
-          </div>
-
-          {/* Right — Намери специалист */}
-          <div className="flex justify-end">
-            <Link href="/search"
-              className="hidden md:inline-flex items-center gap-1.5 bg-[#EF3988] hover:bg-[#d92d75] text-white text-sm font-bold rounded-full px-5 py-2 transition-colors">
-              <CalendarCheck className="w-4 h-4" /> Намери специалист
-            </Link>
             {/* Mobile — just icon */}
             <Link href="/search" className="md:hidden p-2 text-white">
               <CalendarCheck className="w-5 h-5" />
