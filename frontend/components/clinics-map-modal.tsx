@@ -23,7 +23,7 @@ export function ClinicsMapModal({ isOpen, onClose, standalone }: ClinicsMapModal
   const mapInstanceRef = useRef<any>(null)
   const [clinics, setClinics]   = useState<Clinic[]>([])
   const [selected, setSelected] = useState<Clinic | null>(null)
-  const [filter, setFilter]     = useState<"ALL"|"VET"|"GROOMING">("ALL")
+  const [filter, setFilter]     = useState<"ALL"|"VET">("ALL")
   const [loading, setLoading]   = useState(false)
 
   // Fetch clinics from API
@@ -59,9 +59,9 @@ export function ClinicsMapModal({ isOpen, onClose, standalone }: ClinicsMapModal
 
       const visible = filter === "ALL" ? clinics : clinics.filter(c => c.type === filter)
       visible.forEach(clinic => {
-        const color = clinic.isEmergency ? "#EF3988" : clinic.type === "GROOMING" ? "#DAF467" : "#1083BD"
-        const textColor = clinic.type === "GROOMING" ? "#1a1a1a" : "white"
-        const emoji = clinic.type === "GROOMING" ? "✂️" : "🐾"
+        const color = clinic.isEmergency ? "#EF3988" : "#1083BD"
+        const textColor = "white"
+        const emoji = "🐾"
 
         const icon = L.divIcon({
           className: "",
@@ -115,12 +115,12 @@ export function ClinicsMapModal({ isOpen, onClose, standalone }: ClinicsMapModal
       {/* Filter tabs + Legend */}
       <div className="flex items-center justify-between px-6 py-2 bg-gray-50 border-b border-gray-100">
         <div className="flex gap-1">
-          {(["ALL","VET","GROOMING"] as const).map(t => (
+          {(["ALL","VET"] as const).map(t => (
             <button key={t} onClick={() => setFilter(t)}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                 filter === t ? "bg-[#1083BD] text-white" : "text-gray-500 hover:bg-gray-200"
               }`}>
-              {t === "ALL" ? "Всички" : t === "VET" ? "Ветеринари" : "Груминг"}
+              {t === "ALL" ? "Всички" : "Ветеринари"}
             </button>
           ))}
         </div>
@@ -129,10 +129,7 @@ export function ClinicsMapModal({ isOpen, onClose, standalone }: ClinicsMapModal
             <span className="w-2.5 h-2.5 rounded-full bg-[#EF3988]" /> Спешна 24/7
           </span>
           <span className="flex items-center gap-1.5 text-xs text-gray-500">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#1083BD]" /> Стандартна
-          </span>
-          <span className="flex items-center gap-1.5 text-xs text-gray-500">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#DAF467]" /> Груминг
+            <span className="w-2.5 h-2.5 rounded-full bg-[#1083BD]" /> Ветеринарна
           </span>
         </div>
       </div>
@@ -178,7 +175,7 @@ export function ClinicsMapModal({ isOpen, onClose, standalone }: ClinicsMapModal
           ) : (
             <div className="p-4 flex flex-col gap-2">
               <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold px-1 mb-1">
-                {filter === "ALL" ? "Всички клиники" : filter === "VET" ? "Ветеринарни клиники" : "Груминг салони"}
+                {filter === "ALL" ? "Всички клиники" : "Ветеринарни клиники"}
               </p>
               {visible.map(clinic => (
                 <button key={clinic.id} onClick={() => setSelected(clinic)}
