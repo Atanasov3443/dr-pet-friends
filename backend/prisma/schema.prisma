@@ -31,6 +31,11 @@ enum AppointmentStatus {
   COMPLETED
 }
 
+enum ConsultationType {
+  IN_CLINIC
+  ONLINE
+}
+
 enum PlaceType {
   VET
   GROOMING
@@ -230,10 +235,12 @@ model Appointment {
   petId     String
   clinicId  String?
   serviceId String?
-  date      DateTime
-  status    AppointmentStatus @default(PENDING)
-  notes     String?           @db.Text
-  price     Float?
+  date             DateTime
+  status           AppointmentStatus  @default(PENDING)
+  consultationType ConsultationType   @default(IN_CLINIC)
+  meetLink         String?
+  notes            String?            @db.Text
+  price            Float?
 
   owner         User        @relation(fields: [ownerId], references: [id])
   vet           Vet         @relation(fields: [vetId], references: [id])

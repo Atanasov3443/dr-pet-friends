@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { ChevronLeft, ChevronRight, Check, Clock, Stethoscope, PawPrint, CalendarCheck } from "lucide-react"
+import { ChevronLeft, ChevronRight, Check, Clock, Stethoscope, PawPrint, CalendarCheck, Video, MapPin } from "lucide-react"
 import { apiUrl } from "@/lib/api"
 
 type Service  = { id: string; name: string; price: number; duration: number }
@@ -60,17 +60,17 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   const [calYear,  setCalYear]  = useState(today.getFullYear())
   const [calMonth, setCalMonth] = useState(today.getMonth())
 
+  const [consultType, setConsultType] = useState<"IN_CLINIC" | "ONLINE" | null>(null)
   const [service,    setService]    = useState<Service | null>(null)
   const [date,       setDate]       = useState<Date | null>(null)
   const [slot,       setSlot]       = useState("")
   const [petName,    setPetName]    = useState("")
   const [petSpecies, setPetSpecies] = useState("DOG")
   const [notes,      setNotes]      = useState("")
-  const [step,       setStep]       = useState<"service" | "date" | "confirm" | "done">(
-    services.length === 0 ? "date" : "service"
-  )
-  const [saving, setSaving] = useState(false)
-  const [error,  setError]  = useState("")
+  const [step,       setStep]       = useState<"type" | "service" | "date" | "confirm" | "done">("type" as "type" | "service" | "date" | "confirm" | "done")
+  const [saving,  setSaving]  = useState(false)
+  const [error,   setError]   = useState("")
+  const [meetLink, setMeetLink] = useState("")
 
   const activeDays   = useMemo(() => new Set(schedule.filter(s => s.isActive).map(s => s.dayOfWeek)), [schedule])
   const calCells     = useMemo(() => buildCalendar(calYear, calMonth), [calYear, calMonth])
@@ -102,10 +102,18 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
       const res = await fetch(apiUrl("/api/appointments"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vetId, serviceId: service?.id, date: dt.toISOString(), petName: petName.trim(), petSpecies, notes }),
+        body: JSON.stringify({
+          vetId, serviceId: service?.id, date: dt.toISOString(),
+          petName: petName.trim(), petSpecies, notes,
+          consultationType: consultType ?? "IN_CLINIC",
+        }),
         credentials: "include",
       })
-      if (res.ok) { setStep("done") }
+      if (res.ok) {
+        const data = await res.json()
+        if (data.meetLink) setMeetLink(data.meetLink)
+        setStep("done")
+      }
       else if (res.status === 401) { router.push("/login") }
       else {
         const data = await res.json().catch(() => ({}))
@@ -126,9 +134,17 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
         <p className="text-gray-500 text-sm mb-1">
           {date && `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]} · ${slot}`}
         </p>
-        {service && <p className="text-gray-400 text-xs mb-5">{service.name}</p>}
+        {service && <p className="text-gray-400 text-xs mb-3">{service.name}</p>}
+        <p className="text-xs text-gray-400 mb-4">Изпратихме потвърждение на вашия имейл.</p>
+
+        {meetLink && (
+          <a href={meetLink} target="_blank" rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-[#1083BD] text-white rounded-xl text-sm font-bold mb-3 hover:bg-[#0d6fa0] transition-colors">
+            <Video className="w-4 h-4" /> Влез в онлайн консултацията
+          </a>
+        )}
         <button onClick={() => router.push("/my/appointments")}
-          className="w-full py-2.5 bg-[#1083BD] text-white rounded-xl text-sm font-bold">
+          className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-bold transition-colors">
           Виж моите часове
         </button>
       </div>
@@ -147,20 +163,59 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
 
         {/* Progress dots */}
         <div className="flex gap-1.5 mt-3">
-          {(services.length > 0 ? ["service","date","confirm"] : ["date","confirm"]).map((s, i, arr) => (
+          {(services.length > 0 ? ["type","service","date","confirm"] : ["type","date","confirm"]).map((s, i, arr) => {
+            const s2: string = step
+            const currentStep: string = s2 === "done" ? "confirm" : s2
+            const currentIdx  = arr.indexOf(currentStep)
+            return (
             <div key={s} className={`flex-1 h-1 rounded-full transition-colors ${
-              i <= arr.indexOf(step === "done" ? "confirm" : step)
-                ? "bg-white" : "bg-white/25"
+              i <= currentIdx ? "bg-white" : "bg-white/25"
             }`} />
-          ))}
+          )})}
         </div>
       </div>
 
       <div className="p-4 space-y-4">
 
+        {/* ── Step: Type ── */}
+        {step === "type" && (
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-4">Избери тип консултация</p>
+            <div className="grid grid-cols-2 gap-3">
+              <button onClick={() => { setConsultType("IN_CLINIC"); setStep(services.length > 0 ? "service" : "date") }}
+                className="flex flex-col items-center gap-3 p-5 border-2 border-gray-100 rounded-2xl hover:border-[#1083BD] hover:bg-blue-50/30 transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-[#1083BD]/10 group-hover:bg-[#1083BD]/20 flex items-center justify-center transition-colors">
+                  <MapPin className="w-6 h-6 text-[#1083BD]" />
+                </div>
+                <div className="text-center">
+                  <p className="font-bold text-gray-900 text-sm">На място</p>
+                  <p className="text-gray-400 text-xs mt-0.5">Преглед в клиника</p>
+                </div>
+              </button>
+              <button onClick={() => { setConsultType("ONLINE"); setStep(services.length > 0 ? "service" : "date") }}
+                className="flex flex-col items-center gap-3 p-5 border-2 border-gray-100 rounded-2xl hover:border-[#EF3988] hover:bg-pink-50/30 transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-[#EF3988]/10 group-hover:bg-[#EF3988]/20 flex items-center justify-center transition-colors">
+                  <Video className="w-6 h-6 text-[#EF3988]" />
+                </div>
+                <div className="text-center">
+                  <p className="font-bold text-gray-900 text-sm">Онлайн</p>
+                  <p className="text-gray-400 text-xs mt-0.5">Видео консултация</p>
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* ── Step: Service ── */}
         {step === "service" && (
           <div>
+            {consultType && (
+              <div className={`flex items-center gap-2 mb-3 rounded-xl px-3 py-2 text-xs font-semibold ${consultType === "ONLINE" ? "bg-pink-50 text-[#EF3988]" : "bg-blue-50 text-[#1083BD]"}`}>
+                {consultType === "ONLINE" ? <Video className="w-3.5 h-3.5" /> : <MapPin className="w-3.5 h-3.5" />}
+                {consultType === "ONLINE" ? "Онлайн консултация" : "Преглед на място"}
+                <button onClick={() => setStep("type")} className="ml-auto text-xs opacity-60 hover:opacity-100">Промени</button>
+              </div>
+            )}
             <p className="text-xs font-bold uppercase tracking-wide text-gray-400 flex items-center gap-1.5 mb-3">
               <Stethoscope className="w-3.5 h-3.5" /> Избери услуга
             </p>
