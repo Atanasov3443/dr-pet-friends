@@ -6,7 +6,7 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { MapPin, Phone, Star, Clock, Stethoscope, Shield, ChevronLeft } from "lucide-react"
 import Link from "next/link"
-import { BookingButton } from "@/components/booking-button"
+import { InlineBookingWidget } from "@/components/inline-booking-widget"
 
 const DAYS = ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"]
 
@@ -160,17 +160,13 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
 
             {/* Right column */}
             <div className="space-y-4">
-              {/* Book CTA */}
-              <div className="bg-[#1083BD] rounded-2xl p-5 text-white">
-                <h3 className="font-bold text-lg mb-1">Запази час</h3>
-                <p className="text-white/70 text-sm mb-4">Онлайн резервация без телефон</p>
-                <BookingButton
-                  vetId={vet.id}
-                  vetName={vet.displayName}
-                  services={(vet.services ?? []).map((s: any) => ({ id: s.id, name: s.name, price: s.price, duration: s.duration }))}
-                  schedule={(vet.schedule ?? []).map((s: any) => ({ dayOfWeek: s.dayOfWeek, startTime: s.startTime, endTime: s.endTime, isActive: s.isActive }))}
-                />
-              </div>
+              {/* Inline booking widget */}
+              <InlineBookingWidget
+                vetId={vet.id}
+                vetName={vet.displayName}
+                services={(vet.services ?? []).map((s: any) => ({ id: s.id, name: s.name, price: s.price, duration: s.duration }))}
+                schedule={(vet.schedule ?? []).map((s: any) => ({ dayOfWeek: s.dayOfWeek, startTime: s.startTime, endTime: s.endTime, isActive: s.isActive }))}
+              />
 
               {/* Schedule */}
               {vet.schedule?.length > 0 && (
