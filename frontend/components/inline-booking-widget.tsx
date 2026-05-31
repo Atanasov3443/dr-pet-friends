@@ -68,9 +68,12 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   const [petSpecies, setPetSpecies] = useState("DOG")
   const [notes,      setNotes]      = useState("")
   const [step,       setStep]       = useState<"type" | "service" | "date" | "confirm" | "done">("type" as "type" | "service" | "date" | "confirm" | "done")
-  const [saving,  setSaving]  = useState(false)
-  const [error,   setError]   = useState("")
-  const [meetLink, setMeetLink] = useState("")
+  const [saving,       setSaving]       = useState(false)
+  const [error,        setError]        = useState("")
+  const [meetLink,     setMeetLink]     = useState("")
+  const [appointmentId, setAppointmentId] = useState("")
+  const [appointmentPrice, setAppointmentPrice] = useState<number | null>(null)
+  const [payLoading,   setPayLoading]   = useState(false)
 
   const activeDays   = useMemo(() => new Set(schedule.filter(s => s.isActive).map(s => s.dayOfWeek)), [schedule])
   const calCells     = useMemo(() => buildCalendar(calYear, calMonth), [calYear, calMonth])
@@ -112,6 +115,8 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
       if (res.ok) {
         const data = await res.json()
         if (data.meetLink) setMeetLink(data.meetLink)
+        setAppointmentId(data.id ?? "")
+        setAppointmentPrice(data.price ?? service?.price ?? null)
         setStep("done")
       }
       else if (res.status === 401) { router.push("/login") }
@@ -121,6 +126,20 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
       }
     } catch { setError("Сървърна грешка.") }
     finally { setSaving(false) }
+  }
+
+  const startPayment = async () => {
+    if (!appointmentId) return
+    setPayLoading(true)
+    try {
+      const res  = await fetch(apiUrl("/api/stripe/checkout"), {
+        method: "POST", credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ appointmentId }),
+      })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+    } finally { setPayLoading(false) }
   }
 
   // ── Done ──────────────────────────────────────────────────────────────────
@@ -134,19 +153,29 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
         <p className="text-gray-500 text-sm mb-1">
           {date && `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]} · ${slot}`}
         </p>
-        {service && <p className="text-gray-400 text-xs mb-3">{service.name}</p>}
-        <p className="text-xs text-gray-400 mb-4">Изпратихме потвърждение на вашия имейл.</p>
+        {service && <p className="text-gray-400 text-xs mb-1">{service.name}</p>}
+        <p className="text-xs text-gray-400 mb-5">Ще получите имейл с потвърждение.</p>
 
-        {meetLink && (
-          <a href={meetLink} target="_blank" rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-3 bg-[#1083BD] text-white rounded-xl text-sm font-bold mb-3 hover:bg-[#0d6fa0] transition-colors">
-            <Video className="w-4 h-4" /> Влез в онлайн консултацията
-          </a>
-        )}
-        <button onClick={() => router.push("/my/appointments")}
-          className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-bold transition-colors">
-          Виж моите часове
-        </button>
+        <div className="space-y-2">
+          {appointmentPrice && appointmentPrice > 0 && (
+            <button onClick={startPayment} disabled={payLoading}
+              className="flex items-center justify-center gap-2 w-full py-3 bg-[#10B83D] hover:bg-[#0da033] disabled:opacity-60 text-white rounded-xl text-sm font-bold transition-colors">
+              💳 {payLoading ? "Зарежда..." : `Плати ${appointmentPrice} лв. онлайн`}
+            </button>
+          )}
+
+          {meetLink && (
+            <a href={meetLink} target="_blank" rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-[#1083BD] hover:bg-[#0d6fa0] text-white rounded-xl text-sm font-bold transition-colors">
+              <Video className="w-4 h-4" /> Влез в онлайн консултацията
+            </a>
+          )}
+
+          <button onClick={() => router.push("/my/appointments")}
+            className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-bold transition-colors">
+            Виж моите часове
+          </button>
+        </div>
       </div>
     )
   }
