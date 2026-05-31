@@ -21,7 +21,7 @@ export function Navbar() {
   }, [])
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/20 ${
       scrolled ? "bg-[#1083BD] shadow-lg shadow-[#1083BD]/20" : "bg-transparent"
     }`}>
       <div className="w-full px-4 md:px-8">
