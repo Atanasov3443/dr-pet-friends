@@ -147,10 +147,9 @@ function SearchPageInner() {
     if (params.city)      qs.set("city",       params.city)
     if (params.specialty) qs.set("specialty",  params.specialty)
 
-    router.replace(`/search?${qs.toString()}`, { scroll: false })
-
     try {
-      const res  = await fetch(`${apiUrl("/api/search")}?${qs.toString()}`)
+      const url  = `/api/proxy/api/search${qs.toString() ? "?" + qs.toString() : ""}`
+      const res  = await fetch(url)
       const data = await res.json()
       setResults(Array.isArray(data) ? data : [])
     } catch {
@@ -158,7 +157,7 @@ function SearchPageInner() {
     } finally {
       setLoading(false)
     }
-  }, [router])
+  }, [])
 
   useEffect(() => {
     search({ q, city, specialty })
