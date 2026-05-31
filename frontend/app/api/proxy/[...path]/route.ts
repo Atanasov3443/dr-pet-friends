@@ -18,27 +18,37 @@ async function handler(req: NextRequest) {
   const hasBody = req.method !== "GET" && req.method !== "HEAD"
   const body    = hasBody ? await req.arrayBuffer() : undefined
 
-  try {
-    const res = await fetch(url, {
-      method:  req.method,
-      headers,
-      body:    body ? body : undefined,
-    })
+  // Retry up to 3 times with increasing delays (handles Render cold start)
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) {
+      await new Promise(r => setTimeout(r, attempt * 3000))
+    }
+    try {
+      const res = await fetch(url, {
+        method:  req.method,
+        headers,
+        body:    body ? body : undefined,
+        signal:  AbortSignal.timeout(25000),
+      })
 
-    const resHeaders = new Headers()
-    const resCt = res.headers.get("content-type")
-    if (resCt) resHeaders.set("content-type", resCt)
+      const resHeaders = new Headers()
+      const resCt = res.headers.get("content-type")
+      if (resCt) resHeaders.set("content-type", resCt)
+      const setCookie = res.headers.get("set-cookie")
+      if (setCookie) resHeaders.set("set-cookie", setCookie)
 
-    return new NextResponse(res.body, {
-      status:  res.status,
-      headers: resHeaders,
-    })
-  } catch {
-    return NextResponse.json(
-      { error: "Сървърът не отговори. Опитай след 30 секунди." },
-      { status: 503 }
-    )
+      return new NextResponse(res.body, { status: res.status, headers: resHeaders })
+    } catch {
+      if (attempt === 2) {
+        return NextResponse.json(
+          { error: "Сървърът не отговори. Опитай след 30 секунди." },
+          { status: 503 }
+        )
+      }
+    }
   }
+
+  return NextResponse.json({ error: "Грешка" }, { status: 500 })
 }
 
 export const GET    = handler
