@@ -295,10 +295,6 @@ export function HeroSection() {
 
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 text-white/30 flex flex-col items-center gap-1">
-          <ChevronRight className="w-4 h-4 rotate-90 animate-bounce" />
-        </div>
       </div>
 
       {/* Wave transition */}
