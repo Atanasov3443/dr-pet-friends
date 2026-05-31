@@ -70,7 +70,7 @@ export function ZoomParallaxSection() {
     <section className="bg-white relative">
 
       {/* Header content */}
-      <div className="container pt-20 pb-12">
+      <div className="container pt-32 pb-12">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
           <div className="text-center lg:text-left">
             <div className="inline-flex items-center gap-2 bg-[#1083BD]/10 border border-[#1083BD]/20 rounded-full px-4 py-1.5 mb-4">

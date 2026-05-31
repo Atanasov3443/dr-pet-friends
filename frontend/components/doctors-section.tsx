@@ -187,7 +187,7 @@ export function DoctorsSection() {
       {/* Diagonal cut to white */}
       <div className="absolute bottom-0 left-0 w-full leading-none pointer-events-none">
         <svg viewBox="0 0 1440 56" fill="white" preserveAspectRatio="none" className="w-full h-14 block">
-          <polygon points="0,56 1440,0 1440,56" />
+          <polygon points="0,0 0,56 1440,56" />
         </svg>
       </div>
 
