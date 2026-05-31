@@ -100,7 +100,7 @@ export function DoctorsSection() {
       <img
         src="/animal-illustration-4.svg"
         alt="" aria-hidden
-        className="absolute bottom-0 right-0 w-80 pointer-events-none select-none hidden lg:block translate-y-1/3"
+        className="absolute bottom-0 right-0 w-80 pointer-events-none select-none hidden lg:block translate-y-[16%]"
         style={{
           opacity: 0.06,
           filter: "invert(38%) sepia(77%) saturate(500%) hue-rotate(164deg) brightness(90%)",
