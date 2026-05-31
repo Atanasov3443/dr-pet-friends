@@ -82,6 +82,13 @@ export function Footer() {
           </div>
 
         </div>
+
+        {/* Diagonal cut to dark footer */}
+        <div className="absolute bottom-0 left-0 w-full leading-none pointer-events-none">
+          <svg viewBox="0 0 1440 56" fill="#071C30" preserveAspectRatio="none" className="w-full h-14 block">
+            <polygon points="0,0 0,56 1440,56" />
+          </svg>
+        </div>
       </div>
 
       {/* Main Footer Links */}
