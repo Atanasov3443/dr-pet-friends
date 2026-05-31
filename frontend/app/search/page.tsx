@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { apiUrl } from "@/lib/api"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { Search, MapPin, Star, Clock, Phone, SlidersHorizontal, X, ChevronRight, Stethoscope, Scissors, List, Map } from "lucide-react"
+import { Search, MapPin, Star, Clock, Phone, SlidersHorizontal, X, ChevronRight, Stethoscope, List, Map } from "lucide-react"
 import Link from "next/link"
 
 type Vet = {
@@ -128,7 +128,6 @@ export default function SearchPage() {
 
   const [q,         setQ]         = useState(searchParams.get("q")        ?? "")
   const [city,      setCity]      = useState(searchParams.get("city")     ?? "")
-  const [type,      setType]      = useState(searchParams.get("type")     ?? "")
   const [specialty, setSpecialty] = useState(searchParams.get("specialty") ?? "")
   const [results,   setResults]   = useState<Vet[]>([])
   const [loading,   setLoading]   = useState(false)
@@ -140,13 +139,12 @@ export default function SearchPage() {
   const mapRef         = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<any>(null)
 
-  const search = useCallback(async (params: { q: string; city: string; type: string; specialty: string }) => {
+  const search = useCallback(async (params: { q: string; city: string; specialty: string }) => {
     setLoading(true)
     setSearched(true)
     const qs = new URLSearchParams()
     if (params.q)         qs.set("q",         params.q)
     if (params.city)      qs.set("city",       params.city)
-    if (params.type)      qs.set("type",       params.type)
     if (params.specialty) qs.set("specialty",  params.specialty)
 
     router.replace(`/search?${qs.toString()}`, { scroll: false })
@@ -158,21 +156,16 @@ export default function SearchPage() {
   }, [router])
 
   useEffect(() => {
-    const hasParams = q || city || type || specialty
-    if (hasParams) search({ q, city, type, specialty })
-    else { search({ q: "", city: "", type: "", specialty: "" }) }
+    search({ q, city, specialty })
   }, [])
 
   // Fetch clinics for map view
   useEffect(() => {
     if (viewMode !== "map") return
-    const qs = new URLSearchParams()
-    if (type === "vet") qs.set("type", "VET")
-    if (type === "grooming") qs.set("type", "GROOMING")
-    fetch(`${apiUrl("/api/clinics")}?${qs}`)
+    fetch(`${apiUrl("/api/clinics")}?type=VET`)
       .then(r => r.json())
       .then(data => setClinics(Array.isArray(data) ? data : []))
-  }, [viewMode, type])
+  }, [viewMode])
 
   // Init Leaflet map
   useEffect(() => {
@@ -210,22 +203,20 @@ export default function SearchPage() {
 
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault()
-    search({ q, city, type, specialty })
+    search({ q, city, specialty })
   }
 
-  const clearFilter = (key: "city" | "type" | "specialty") => {
-    const next = { q, city, type, specialty, [key]: "" }
+  const clearFilter = (key: "city" | "specialty") => {
+    const next = { q, city, specialty, [key]: "" }
     if (key === "city")      setCity("")
-    if (key === "type")      setType("")
     if (key === "specialty") setSpecialty("")
     search(next)
   }
 
   const activeFilters = [
     city      && { key: "city"      as const, label: city },
-    type      && { key: "type"      as const, label: type === "vet" ? "Ветеринар" : "Груминг" },
     specialty && { key: "specialty" as const, label: specialty },
-  ].filter(Boolean) as { key: "city"|"type"|"specialty"; label: string }[]
+  ].filter(Boolean) as { key: "city"|"specialty"; label: string }[]
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -235,7 +226,7 @@ export default function SearchPage() {
       <div className="bg-[#1083BD] pt-24 pb-8">
         <div className="container max-w-5xl mx-auto px-4">
           <h1 className="text-3xl font-black text-white mb-6">
-            Намери ветеринар или груминг салон
+            Намери ветеринар за твоя любимец
           </h1>
 
           <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
@@ -282,21 +273,8 @@ export default function SearchPage() {
           {/* Filters panel */}
           {showFilters && (
             <div className="mt-3 bg-white rounded-2xl p-5 shadow-lg">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-2">Тип</label>
-                  <div className="flex gap-2">
-                    {[{ v: "", l: "Всички" }, { v: "vet", l: "Ветеринари" }, { v: "grooming", l: "Груминг" }].map(({ v, l }) => (
-                      <button key={v} onClick={() => setType(v)}
-                        className={`flex-1 py-2 rounded-xl text-xs font-medium border transition-colors ${
-                          type === v ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]"
-                        }`}>
-                        {l}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="col-span-2">
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-2">Специалност</label>
                   <div className="flex flex-wrap gap-2">
                     {SPECIALTIES.map(s => (
@@ -310,7 +288,7 @@ export default function SearchPage() {
                   </div>
                 </div>
               </div>
-              <button onClick={() => handleSearch()}
+              <button onClick={handleSearch}
                 className="mt-4 w-full py-2.5 bg-[#1083BD] text-white rounded-xl text-sm font-semibold hover:bg-[#0d6fa0] transition-colors">
                 Приложи филтри
               </button>
@@ -332,33 +310,19 @@ export default function SearchPage() {
         </div>
       </div>
 
-      {/* Type quick toggle */}
+      {/* Sticky bar */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
         <div className="container max-w-5xl mx-auto px-4">
-          <div className="flex gap-0">
-            {[
-              { v: "",         l: "Всички",    icon: null      },
-              { v: "vet",      l: "Ветеринари", icon: Stethoscope },
-              { v: "grooming", l: "Груминг",    icon: Scissors  },
-            ].map(({ v, l, icon: Icon }) => (
-              <button key={v}
-                onClick={() => { setType(v); search({ q, city, type: v, specialty }) }}
-                className={`flex items-center gap-2 px-5 py-3.5 text-sm font-semibold border-b-2 transition-colors ${
-                  type === v
-                    ? "border-[#1083BD] text-[#1083BD]"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}>
-                {Icon && <Icon className="w-4 h-4" />}
-                {l}
-              </button>
-            ))}
+          <div className="flex items-center gap-0">
+            <div className="flex items-center gap-1.5 py-3.5 text-[#1083BD] font-bold text-sm">
+              <Stethoscope className="w-4 h-4" /> Ветеринари
+            </div>
             <div className="flex-1" />
             {searched && viewMode === "list" && (
               <div className="flex items-center text-sm text-gray-400 py-3.5 mr-3">
                 {loading ? "Търси..." : `${results.length} резултата`}
               </div>
             )}
-            {/* List / Map toggle */}
             <div className="flex items-center gap-1 py-2">
               <button onClick={() => setViewMode("list")}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${viewMode === "list" ? "bg-[#1083BD] text-white" : "text-gray-500 hover:bg-gray-100"}`}>

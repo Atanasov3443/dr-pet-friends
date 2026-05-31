@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { Search, MapPin, PawPrint } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -50,41 +50,15 @@ const photos = [
 ]
 
 function SearchForm() {
-  const [searchType, setSearchType] = useState<"vet" | "grooming">("vet")
-
   return (
     <div className="w-full">
-      {/* Toggle */}
-      <div className="flex gap-2 mb-3">
-        <button
-          onClick={() => setSearchType("vet")}
-          className={`flex-1 py-2.5 px-4 rounded-full font-semibold text-sm transition-all ${
-            searchType === "vet"
-              ? "bg-white text-[#1083BD] shadow-lg"
-              : "bg-white/15 text-white hover:bg-white/25"
-          }`}
-        >
-          🐾 Търси ветеринар
-        </button>
-        <button
-          onClick={() => setSearchType("grooming")}
-          className={`flex-1 py-2.5 px-4 rounded-full font-semibold text-sm transition-all ${
-            searchType === "grooming"
-              ? "bg-white text-[#EF3988] shadow-lg"
-              : "bg-white/15 text-white hover:bg-white/25"
-          }`}
-        >
-          ✂️ Груминг салон
-        </button>
-      </div>
-
-      {/* Inputs + button */}
+      <p className="text-white font-black text-lg mb-3">🐾 Намери ветеринар</p>
       <div className="bg-white rounded-2xl p-3 shadow-2xl">
         <div className="grid md:grid-cols-3 gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
             <Input
-              placeholder={searchType === "vet" ? "Специалност" : "Вид груминг"}
+              placeholder="Специалност, д-р..."
               className="pl-9 border-gray-100 rounded-xl h-11 text-sm text-gray-700 bg-gray-50"
             />
           </div>
@@ -98,7 +72,7 @@ function SearchForm() {
           </div>
         </div>
         <Button className="w-full mt-2 bg-[#EF3988] hover:bg-[#d42f77] text-white font-semibold rounded-xl h-11 text-sm">
-          {searchType === "vet" ? "Търси ветеринар" : "Търси груминг салон"}
+          Търси ветеринар
         </Button>
       </div>
     </div>

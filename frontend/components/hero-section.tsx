@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { ChevronRight, Stethoscope, Scissors, ArrowRight, Clock, Shield, Star } from "lucide-react"
+import { ChevronRight, Stethoscope, MapPin, Search } from "lucide-react"
 import { Sticker, PawSticker } from "@/components/sticker"
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
 import { GlowCard } from "@/components/ui/spotlight-card"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 const carouselSlides = [
   {
@@ -190,59 +191,40 @@ export function HeroSection() {
               ))}
             </div>
 
-            {/* Intent cards */}
-            <div className="grid grid-cols-2 gap-3 max-w-xl mx-auto lg:mx-0">
+            {/* Search box */}
+            <div className="max-w-xl mx-auto lg:mx-0">
+              <div className="bg-white rounded-2xl p-3 shadow-2xl">
+                <div className="grid md:grid-cols-2 gap-2">
+                  <div className="relative">
+                    <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
+                    <input
+                      placeholder="Специалност, д-р..."
+                      className="w-full pl-9 pr-3 h-11 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-[#1083BD]/30"
+                      onKeyDown={(e) => { if (e.key === "Enter") window.location.href = `/search?q=${(e.target as HTMLInputElement).value}` }}
+                    />
+                  </div>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
+                    <input
+                      placeholder="Град"
+                      className="w-full pl-9 pr-3 h-11 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-[#1083BD]/30"
+                    />
+                  </div>
+                </div>
+                <Link href="/search" className="mt-2 flex items-center justify-center gap-2 w-full h-11 bg-[#EF3988] hover:bg-[#d42f77] text-white font-semibold rounded-xl text-sm transition-colors">
+                  <Search className="w-4 h-4" /> Намери ветеринар
+                </Link>
+              </div>
 
-              {/* Vet card */}
-              <Link href="/search?type=vet" className="group relative bg-white rounded-2xl p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col gap-3">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#1083BD]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="w-12 h-12 rounded-xl bg-[#1083BD]/10 flex items-center justify-center group-hover:bg-[#1083BD]/15 transition-colors">
-                  <Stethoscope className="w-6 h-6 text-[#1083BD]" />
-                </div>
-                <div>
-                  <h3 className="font-black text-gray-900 text-base leading-tight mb-1">Ветеринар</h3>
-                  <p className="text-gray-400 text-xs leading-relaxed">Преглед · Ваксини · Хирургия · 24/7 спешна помощ</p>
-                </div>
-                <div className="flex flex-col gap-1">
-                  {[
-                    { icon: Shield, text: "Проверени лекари" },
-                    { icon: Clock,  text: "Онлайн запис" },
-                  ].map(({ icon: Icon, text }) => (
-                    <span key={text} className="flex items-center gap-1.5 text-xs text-gray-500">
-                      <Icon className="w-3 h-3 text-[#1083BD]" /> {text}
-                    </span>
-                  ))}
-                </div>
-                <span className="mt-auto flex items-center gap-1 text-[#1083BD] font-bold text-sm group-hover:gap-2 transition-all">
-                  Намери ветеринар <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </Link>
-
-              {/* Grooming card */}
-              <Link href="/search?type=grooming" className="group relative bg-[#EF3988] rounded-2xl p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col gap-3">
-                <div className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-white/10" />
-                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                  <Scissors className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-black text-white text-base leading-tight mb-1">Груминг салон</h3>
-                  <p className="text-white/70 text-xs leading-relaxed">Подстригване · Пране · Маникюр · SPA</p>
-                </div>
-                <div className="flex flex-col gap-1">
-                  {[
-                    { icon: Star,  text: "Реални отзиви" },
-                    { icon: Clock, text: "Гъвкав график" },
-                  ].map(({ icon: Icon, text }) => (
-                    <span key={text} className="flex items-center gap-1.5 text-xs text-white/80">
-                      <Icon className="w-3 h-3 text-white" /> {text}
-                    </span>
-                  ))}
-                </div>
-                <span className="mt-auto flex items-center gap-1 text-white font-bold text-sm group-hover:gap-2 transition-all">
-                  Намери салон <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </Link>
-
+              {/* Quick specialty links */}
+              <div className="flex flex-wrap gap-2 mt-3 justify-center lg:justify-start">
+                {["Общ преглед", "Ваксинации", "Хирургия", "Кардиология", "Спешен 24/7"].map((s) => (
+                  <Link key={s} href={`/search?q=${encodeURIComponent(s)}`}
+                    className="text-xs bg-white/15 hover:bg-white/25 text-white border border-white/20 px-3 py-1.5 rounded-full font-medium transition-colors whitespace-nowrap">
+                    {s}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
 

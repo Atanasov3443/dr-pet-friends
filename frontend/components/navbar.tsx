@@ -3,9 +3,9 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
-  Menu, X, ChevronDown, Stethoscope, Scissors, MapPin, Phone,
+  Menu, X, ChevronDown, Stethoscope, MapPin, Phone,
   Clock, Star, ArrowRight, Syringe, Eye, Activity, Shield,
-  Heart, Zap, Bone, Sparkles, Bath, CalendarCheck, User,
+  Heart, Zap, Bone, CalendarCheck, User,
 } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { useSession } from "next-auth/react"
@@ -25,15 +25,6 @@ const vetSpecialties = [
   { name: "Неврология",     icon: Zap,         color: "#10B83D", price: "от 100лв", href: "/search?specialty=Неврология" },
 ]
 
-const groomingServices = [
-  { name: "Пълен груминг",  icon: Scissors,   color: "#EF3988", price: "от 40лв" },
-  { name: "Баня & Сешоар",  icon: Bath,       color: "#1083BD", price: "от 25лв" },
-  { name: "Подстригване",   icon: Scissors,   color: "#10B83D", price: "от 30лв" },
-  { name: "SPA третиране",  icon: Sparkles,   color: "#FF6B35", price: "от 55лв" },
-  { name: "Зъбна хигиена",  icon: Shield,     color: "#1083BD", price: "от 20лв" },
-  { name: "Нокти & Уши",   icon: Star,       color: "#EF3988", price: "от 15лв" },
-]
-
 const cities = [
   { name: "София",         count: "120+", href: "/search?city=София" },
   { name: "Пловдив",      count: "45+",  href: "/search?city=Пловдив" },
@@ -43,13 +34,12 @@ const cities = [
   { name: "Русе",         count: "12+",  href: "/search?city=Русе" },
 ]
 
-type MenuKey = "specialnosti" | "veterinari" | "kliniki" | "grooming"
+type MenuKey = "specialnosti" | "veterinari" | "kliniki"
 
 const navItems: { label: string; menu?: MenuKey; href?: string; highlight?: boolean }[] = [
   { label: "Специалности", menu: "specialnosti" },
   { label: "Ветеринари",   menu: "veterinari" },
   { label: "Клиники",      menu: "kliniki" },
-  { label: "Груминг",      menu: "grooming" },
   { label: "Спешни 24/7",  href: "/search?emergency=true", highlight: true },
 ]
 
@@ -257,72 +247,10 @@ function PanelKliniki() {
   )
 }
 
-function PanelGrooming() {
-  return (
-    <div className="grid grid-cols-3 gap-0 max-w-5xl mx-auto">
-      {/* Col 1-2: Services */}
-      <div className="col-span-2 p-8 border-r border-gray-100">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-5">Груминг услуги</p>
-        <div className="grid grid-cols-2 gap-2">
-          {groomingServices.map((s) => {
-            const Icon = s.icon
-            return (
-              <Link key={s.name} href="/search?type=GROOMING"
-                className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: s.color + "18" }}>
-                  <Icon className="w-4 h-4" style={{ color: s.color }} />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#191919] group-hover:text-[#EF3988] leading-tight">{s.name}</p>
-                  <p className="text-xs text-gray-400">{s.price}</p>
-                </div>
-              </Link>
-            )
-          })}
-        </div>
-        <Link href="/search?type=GROOMING"
-          className="inline-flex items-center gap-1.5 mt-5 text-[#EF3988] text-sm font-semibold hover:gap-2.5 transition-all">
-          Виж всички салони <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
-      </div>
-
-      {/* Col 3: Featured */}
-      <div className="p-8 flex flex-col gap-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Топ салон</p>
-        <div className="rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-          <img
-            src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=400&h=160&fit=crop"
-            alt="Пухкаво студио" className="w-full h-24 object-cover"
-          />
-          <div className="p-4">
-            <div className="flex items-center gap-1 mb-1">
-              <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-              <span className="text-xs font-bold text-[#191919]">4.9</span>
-              <span className="text-xs text-gray-400">· Пълен груминг</span>
-            </div>
-            <p className="font-bold text-sm text-[#191919]">Пухкаво студио</p>
-            <p className="text-xs text-gray-400 mb-3">ул. Раковски 22 · София</p>
-            <Link href="/search?type=GROOMING"
-              className="inline-flex items-center gap-1.5 bg-[#EF3988] text-white text-xs font-bold px-4 py-1.5 rounded-full hover:bg-[#d42f77] transition-colors">
-              Запази час <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-        </div>
-        <div className="p-4 rounded-2xl bg-[#EF3988]/8 border border-[#EF3988]/15">
-          <p className="text-xs font-bold text-[#EF3988] mb-1">80+ салона в България</p>
-          <p className="text-xs text-gray-500">Намери най-близкия до теб</p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 const panels: Record<MenuKey, React.ReactNode> = {
   specialnosti: <PanelSpecialities />,
   veterinari:   <PanelVeternari />,
   kliniki:      <PanelKliniki />,
-  grooming:     <PanelGrooming />,
 }
 
 // ─── Navbar ──────────────────────────────────────────────────────────────────

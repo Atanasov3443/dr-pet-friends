@@ -1,12 +1,12 @@
-import { 
-  Stethoscope, 
-  Syringe, 
-  Scissors, 
-  Heart, 
-  Eye, 
-  Bone, 
-  Bug, 
-  Pill 
+import {
+  Stethoscope,
+  Syringe,
+  Activity,
+  Heart,
+  Eye,
+  Bone,
+  Bug,
+  Pill
 } from "lucide-react"
 import { Sticker } from "@/components/sticker"
 
@@ -24,7 +24,7 @@ const specialties = [
     textColor: "text-[#1083BD]"
   },
   { 
-    icon: Scissors, 
+    icon: Activity,
     name: "Хирургия", 
     color: "bg-[#EF3988]",
     textColor: "text-white"
