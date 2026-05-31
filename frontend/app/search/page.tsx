@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback, useRef } from "react"
+import { useEffect, useState, useCallback, useRef, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { apiUrl } from "@/lib/api"
 import { Navbar } from "@/components/navbar"
@@ -122,7 +122,7 @@ function VetCard({ vet }: { vet: Vet }) {
   )
 }
 
-export default function SearchPage() {
+function SearchPageInner() {
   const router       = useRouter()
   const searchParams = useSearchParams()
 
@@ -149,10 +149,15 @@ export default function SearchPage() {
 
     router.replace(`/search?${qs.toString()}`, { scroll: false })
 
-    const res  = await fetch(`${apiUrl("/api/search")}?${qs.toString()}`)
-    const data = await res.json()
-    setResults(Array.isArray(data) ? data : [])
-    setLoading(false)
+    try {
+      const res  = await fetch(`${apiUrl("/api/search")}?${qs.toString()}`)
+      const data = await res.json()
+      setResults(Array.isArray(data) ? data : [])
+    } catch {
+      setResults([])
+    } finally {
+      setLoading(false)
+    }
   }, [router])
 
   useEffect(() => {
@@ -439,5 +444,13 @@ export default function SearchPage() {
 
       {viewMode === "list" && <Footer />}
     </div>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-400">Зарежда...</div>}>
+      <SearchPageInner />
+    </Suspense>
   )
 }
