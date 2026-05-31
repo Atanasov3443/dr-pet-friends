@@ -102,7 +102,17 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
         <div className="container max-w-5xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {/* Left column */}
+            {/* Left column — Booking widget */}
+            <div className="space-y-4">
+              <InlineBookingWidget
+                vetId={vet.id}
+                vetName={vet.displayName}
+                services={(vet.services ?? []).map((s: any) => ({ id: s.id, name: s.name, price: s.price, duration: s.duration }))}
+                schedule={(vet.schedule ?? []).map((s: any) => ({ dayOfWeek: s.dayOfWeek, startTime: s.startTime, endTime: s.endTime, isActive: s.isActive }))}
+              />
+            </div>
+
+            {/* Right column */}
             <div className="lg:col-span-2 space-y-6">
               {/* Services */}
               {vet.services?.length > 0 && (
@@ -120,6 +130,44 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
                         <span className="font-bold text-[#1083BD]">{s.price} лв.</span>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Schedule */}
+              {vet.schedule?.length > 0 && (
+                <div className="bg-white rounded-2xl border border-gray-100 p-5">
+                  <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2 text-sm">
+                    <Clock className="w-4 h-4 text-[#1083BD]" /> Работно време
+                  </h3>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
+                    {[1,2,3,4,5,6,0].map(day => {
+                      const slots   = scheduleByDay[day]
+                      const isToday = day === todayDay
+                      return (
+                        <div key={day} className={`flex items-center justify-between text-sm py-1 px-2 rounded-lg ${isToday ? "bg-[#1083BD]/5" : ""}`}>
+                          <span className={`font-medium ${isToday ? "text-[#1083BD]" : "text-gray-600"}`}>{DAYS[day]}</span>
+                          {slots?.length ? (
+                            <span className="text-gray-500 text-xs">{slots.map((s: any) => `${s.startTime}–${s.endTime}`).join(", ")}</span>
+                          ) : (
+                            <span className="text-gray-300 text-xs">Почивен</span>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Clinic info */}
+              {vet.clinic && (
+                <div className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-[#1083BD]/10 flex items-center justify-center shrink-0">
+                    <MapPin className="w-5 h-5 text-[#1083BD]" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm text-gray-900">{vet.clinic.name}</p>
+                    {vet.clinic.address && <p className="text-xs text-gray-400 mt-0.5">{vet.clinic.address}{vet.clinic.city ? `, ${vet.clinic.city}` : ""}</p>}
                   </div>
                 </div>
               )}
@@ -158,55 +206,6 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
               )}
             </div>
 
-            {/* Right column */}
-            <div className="space-y-4">
-              {/* Inline booking widget */}
-              <InlineBookingWidget
-                vetId={vet.id}
-                vetName={vet.displayName}
-                services={(vet.services ?? []).map((s: any) => ({ id: s.id, name: s.name, price: s.price, duration: s.duration }))}
-                schedule={(vet.schedule ?? []).map((s: any) => ({ dayOfWeek: s.dayOfWeek, startTime: s.startTime, endTime: s.endTime, isActive: s.isActive }))}
-              />
-
-              {/* Schedule */}
-              {vet.schedule?.length > 0 && (
-                <div className="bg-white rounded-2xl border border-gray-100 p-5">
-                  <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2 text-sm">
-                    <Clock className="w-4 h-4 text-[#1083BD]" /> Работно време
-                  </h3>
-                  <div className="space-y-2">
-                    {[1,2,3,4,5,6,0].map(day => {
-                      const slots   = scheduleByDay[day]
-                      const isToday = day === todayDay
-                      return (
-                        <div key={day} className={`flex items-center justify-between text-sm py-1.5 px-2 rounded-lg ${isToday ? "bg-[#1083BD]/5" : ""}`}>
-                          <span className={`font-medium ${isToday ? "text-[#1083BD]" : "text-gray-600"}`}>
-                            {DAYS[day]}
-                          </span>
-                          {slots?.length ? (
-                            <span className="text-gray-700 text-xs">
-                              {slots.map((s: any) => `${s.startTime}–${s.endTime}`).join(", ")}
-                            </span>
-                          ) : (
-                            <span className="text-gray-300 text-xs">Почивен</span>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Clinic info */}
-              {vet.clinic && (
-                <div className="bg-white rounded-2xl border border-gray-100 p-5">
-                  <h3 className="font-bold text-gray-900 mb-3 text-sm">Клиника</h3>
-                  <p className="font-semibold text-sm text-gray-900">{vet.clinic.name}</p>
-                  {vet.clinic.address && <p className="text-xs text-gray-400 mt-1 flex items-center gap-1"><MapPin className="w-3 h-3" />{vet.clinic.address}</p>}
-                  {vet.clinic.city    && <p className="text-xs text-gray-500 mt-0.5">{vet.clinic.city}</p>}
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
