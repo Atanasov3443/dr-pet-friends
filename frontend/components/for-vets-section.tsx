@@ -5,7 +5,7 @@ import { apiUrl } from "@/lib/api"
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Stethoscope, Scissors, CheckCircle, Users, CalendarCheck, Star, Shield } from "lucide-react"
+import { Stethoscope, CheckCircle, Users, CalendarCheck, Star, Shield } from "lucide-react"
 import { GlowCard } from "@/components/ui/spotlight-card"
 
 const benefits = [
@@ -16,7 +16,6 @@ const benefits = [
 ]
 
 export function ForVetsSection() {
-  const [type, setType] = useState<"vet" | "grooming">("vet")
   const [submitted, setSubmitted] = useState(false)
   const [form, setForm] = useState({ name: "", clinic: "", city: "", phone: "", email: "" })
 
@@ -31,7 +30,7 @@ export function ForVetsSection() {
         phone:      form.phone,
         clinicName: form.clinic,
         city:       form.city,
-        type:       type === "vet" ? "VET" : "GROOMING",
+        type:       "VET",
       }),
     })
     setSubmitted(true)
@@ -107,29 +106,14 @@ export function ForVetsSection() {
                 <h3 className="font-display font-black text-lg text-white mb-0.5">Заяви своя профил</h3>
                 <p className="text-white/70 text-xs mb-3">Попълнете формата и ние ще се свържем с вас.</p>
 
-                {/* Toggle */}
-                <div className="flex bg-gray-100 rounded-full p-1 gap-1 mb-3">
-                  <button
-                    onClick={() => setType("vet")}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                      type === "vet" ? "bg-[#1083BD] text-white shadow-md" : "text-gray-500 hover:text-gray-700"
-                    }`}
-                  >
-                    <Stethoscope className="w-4 h-4" /> Ветеринар
-                  </button>
-                  <button
-                    onClick={() => setType("grooming")}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                      type === "grooming" ? "bg-[#EF3988] text-white shadow-md" : "text-gray-500 hover:text-gray-700"
-                    }`}
-                  >
-                    <Scissors className="w-4 h-4" /> Груминг салон
-                  </button>
+                <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-3 w-fit">
+                  <Stethoscope className="w-4 h-4 text-white" />
+                  <span className="text-white text-xs font-semibold">Ветеринар / Клиника</span>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
                   {(() => {
-                    const inputCls = `h-8 rounded-xl border-gray-200 ${type === "vet" ? "focus-visible:ring-[#1083BD] focus-visible:border-[#1083BD]" : "focus-visible:ring-[#EF3988] focus-visible:border-[#EF3988]"}`
+                    const inputCls = "h-8 rounded-xl border-gray-200 focus-visible:ring-[#1083BD] focus-visible:border-[#1083BD]"
                     const labelCls = "text-xs font-semibold uppercase tracking-wide block mb-1"
                     const labelStyle = { color: "rgba(255,255,255,0.9)" }
                     return (
@@ -141,10 +125,8 @@ export function ForVetsSection() {
                         className={inputCls} />
                     </div>
                     <div className="col-span-2">
-                      <label className={labelCls} style={labelStyle}>
-                        {type === "vet" ? "Клиника / Практика" : "Название на салона"}
-                      </label>
-                      <Input placeholder={type === "vet" ? "Вет клиника Здраве" : "Груминг студио Пух"}
+                      <label className={labelCls} style={labelStyle}>Клиника / Практика</label>
+                      <Input placeholder="Вет клиника Здраве"
                         value={form.clinic} onChange={e => setForm(f => ({ ...f, clinic: e.target.value }))} required
                         className={inputCls} />
                     </div>

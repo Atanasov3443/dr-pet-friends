@@ -80,14 +80,7 @@ function RequestModal({ onClose }: { onClose: () => void }) {
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">Тип профил</label>
-                <select name="type" defaultValue="VET"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1083BD]/30 focus:border-[#1083BD]">
-                  <option value="VET">Ветеринарна клиника / Лекар</option>
-                  <option value="GROOMING">Груминг салон</option>
-                </select>
-              </div>
+              <input type="hidden" name="type" value="VET" />
 
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">Вашето име *</label>
