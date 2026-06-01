@@ -27,7 +27,7 @@ const carouselSlides = [
     description: "Намерете специалист за куче, котка, зайче или екзотично животно.",
   },
   {
-    src: "/veterinarian-taking-care-pet.jpg",
+    src: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=800&h=1000&fit=crop",
     alt: "Ветеринар се грижи за любимец",
     subtitle: "Специалисти, на които можете да се доверите",
     description: "Проверени ветеринари с реални отзиви от хиляди доволни домашни любимци.",
