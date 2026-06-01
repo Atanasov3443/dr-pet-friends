@@ -281,82 +281,82 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
               </div>
             )}
 
-            {/* Calendar header */}
-            <div className="flex items-center justify-between mb-3">
-              <button onClick={prevMonth} className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
-                <ChevronLeft className="w-4 h-4 text-gray-500" />
-              </button>
-              <span className="text-sm font-bold text-gray-900">
-                {MONTHS_BG[calMonth]} {calYear}
-              </span>
-              <button onClick={nextMonth} className="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
-                <ChevronRight className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-
-            {/* Day names */}
-            <div className="grid grid-cols-7 mb-1">
-              {DAYS_BG.map(d => (
-                <div key={d} className="text-center text-[10px] font-bold text-gray-400 py-1">{d}</div>
-              ))}
-            </div>
-
-            {/* Calendar grid */}
-            <div className="grid grid-cols-7 gap-0.5">
-              {calCells.map((d, i) => {
-                if (!d) return <div key={i} />
-                const avail   = isAvailable(d)
-                const selected = date?.toDateString() === d.toDateString()
-                const isToday  = d.toDateString() === today.toDateString()
-                return (
-                  <button
-                    key={i}
-                    disabled={!avail}
-                    onClick={() => { setDate(d); setSlot("") }}
-                    className={`
-                      h-9 w-full rounded-lg text-sm font-semibold transition-colors
-                      ${selected ? "bg-[#1083BD] text-white"
-                        : avail ? "hover:bg-[#1083BD]/10 text-gray-900"
-                        : "text-gray-300 cursor-not-allowed"}
-                      ${isToday && !selected ? "ring-1 ring-[#1083BD]/40" : ""}
-                    `}
-                  >
-                    {d.getDate()}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Calendar */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <button onClick={prevMonth} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
+                    <ChevronLeft className="w-4 h-4 text-gray-500" />
                   </button>
-                )
-              })}
-            </div>
-
-            {/* Time slots */}
-            {date && (
-              <div className="mt-4 border-t border-gray-100 pt-4">
-                <p className="text-xs font-bold uppercase tracking-wide text-gray-400 flex items-center gap-1.5 mb-3">
-                  <Clock className="w-3.5 h-3.5" /> Часове за {date.getDate()} {MONTHS_SHORT[date.getMonth()]}
-                </p>
-                {slots.length === 0 ? (
-                  <p className="text-center text-gray-400 text-sm py-3">Няма свободни часове</p>
-                ) : (
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {slots.map(s => (
-                      <button key={s} onClick={() => setSlot(s)}
-                        className={`py-2 rounded-lg text-sm font-semibold border transition-colors ${
-                          slot === s ? "bg-[#1083BD] text-white border-[#1083BD]"
-                                     : "border-gray-200 hover:border-[#1083BD]/40 text-gray-700"
-                        }`}>
-                        {s}
+                  <span className="text-sm font-bold text-gray-900">
+                    {MONTHS_BG[calMonth]} {calYear}
+                  </span>
+                  <button onClick={nextMonth} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
+                    <ChevronRight className="w-4 h-4 text-gray-500" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-7 mb-1">
+                  {DAYS_BG.map(d => (
+                    <div key={d} className="text-center text-[10px] font-bold text-gray-400 py-1">{d}</div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-7 gap-0.5">
+                  {calCells.map((d, i) => {
+                    if (!d) return <div key={i} />
+                    const avail    = isAvailable(d)
+                    const selected = date?.toDateString() === d.toDateString()
+                    const isToday  = d.toDateString() === today.toDateString()
+                    return (
+                      <button key={i} disabled={!avail} onClick={() => { setDate(d); setSlot("") }}
+                        className={`h-9 w-full rounded-lg text-sm font-semibold transition-colors
+                          ${selected ? "bg-[#1083BD] text-white"
+                            : avail ? "hover:bg-[#1083BD]/10 text-gray-900"
+                            : "text-gray-300 cursor-not-allowed"}
+                          ${isToday && !selected ? "ring-1 ring-[#1083BD]/40" : ""}`}>
+                        {d.getDate()}
                       </button>
-                    ))}
-                  </div>
-                )}
+                    )
+                  })}
+                </div>
+              </div>
 
-                {slot && (
-                  <button onClick={() => setStep("confirm")}
-                    className="mt-4 w-full py-2.5 bg-[#EF3988] hover:bg-[#d42f77] text-white rounded-xl text-sm font-bold transition-colors">
-                    Продължи →
-                  </button>
+              {/* Time slots — appear on the right */}
+              <div className="flex flex-col">
+                {!date ? (
+                  <div className="flex flex-col items-center justify-center h-full text-center text-gray-300 py-8 gap-2">
+                    <Clock className="w-10 h-10 opacity-30" />
+                    <p className="text-sm">Изберете дата от календара</p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-xs font-bold uppercase tracking-wide text-gray-400 flex items-center gap-1.5 mb-3">
+                      <Clock className="w-3.5 h-3.5" /> {date.getDate()} {MONTHS_SHORT[date.getMonth()]}
+                    </p>
+                    {slots.length === 0 ? (
+                      <p className="text-gray-400 text-sm py-3">Няма свободни часове</p>
+                    ) : (
+                      <div className="grid grid-cols-3 gap-2 flex-1 content-start">
+                        {slots.map(s => (
+                          <button key={s} onClick={() => setSlot(s)}
+                            className={`py-2.5 rounded-xl text-sm font-semibold border transition-colors ${
+                              slot === s ? "bg-[#1083BD] text-white border-[#1083BD]"
+                                         : "border-gray-200 hover:border-[#1083BD]/40 text-gray-700 hover:bg-blue-50/50"
+                            }`}>
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {slot && (
+                      <button onClick={() => setStep("confirm")}
+                        className="mt-4 w-full py-3 bg-[#EF3988] hover:bg-[#d42f77] text-white rounded-xl text-sm font-bold transition-colors">
+                        Продължи →
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
-            )}
+            </div>
 
             {services.length > 0 && (
               <button onClick={() => setStep("service")} className="mt-3 text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1">
