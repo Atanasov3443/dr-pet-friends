@@ -157,18 +157,25 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
         <p className="text-xs text-gray-400 mb-5">Ще получите имейл с потвърждение.</p>
 
         <div className="space-y-2">
-          {appointmentPrice && appointmentPrice > 0 && (
-            <button onClick={startPayment} disabled={payLoading}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-[#10B83D] hover:bg-[#0da033] disabled:opacity-60 text-white rounded-xl text-sm font-bold transition-colors">
-              💳 {payLoading ? "Зарежда..." : `Плати ${appointmentPrice} лв. онлайн`}
-            </button>
-          )}
-
-          {meetLink && (
-            <a href={meetLink} target="_blank" rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3 bg-[#1083BD] hover:bg-[#0d6fa0] text-white rounded-xl text-sm font-bold transition-colors">
-              <Video className="w-4 h-4" /> Влез в онлайн консултацията
-            </a>
+          {appointmentPrice && appointmentPrice > 0 ? (
+            <>
+              <button onClick={startPayment} disabled={payLoading}
+                className="flex items-center justify-center gap-2 w-full py-3 bg-[#10B83D] hover:bg-[#0da033] disabled:opacity-60 text-white rounded-xl text-sm font-bold transition-colors">
+                💳 {payLoading ? "Зарежда..." : `Плати ${appointmentPrice} лв. онлайн`}
+              </button>
+              {meetLink && (
+                <p className="text-xs text-center text-gray-400">
+                  Линкът за онлайн консултацията ще бъде изпратен по имейл след плащане.
+                </p>
+              )}
+            </>
+          ) : (
+            meetLink && (
+              <a href={meetLink} target="_blank" rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-[#1083BD] hover:bg-[#0d6fa0] text-white rounded-xl text-sm font-bold transition-colors">
+                <Video className="w-4 h-4" /> Влез в онлайн консултацията
+              </a>
+            )
           )}
 
           <button onClick={() => router.push("/my/appointments")}
