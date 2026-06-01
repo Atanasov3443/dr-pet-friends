@@ -17,22 +17,28 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
 
     const isOnline = consultationType === "ONLINE"
 
-    // Ensure the user exists in the database (auto-create if missing)
-    await db.user.upsert({
-      where:  { id: userId },
-      update: {},
-      create: {
-        id:    userId,
-        email: req.user!.email,
-        name:  req.user!.name,
-        role:  (req.user!.role as any) ?? "OWNER",
-      },
-    })
+    // Ensure the user exists — find by email or create with the session ID
+    let dbUser = await db.user.findUnique({ where: { id: userId } })
+    if (!dbUser) {
+      dbUser = await db.user.findUnique({ where: { email: req.user!.email } })
+      if (!dbUser) {
+        dbUser = await db.user.create({
+          data: {
+            id:    userId,
+            email: req.user!.email,
+            name:  req.user!.name,
+            role:  (req.user!.role as any) ?? "OWNER",
+          },
+        })
+      }
+    }
 
-    let pet = await db.pet.findFirst({ where: { ownerId: userId, name: petName } })
+    const ownerId = dbUser.id
+
+    let pet = await db.pet.findFirst({ where: { ownerId, name: petName } })
     if (!pet) {
       pet = await db.pet.create({
-        data: { ownerId: userId, name: petName || "Любимец", species: petSpecies || "DOG" },
+        data: { ownerId, name: petName || "Любимец", species: petSpecies || "DOG" },
       })
     }
 
@@ -47,7 +53,7 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
 
     const appointment = await db.appointment.create({
       data: {
-        ownerId:          userId,
+        ownerId:          ownerId,
         vetId,
         petId:            pet.id,
         serviceId:        serviceId || null,
@@ -60,7 +66,7 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
       },
     })
 
-    const user = await db.user.findUnique({ where: { id: userId }, select: { name: true, email: true } })
+    const user = await db.user.findUnique({ where: { id: ownerId }, select: { name: true, email: true } })
 
     if (user?.email) {
       sendAppointmentEmails({
