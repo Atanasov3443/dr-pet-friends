@@ -99,21 +99,11 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
           </div>
         </div>
 
-        <div className="container max-w-5xl mx-auto px-4 py-8">
+        <div className="container max-w-6xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {/* Left column — Booking widget */}
-            <div className="space-y-4">
-              <InlineBookingWidget
-                vetId={vet.id}
-                vetName={vet.displayName}
-                services={(vet.services ?? []).map((s: any) => ({ id: s.id, name: s.name, price: s.price, duration: s.duration }))}
-                schedule={(vet.schedule ?? []).map((s: any) => ({ dayOfWeek: s.dayOfWeek, startTime: s.startTime, endTime: s.endTime, isActive: s.isActive }))}
-              />
-            </div>
-
-            {/* Right column */}
-            <div className="lg:col-span-2 space-y-6">
+            {/* Right column — Services, Schedule, Reviews (1 col) */}
+            <div className="lg:order-2 space-y-6">
               {/* Services */}
               {vet.services?.length > 0 && (
                 <div className="bg-white rounded-2xl border border-gray-100 p-6">
@@ -204,6 +194,16 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Booking widget — 2 cols */}
+            <div className="lg:col-span-2 lg:order-1">
+              <InlineBookingWidget
+                vetId={vet.id}
+                vetName={vet.displayName}
+                services={(vet.services ?? []).map((s: any) => ({ id: s.id, name: s.name, price: s.price, duration: s.duration }))}
+                schedule={(vet.schedule ?? []).map((s: any) => ({ dayOfWeek: s.dayOfWeek, startTime: s.startTime, endTime: s.endTime, isActive: s.isActive }))}
+              />
             </div>
 
           </div>
