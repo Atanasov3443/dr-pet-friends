@@ -43,7 +43,7 @@ export function Logo({ variant = "light", size = "md", href = "/" }: LogoProps) 
   )
 
   return href ? (
-    <Link href={href} className="inline-flex">
+    <Link href={href} className="inline-flex cursor-pointer hover:opacity-80 transition-opacity">
       {inner}
     </Link>
   ) : (
