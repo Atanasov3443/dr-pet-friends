@@ -26,7 +26,7 @@ export function EmergencyBanner() {
             <div className="relative hidden lg:block order-1">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-[#1083BD]/10">
                 <img
-                  src="https://images.unsplash.com/photo-1548767797-d8c844163c4a?w=600&h=700&fit=crop&crop=center"
+                  src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=700&fit=crop&crop=faces"
                   alt="Ветеринар с котка"
                   className="w-full h-[480px] object-cover"
                 />
