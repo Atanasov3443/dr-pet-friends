@@ -159,16 +159,16 @@ export function HeroSection() {
             <h1 className="font-display font-black text-5xl md:text-6xl lg:text-7xl xl:text-[88px] text-white leading-[0.95] mb-5 tracking-tight">
               Грижа за
               <br />
-              <span className="text-[#DAF467]">любимеца</span>
+              <span className="text-[#EF3988]">любимеца</span>
               <br />
               <span className="whitespace-nowrap">на едно място</span>
             </h1>
 
             {/* Animated subtitle + description */}
             <div className="mb-7 min-h-[72px]">
-              <p className="text-[#FF8EC8] text-lg md:text-xl max-w-lg mx-auto lg:mx-0 mb-2 font-bold min-h-[1.75rem]">
+              <p className="text-[#DAF467] text-lg md:text-xl max-w-lg mx-auto lg:mx-0 mb-2 font-bold min-h-[1.75rem]">
                 {typedText}
-                <span className="inline-block w-0.5 h-4 bg-[#FF8EC8] ml-0.5 align-middle" style={{ animation: "blink 0.8s step-end infinite" }} />
+                <span className="inline-block w-0.5 h-4 bg-[#DAF467] ml-0.5 align-middle" style={{ animation: "blink 0.8s step-end infinite" }} />
               </p>
               <p
                 className="text-white/65 text-sm md:text-base max-w-md mx-auto lg:mx-0 leading-relaxed transition-all duration-500"
