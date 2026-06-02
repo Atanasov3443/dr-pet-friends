@@ -28,8 +28,7 @@ function PetForm({ initial, onSave, onCancel }: {
   onSave: (data: PetData) => Promise<string | null>
   onCancel: () => void
 }) {
-  const [species,    setSpecies]    = useState(initial.species || "DOG")
-  const [gender,     setGender]     = useState(initial.gender  || "")
+  const [gender, setGender] = useState(initial.gender || "")
   const [image,      setImage]      = useState(initial.image   || "")
   const [uploading,  setUploading]  = useState(false)
   const [error,      setError]      = useState("")
@@ -64,7 +63,7 @@ function PetForm({ initial, onSave, onCancel }: {
     const err = await onSave({
       id:        initial.id,
       name,
-      species,
+      species:   "OTHER",
       gender,
       breed:     (fd.get("breed")     as string) || "",
       weight:    (fd.get("weight")    as string) || "",
@@ -119,19 +118,6 @@ function PetForm({ initial, onSave, onCancel }: {
             />
           </div>
 
-          <div className="col-span-2">
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Вид</label>
-            <div className="grid grid-cols-3 gap-1.5">
-              {SPECIES.map(s => (
-                <button key={s.v} type="button" onClick={() => setSpecies(s.v)}
-                  className={`py-2 rounded-xl text-xs font-medium border transition-colors ${
-                    species === s.v ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-700 hover:border-[#1083BD]/40"
-                  }`}>
-                  {s.l}
-                </button>
-              ))}
-            </div>
-          </div>
 
           <div className="col-span-2">
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Пол</label>
@@ -148,12 +134,12 @@ function PetForm({ initial, onSave, onCancel }: {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Порода</label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Вид / Порода</label>
             <input
               name="breed"
               type="text"
               defaultValue={initial.breed}
-              placeholder="Лабрадор..."
+              placeholder="Куче, котка, заек..."
               autoComplete="off"
               style={{ color: "#111827" }}
               className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#1083BD] focus:ring-2 focus:ring-[#1083BD]/20"

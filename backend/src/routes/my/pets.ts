@@ -4,10 +4,17 @@ import { authenticate, AuthRequest } from "../../middleware/auth"
 
 const router = Router()
 
+async function resolveOwner(req: AuthRequest) {
+  let user = await db.user.findUnique({ where: { id: req.user!.id } })
+  if (!user) user = await db.user.findUnique({ where: { email: req.user!.email } })
+  return user
+}
+
 router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
-  const userId = req.user!.id
+  const user = await resolveOwner(req)
+  if (!user) { res.json([]); return }
   const pets = await db.pet.findMany({
-    where: { ownerId: userId },
+    where: { ownerId: user.id },
     include: { vaccinations: { orderBy: { date: "desc" }, take: 3 } },
     orderBy: { createdAt: "asc" },
   })
@@ -15,17 +22,18 @@ router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
 })
 
 router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
-  const userId = req.user!.id
-  const { name, species, gender, breed, birthDate, weight, notes, image } = req.body
+  const user = await resolveOwner(req)
+  if (!user) { res.status(401).json({ error: "Не е намерен потребител" }); return }
 
+  const { name, species, gender, breed, birthDate, weight, notes, image } = req.body
   if (!name?.trim()) { res.status(400).json({ error: "Името е задължително" }); return }
 
   try {
     const pet = await db.pet.create({
       data: {
-        ownerId:   userId,
+        ownerId:   user.id,
         name:      name.trim(),
-        species:   species   || "DOG",
+        species:   species   || "OTHER",
         gender:    gender    || null,
         breed:     breed     || null,
         birthDate: birthDate ? new Date(birthDate) : null,
@@ -41,12 +49,13 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
 })
 
 router.patch("/", authenticate, async (req: AuthRequest, res: Response) => {
-  const userId = req.user!.id
-  const { id, name, species, gender, breed, birthDate, weight, notes, image } = req.body
+  const user = await resolveOwner(req)
+  if (!user) { res.status(401).json({ error: "Не е намерен потребител" }); return }
 
+  const { id, name, species, gender, breed, birthDate, weight, notes, image } = req.body
   if (!name?.trim()) { res.status(400).json({ error: "Името е задължително" }); return }
 
-  const pet = await db.pet.findFirst({ where: { id, ownerId: userId } })
+  const pet = await db.pet.findFirst({ where: { id, ownerId: user.id } })
   if (!pet) { res.status(404).json({ error: "Not found" }); return }
 
   try {
@@ -54,7 +63,7 @@ router.patch("/", authenticate, async (req: AuthRequest, res: Response) => {
       where: { id },
       data: {
         name:      name.trim(),
-        species:   species   || "DOG",
+        species:   species   || "OTHER",
         gender:    gender    || null,
         breed:     breed     || null,
         birthDate: birthDate ? new Date(birthDate) : null,
@@ -70,10 +79,11 @@ router.patch("/", authenticate, async (req: AuthRequest, res: Response) => {
 })
 
 router.delete("/", authenticate, async (req: AuthRequest, res: Response) => {
-  const userId = req.user!.id
-  const { id } = req.body
+  const user = await resolveOwner(req)
+  if (!user) { res.status(401).json({ error: "Не е намерен потребител" }); return }
 
-  const pet = await db.pet.findFirst({ where: { id, ownerId: userId } })
+  const { id } = req.body
+  const pet = await db.pet.findFirst({ where: { id, ownerId: user.id } })
   if (!pet) { res.status(404).json({ error: "Not found" }); return }
 
   await db.pet.delete({ where: { id } })
