@@ -29,26 +29,7 @@ function emailWrapper(content: string, accentColor = "#1083BD") {
 
         <!-- Header -->
         <tr><td style="background:${accentColor};border-radius:16px 16px 0 0;padding:32px;text-align:center">
-          <div style="margin-bottom:10px;display:inline-flex;gap:6px;align-items:flex-end">
-        <!-- Paw print 1 -->
-        <svg width="28" height="28" viewBox="0 0 50 50" fill="white" xmlns="http://www.w3.org/2000/svg" style="opacity:0.9">
-          <ellipse cx="10" cy="14" rx="5" ry="6" transform="rotate(-15 10 14)"/>
-          <ellipse cx="22" cy="9"  rx="5" ry="6"/>
-          <ellipse cx="34" cy="11" rx="5" ry="6" transform="rotate(15 34 11)"/>
-          <ellipse cx="24" cy="34" rx="12" ry="10"/>
-          <ellipse cx="10" cy="28" rx="6"  ry="7"  transform="rotate(-20 10 28)"/>
-          <ellipse cx="38" cy="28" rx="6"  ry="7"  transform="rotate(20 38 28)"/>
-        </svg>
-        <!-- Paw print 2 (slightly offset) -->
-        <svg width="22" height="22" viewBox="0 0 50 50" fill="white" xmlns="http://www.w3.org/2000/svg" style="opacity:0.7;margin-bottom:4px">
-          <ellipse cx="10" cy="14" rx="5" ry="6" transform="rotate(-15 10 14)"/>
-          <ellipse cx="22" cy="9"  rx="5" ry="6"/>
-          <ellipse cx="34" cy="11" rx="5" ry="6" transform="rotate(15 34 11)"/>
-          <ellipse cx="24" cy="34" rx="12" ry="10"/>
-          <ellipse cx="10" cy="28" rx="6"  ry="7"  transform="rotate(-20 10 28)"/>
-          <ellipse cx="38" cy="28" rx="6"  ry="7"  transform="rotate(20 38 28)"/>
-        </svg>
-      </div>
+          <div style="font-size:24px;margin-bottom:8px;letter-spacing:4px">🐾 🐾</div>
           <div style="color:white;font-size:24px;font-weight:900;letter-spacing:-0.5px">Dr. Pet Friend</div>
           <div style="color:rgba(255,255,255,0.75);font-size:13px;margin-top:4px">Вашият домашен любимец е наш приятел</div>
         </td></tr>
