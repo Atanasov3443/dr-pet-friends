@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sticker } from "@/components/sticker"
+import Link from "next/link"
 import { CalendarCheck, Phone, Clock, MapPin, Star, ArrowRight, Users } from "lucide-react"
 import { ClinicsMapModal } from "@/components/clinics-map-modal"
 
@@ -92,13 +93,15 @@ export function EmergencyBanner() {
 
               {/* CTA */}
               <div className="flex items-center gap-4 mt-auto">
-                <Button
-                  size="lg"
-                  className="bg-[#EF3988] hover:bg-[#d42f77] text-white font-bold rounded-full px-8 h-12 shadow-lg shadow-[#EF3988]/20 gap-2 transition-all min-w-[240px] justify-center"
-                >
-                  <Phone className="w-4 h-4" />
-                  Спешен ветеринар 24/7
-                </Button>
+                <Link href="/search?emergency=true">
+                  <Button
+                    size="lg"
+                    className="bg-[#EF3988] hover:bg-[#d42f77] text-white font-bold rounded-full px-8 h-12 shadow-lg shadow-[#EF3988]/20 gap-2 transition-all min-w-[240px] justify-center"
+                  >
+                    <Phone className="w-4 h-4" />
+                    Спешен ветеринар 24/7
+                  </Button>
+                </Link>
                 <span className="text-gray-400 text-sm">+359 888 123 456</span>
               </div>
             </div>
@@ -147,13 +150,15 @@ export function EmergencyBanner() {
 
               {/* CTA */}
               <div className="flex items-center gap-4 mt-auto">
-                <Button
-                  size="lg"
-                  className="bg-[#1083BD] hover:bg-[#0D67F7] text-white font-bold rounded-full px-8 h-12 shadow-lg shadow-[#1083BD]/20 gap-2 transition-all min-w-[240px] justify-center"
-                >
-                  <CalendarCheck className="w-4 h-4" />
-                  Запази час сега
-                </Button>
+                <Link href="/search">
+                  <Button
+                    size="lg"
+                    className="bg-[#1083BD] hover:bg-[#0D67F7] text-white font-bold rounded-full px-8 h-12 shadow-lg shadow-[#1083BD]/20 gap-2 transition-all min-w-[240px] justify-center"
+                  >
+                    <CalendarCheck className="w-4 h-4" />
+                    Запази час сега
+                  </Button>
+                </Link>
                 <span className="flex items-center gap-1 text-gray-400 text-sm">
                   Безплатно <ArrowRight className="w-3.5 h-3.5" />
                 </span>
