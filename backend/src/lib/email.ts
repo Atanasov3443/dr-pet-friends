@@ -29,7 +29,7 @@ function emailWrapper(content: string, accentColor = "#1083BD") {
 
         <!-- Header -->
         <tr><td style="background:${accentColor};border-radius:16px 16px 0 0;padding:32px;text-align:center">
-          <div style="font-size:32px;margin-bottom:8px">🐾</div>
+          <div style="font-size:32px;margin-bottom:8px;letter-spacing:2px;color:rgba(255,255,255,0.9)">✦</div>
           <div style="color:white;font-size:24px;font-weight:900;letter-spacing:-0.5px">Dr. Pet Friend</div>
           <div style="color:rgba(255,255,255,0.75);font-size:13px;margin-top:4px">Вашият домашен любимец е наш приятел</div>
         </td></tr>
@@ -113,12 +113,12 @@ export async function sendAppointmentEmails(data: AppointmentEmailData) {
   const typeEmoji  = data.isOnline ? "🖥️" : "🏥"
 
   const rows = [
-    infoRow(typeEmoji, "Тип", typeLabel),
-    infoRow("👨‍⚕️", "Специалист", data.vetName),
-    infoRow("💊", "Услуга", data.serviceName),
-    infoRow("🐾", "Любимец", data.petName),
-    infoRow("📅", "Дата", dateStr),
-    infoRow("🕐", "Час", timeStr, true),
+    infoRow("", "Тип", typeLabel),
+    infoRow("", "Специалист", data.vetName),
+    infoRow("", "Услуга", data.serviceName),
+    infoRow("", "Любимец", data.petName),
+    infoRow("", "Дата", dateStr),
+    infoRow("", "Час", timeStr, true),
   ].join("")
 
   const card    = appointmentCard(rows)
@@ -127,7 +127,7 @@ export async function sendAppointmentEmails(data: AppointmentEmailData) {
   // ── Email to owner ──────────────────────────────────────────────────
   const ownerContent = `
     <div style="margin-bottom:24px">
-      <h2 style="color:#111827;font-size:22px;font-weight:900;margin:0 0 8px">Часът е запазен! ✅</h2>
+      <h2 style="color:#111827;font-size:22px;font-weight:900;margin:0 0 8px">Часът е запазен успешно</h2>
       <p style="color:#6b7280;font-size:14px;margin:0">Здравей, <strong style="color:#111827">${data.ownerName}</strong>! Вашата резервация е потвърдена.</p>
     </div>
 
@@ -136,7 +136,7 @@ export async function sendAppointmentEmails(data: AppointmentEmailData) {
 
     <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px;margin:20px 0">
       <p style="color:#166534;font-size:13px;margin:0">
-        ✉️ Ще получите напомняне преди прегледа. При нужда от промяна, свържете се с клиниката директно.
+        Ще получите напомняне преди прегледа. При нужда от промяна, свържете се с клиниката директно.
       </p>
     </div>
 
@@ -146,7 +146,7 @@ export async function sendAppointmentEmails(data: AppointmentEmailData) {
   resend.emails.send({
     from:    "Dr. Pet Friend <onboarding@resend.dev>",
     to:      data.ownerEmail,
-    subject: `✅ Запазен час — ${data.vetName} · ${timeStr}, ${dateStr}`,
+    subject: `Запазен час — ${data.vetName} · ${timeStr}, ${dateStr}`,
     html:    emailWrapper(ownerContent, "#1083BD"),
   }).catch(() => {})
 
@@ -155,7 +155,7 @@ export async function sendAppointmentEmails(data: AppointmentEmailData) {
 
   const vetContent = `
     <div style="margin-bottom:24px">
-      <h2 style="color:#111827;font-size:22px;font-weight:900;margin:0 0 8px">📅 Нова резервация</h2>
+      <h2 style="color:#111827;font-size:22px;font-weight:900;margin:0 0 8px">Нова резервация</h2>
       <p style="color:#6b7280;font-size:14px;margin:0">Здравейте, <strong style="color:#111827">д-р ${data.vetName}</strong>! Клиент е запазил час при вас.</p>
     </div>
 
@@ -164,7 +164,7 @@ export async function sendAppointmentEmails(data: AppointmentEmailData) {
 
     <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:10px;padding:16px;margin:20px 0">
       <p style="color:#92400e;font-size:13px;margin:0">
-        ⏰ Моля потвърдете или откажете часа от вашия dashboard своевременно.
+        Моля потвърдете или откажете часа от вашия dashboard своевременно.
       </p>
     </div>
 
@@ -174,7 +174,7 @@ export async function sendAppointmentEmails(data: AppointmentEmailData) {
   resend.emails.send({
     from:    "Dr. Pet Friend <onboarding@resend.dev>",
     to:      data.vetEmail,
-    subject: `📅 Нова резервация — ${data.petName} · ${timeStr}, ${dateStr}`,
+    subject: `Нова резервация — ${data.petName} · ${timeStr}, ${dateStr}`,
     html:    emailWrapper(vetContent, "#EF3988"),
   }).catch(() => {})
 }
