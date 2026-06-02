@@ -14,6 +14,7 @@ export default function MyProfilePage() {
   const [loading,  setLoading]  = useState(true)
 
   const [name,  setName]  = useState("")
+  const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [image, setImage] = useState("")
 
@@ -31,6 +32,7 @@ export default function MyProfilePage() {
       .then(data => {
         setProfile(data)
         setName(data.name  ?? "")
+        setEmail(data.email ?? "")
         setPhone(data.phone ?? "")
         setImage(data.image ?? "")
         setLoading(false)
@@ -45,7 +47,7 @@ export default function MyProfilePage() {
     if (newPwd && newPwd.length < 6)  { setError("Паролата трябва да е поне 6 знака"); return }
 
     setSaving(true)
-    const body: Record<string, string> = { name, phone, image }
+    const body: Record<string, string> = { name, email, phone, image }
     if (newPwd) { body.currentPassword = curPwd; body.newPassword = newPwd }
 
     const res = await fetch(apiUrl("/api/my/profile"), {
@@ -123,9 +125,9 @@ export default function MyProfilePage() {
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 flex items-center gap-1">
               <Mail className="w-3 h-3" /> Имейл
             </label>
-            <input value={profile.email} disabled
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-gray-50 text-gray-600 cursor-not-allowed" />
-            <p className="text-xs text-gray-400 mt-1">Имейлът не може да се промени</p>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+              placeholder="email@example.com"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#EF3988]" />
           </div>
 
           <div>

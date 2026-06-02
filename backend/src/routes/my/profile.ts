@@ -22,7 +22,7 @@ router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
 // PATCH /api/my/profile — update name, phone, image
 router.patch("/", authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const { name, phone, image, currentPassword, newPassword } = req.body
+    const { name, email, phone, image, currentPassword, newPassword } = req.body
 
     const user = await db.user.findUnique({ where: { id: req.user!.id } })
     if (!user) { res.status(404).json({ error: "Не е намерен" }); return }
@@ -30,6 +30,7 @@ router.patch("/", authenticate, async (req: AuthRequest, res: Response) => {
     const updateData: Record<string, unknown> = {}
 
     if (name  != null) updateData.name  = String(name).trim()  || null
+    if (email != null && String(email).trim()) updateData.email = String(email).trim()
     if (phone != null) updateData.phone = String(phone).trim() || null
     if (image != null) updateData.image = String(image).trim() || null
 
