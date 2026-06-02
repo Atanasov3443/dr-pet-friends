@@ -29,10 +29,7 @@ function emailWrapper(content: string, accentColor = "#1083BD") {
 
         <!-- Header -->
         <tr><td style="background:${accentColor};border-radius:16px 16px 0 0;padding:32px;text-align:center">
-          <div style="margin-bottom:10px">
-        <img src="https://dr-pet-friends.pages.dev/paw-white.svg" width="80" height="32" alt="" style="display:inline-block" />
-      </div>
-          <div style="color:white;font-size:24px;font-weight:900;letter-spacing:-0.5px">Dr. Pet Friend</div>
+              <div style="color:white;font-size:24px;font-weight:900;letter-spacing:-0.5px">Dr. Pet Friend</div>
           <div style="color:rgba(255,255,255,0.75);font-size:13px;margin-top:4px">Вашият домашен любимец е наш приятел</div>
         </td></tr>
 
