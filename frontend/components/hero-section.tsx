@@ -178,29 +178,10 @@ export function HeroSection() {
 
             {/* Search box */}
             <div className="max-w-xl mx-auto lg:mx-0">
-              <div className="bg-white rounded-2xl p-3 shadow-2xl">
-                <div className="grid md:grid-cols-2 gap-2">
-                  <div className="relative">
-                    <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
-                    <input
-                      placeholder="Специалност, д-р..."
-                      className="w-full pl-9 pr-3 h-11 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-[#1083BD]/30"
-                      onKeyDown={(e) => { if (e.key === "Enter") window.location.href = `/search?q=${(e.target as HTMLInputElement).value}` }}
-                    />
-                  </div>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
-                    <input
-                      placeholder="Град"
-                      className="w-full pl-9 pr-3 h-11 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-[#1083BD]/30"
-                    />
-                  </div>
-                </div>
-                <Link href="/search" className="mt-2 flex items-center justify-center gap-2 w-full h-11 bg-[#EF3988] hover:bg-[#d42f77] text-white font-semibold rounded-xl text-sm transition-colors">
-                  <Search className="w-4 h-4" /> Намери ветеринар
-                </Link>
-              </div>
-
+              <Link href="/search"
+                className="flex items-center justify-center gap-3 w-full py-5 bg-[#EF3988] hover:bg-[#d42f77] active:scale-95 text-white font-black text-xl rounded-2xl shadow-2xl shadow-[#EF3988]/40 transition-all">
+                <Search className="w-6 h-6" /> Намери ветеринар
+              </Link>
             </div>
           </div>
 
