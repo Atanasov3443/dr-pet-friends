@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { CalendarCheck, Clock, Star, Users, ArrowRight, MapPin } from "lucide-react"
+import { CalendarCheck, Clock, Star, Users, MapPin, Check } from "lucide-react"
 import { ClinicsMapModal } from "@/components/clinics-map-modal"
 
 export function EmergencyBanner() {
@@ -11,7 +11,7 @@ export function EmergencyBanner() {
   return (
     <>
       <ClinicsMapModal isOpen={mapOpen} onClose={() => setMapOpen(false)} />
-      <section className="relative py-20 bg-gray-50 overflow-hidden">
+      <section className="relative bg-gray-50 overflow-hidden">
         {/* Top diagonal */}
         <div className="absolute top-0 left-0 w-full leading-none pointer-events-none z-10">
           <svg viewBox="0 0 1440 60" fill="#fdf2f8" preserveAspectRatio="none" className="w-full h-16 block">
@@ -19,56 +19,105 @@ export function EmergencyBanner() {
           </svg>
         </div>
 
-        {/* Glow blobs */}
-        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#1083BD] opacity-[0.05] blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/2 right-1/3 translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-[#EF3988] opacity-[0.05] blur-[120px] pointer-events-none" />
+        <div className="container relative z-10 py-20">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
 
-        <div className="container relative z-10 max-w-4xl">
-
-          {/* Header */}
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 bg-[#1083BD]/10 border border-[#1083BD]/20 rounded-full px-4 py-1.5 mb-4">
-              <span className="w-2 h-2 rounded-full bg-[#1083BD] animate-pulse" />
-              <span className="text-[#1083BD] text-xs font-semibold uppercase tracking-widest">Запиши час онлайн</span>
-            </div>
-            <h2 className="font-display font-black text-4xl md:text-5xl text-[#191919] mb-3">
-              Намери ветеринар и<br />
-              <span className="text-[#1083BD]">запази час за минути</span>
-            </h2>
-            <p className="text-gray-400 text-lg max-w-xl mx-auto">
-              Без чакане по телефона. Избери специалист, дата и час — всичко онлайн.
-            </p>
-          </div>
-
-          {/* Stats row */}
-          <div className="grid grid-cols-3 gap-4 mb-10">
-            {[
-              { icon: Users, num: "200+", label: "Специалисти" },
-              { icon: Star,  num: "4.9★", label: "Средна оценка" },
-              { icon: Clock, num: "2 мин", label: "За записване" },
-            ].map(({ icon: Icon, num, label }) => (
-              <div key={label} className="bg-white rounded-2xl border border-gray-100 p-5 text-center shadow-sm">
-                <div className="w-10 h-10 rounded-xl bg-[#1083BD]/10 flex items-center justify-center mx-auto mb-2">
-                  <Icon className="w-5 h-5 text-[#1083BD]" />
-                </div>
-                <p className="font-black text-2xl text-[#1083BD]">{num}</p>
-                <p className="text-gray-400 text-xs mt-0.5">{label}</p>
+            {/* Left — Content */}
+            <div>
+              <div className="inline-flex items-center gap-2 bg-[#1083BD]/10 border border-[#1083BD]/20 rounded-full px-4 py-1.5 mb-6">
+                <span className="w-2 h-2 rounded-full bg-[#1083BD] animate-pulse" />
+                <span className="text-[#1083BD] text-xs font-semibold uppercase tracking-widest">Без чакане по телефона</span>
               </div>
-            ))}
-          </div>
 
-          {/* CTA buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/search"
-              className="flex items-center gap-2 bg-[#1083BD] hover:bg-[#0D67F7] text-white font-bold rounded-full px-10 h-14 text-lg shadow-lg shadow-[#1083BD]/25 transition-all cursor-pointer hover:scale-105 active:scale-95">
-              <CalendarCheck className="w-5 h-5" /> Запази час сега
-            </Link>
-            <button onClick={() => setMapOpen(true)}
-              className="flex items-center gap-2 bg-white border-2 border-gray-200 hover:border-[#1083BD] text-gray-600 hover:text-[#1083BD] font-semibold rounded-full px-8 h-14 text-sm transition-all cursor-pointer">
-              <MapPin className="w-4 h-4" /> Намери клиника на картата
-            </button>
-          </div>
+              <h2 className="font-display font-black text-4xl md:text-5xl text-[#191919] leading-tight mb-4">
+                Запази час при<br />
+                <span className="text-[#1083BD]">ветеринар онлайн</span>
+              </h2>
 
+              <p className="text-gray-500 text-lg mb-8 max-w-md leading-relaxed">
+                Намери проверен специалист, избери дата и час — всичко за под 2 минути.
+              </p>
+
+              {/* Checkmarks */}
+              <div className="space-y-3 mb-8">
+                {[
+                  "Над 200 проверени специалисти",
+                  "Онлайн и на място консултации",
+                  "Потвърждение веднага по имейл",
+                ].map(text => (
+                  <div key={text} className="flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-full bg-[#1083BD] flex items-center justify-center shrink-0">
+                      <Check className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    <span className="text-gray-600 text-sm font-medium">{text}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Stats */}
+              <div className="flex gap-6 mb-8">
+                {[
+                  { num: "200+", label: "Специалисти" },
+                  { num: "4.9★", label: "Средна оценка" },
+                  { num: "2 мин", label: "За записване" },
+                ].map(({ num, label }) => (
+                  <div key={label}>
+                    <p className="font-black text-2xl text-[#1083BD]">{num}</p>
+                    <p className="text-gray-400 text-xs">{label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTAs */}
+              <div className="flex flex-wrap gap-3">
+                <Link href="/search"
+                  className="flex items-center gap-2 bg-[#1083BD] hover:bg-[#0D67F7] text-white font-bold rounded-full px-8 h-13 py-3.5 text-base shadow-lg shadow-[#1083BD]/25 transition-all cursor-pointer hover:scale-105 active:scale-95">
+                  <CalendarCheck className="w-5 h-5" /> Запази час сега
+                </Link>
+                <button onClick={() => setMapOpen(true)}
+                  className="flex items-center gap-2 border-2 border-gray-200 hover:border-[#1083BD] text-gray-500 hover:text-[#1083BD] font-semibold rounded-full px-6 py-3.5 text-sm transition-all cursor-pointer bg-white">
+                  <MapPin className="w-4 h-4" /> Намери на картата
+                </button>
+              </div>
+            </div>
+
+            {/* Right — Image */}
+            <div className="relative hidden lg:block">
+              {/* Main image */}
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-[#1083BD]/10">
+                <img
+                  src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&h=700&fit=crop&crop=center"
+                  alt="Ветеринар с куче"
+                  className="w-full h-[480px] object-cover"
+                />
+                {/* Overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1083BD]/20 to-transparent" />
+              </div>
+
+              {/* Floating card — rating */}
+              <div className="absolute -bottom-4 -left-6 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3 border border-gray-100">
+                <div className="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center">
+                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                </div>
+                <div>
+                  <p className="font-black text-gray-900 text-sm">4.9 / 5.0</p>
+                  <p className="text-gray-400 text-xs">от 12 000+ отзива</p>
+                </div>
+              </div>
+
+              {/* Floating card — online */}
+              <div className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3 border border-gray-100">
+                <div className="w-10 h-10 rounded-xl bg-[#1083BD]/10 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-[#1083BD]" />
+                </div>
+                <div>
+                  <p className="font-black text-gray-900 text-sm">24/7 онлайн</p>
+                  <p className="text-gray-400 text-xs">запазване на час</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
 
         {/* Bottom diagonal */}
