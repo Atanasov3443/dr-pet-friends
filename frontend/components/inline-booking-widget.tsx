@@ -247,9 +247,9 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
         )}
 
         {/* Calendar + Slots side by side */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Calendar */}
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+          {/* Calendar — 3/5 */}
+          <div className="md:col-span-3">
             <div className="flex items-center justify-between mb-3">
               <button onClick={prevMonth} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
                 <ChevronLeft className="w-4 h-4 text-gray-500" />
@@ -270,7 +270,7 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
                 const isToday  = d.toDateString() === today.toDateString()
                 return (
                   <button key={i} disabled={!avail} onClick={() => { setDate(d); setSlot("") }}
-                    className={`h-9 w-full rounded-lg text-sm font-semibold transition-colors
+                    className={`h-11 w-full rounded-xl text-sm font-semibold transition-colors
                       ${selected ? "bg-[#1083BD] text-white"
                         : avail ? "hover:bg-[#1083BD]/10 text-gray-900"
                         : "text-gray-300 cursor-not-allowed"}
@@ -282,8 +282,8 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
             </div>
           </div>
 
-          {/* Time slots */}
-          <div className="flex flex-col">
+          {/* Time slots — 2/5 */}
+          <div className="md:col-span-2 flex flex-col">
             {!date ? (
               <div className="flex flex-col items-center justify-center h-full text-center gap-3 py-8">
                 <Clock className="w-10 h-10 text-gray-200" />
