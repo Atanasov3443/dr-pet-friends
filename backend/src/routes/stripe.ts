@@ -33,7 +33,12 @@ router.post("/checkout", authenticate, async (req: AuthRequest, res: Response) =
       },
     })
 
-    if (!appointment || appointment.ownerId !== req.user!.id) {
+    // Resolve actual DB user (handles session ID vs DB ID mismatch)
+    let dbUser = await db.user.findUnique({ where: { id: req.user!.id } })
+    if (!dbUser) dbUser = await db.user.findUnique({ where: { email: req.user!.email } })
+    if (!dbUser) { res.status(404).json({ error: "Потребителят не е намерен" }); return }
+
+    if (!appointment || appointment.ownerId !== dbUser.id) {
       res.status(404).json({ error: "Не е намерен" }); return
     }
     if (appointment.status === "CANCELLED") {

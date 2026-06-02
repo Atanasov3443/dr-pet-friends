@@ -202,11 +202,19 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
         {/* Service selector */}
         {services.length > 0 && (
           <div className="mb-5">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1.5"><Stethoscope className="w-3.5 h-3.5" /> Услуга</p>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1.5">
+              <Stethoscope className="w-3.5 h-3.5" /> Услуга
+              <span className="text-red-400 font-bold ml-1">*</span>
+              {!service && <span className="text-red-400 text-xs font-normal ml-1">— изберете услуга</span>}
+            </p>
             <div className="flex flex-wrap gap-2">
               {services.map(s => (
                 <button key={s.id} onClick={() => setService(s)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${service?.id === s.id ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]/40"}`}>
+                  className={`px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all ${
+                    service?.id === s.id
+                      ? "bg-[#1083BD] text-white border-[#1083BD] shadow-md"
+                      : "border-gray-300 text-gray-700 hover:border-[#1083BD] hover:text-[#1083BD]"
+                  }`}>
                   {s.name} · {s.price} лв.
                 </button>
               ))}
