@@ -1,5 +1,7 @@
 import "dotenv/config"
 import express from "express"
+import cron from "node-cron"
+import { sendReminders } from "./lib/reminders"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 
@@ -81,6 +83,12 @@ app.use("/api/register",             registerRouter)
 
 app.listen(PORT, () => {
   console.log(`API server running on http://localhost:${PORT}`)
+})
+
+// Run every hour — send reminders for appointments in the next 24h
+cron.schedule("0 * * * *", async () => {
+  console.log("Running appointment reminder check...")
+  await sendReminders().catch(err => console.error("Reminder error:", err))
 })
 
 export default app

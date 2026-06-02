@@ -241,6 +241,7 @@ model Appointment {
   meetLink         String?
   notes            String?            @db.Text
   price            Float?
+  reminderSent     Boolean            @default(false)
 
   owner         User        @relation(fields: [ownerId], references: [id])
   vet           Vet         @relation(fields: [vetId], references: [id])

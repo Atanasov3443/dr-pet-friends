@@ -1,14 +1,14 @@
 import { Resend } from "resend"
 
-function getResend() {
+export function getResend() {
   if (!process.env.RESEND_API_KEY) return null
   return new Resend(process.env.RESEND_API_KEY)
 }
 
-function formatDate(date: Date) {
+export function formatDate(date: Date) {
   return date.toLocaleDateString("bg-BG", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
 }
-function formatTime(date: Date) {
+export function formatTime(date: Date) {
   return date.toLocaleTimeString("bg-BG", { hour: "2-digit", minute: "2-digit" })
 }
 
@@ -18,7 +18,7 @@ export function generateMeetLink(appointmentId: string): string {
 
 // ─── Shared layout ──────────────────────────────────────────────────────────
 
-function emailWrapper(content: string, accentColor = "#1083BD") {
+export function emailWrapper(content: string, accentColor = "#1083BD") {
   return `<!DOCTYPE html>
 <html lang="bg">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dr. Pet Friend</title></head>
@@ -52,7 +52,7 @@ function emailWrapper(content: string, accentColor = "#1083BD") {
 </body></html>`
 }
 
-function infoRow(icon: string, label: string, value: string, highlight = false) {
+export function infoRow(icon: string, label: string, value: string, highlight = false) {
   return `<tr>
     <td style="padding:10px 0;border-bottom:1px solid #f9fafb;width:50%">
       <span style="color:#9ca3af;font-size:13px">${icon} ${label}</span>
@@ -63,13 +63,13 @@ function infoRow(icon: string, label: string, value: string, highlight = false) 
   </tr>`
 }
 
-function ctaButton(text: string, href: string, color = "#1083BD") {
+export function ctaButton(text: string, href: string, color = "#1083BD") {
   return `<div style="text-align:center;margin:24px 0">
     <a href="${href}" style="display:inline-block;background:${color};color:white;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:700;font-size:15px;letter-spacing:0.2px">${text}</a>
   </div>`
 }
 
-function meetBox(meetLink: string) {
+export function meetBox(meetLink: string) {
   return `<div style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:2px solid #1083BD;border-radius:12px;padding:24px;margin:20px 0;text-align:center">
     <div style="font-size:28px;margin-bottom:8px">🎥</div>
     <p style="color:#1e40af;font-weight:700;margin:0 0 4px;font-size:16px">Линк за онлайн консултация</p>
@@ -81,7 +81,7 @@ function meetBox(meetLink: string) {
   </div>`
 }
 
-function appointmentCard(rows: string) {
+export function appointmentCard(rows: string) {
   return `<div style="background:#f9fafb;border-radius:12px;padding:4px 16px;margin:20px 0;border:1px solid #f3f4f6">
     <table width="100%" cellpadding="0" cellspacing="0">${rows}</table>
   </div>`
