@@ -1,9 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CalendarDays, Star, X, CreditCard, Clock, Video, Stethoscope } from "lucide-react"
+import { CalendarDays, Star, X, CreditCard, Clock, Video, Stethoscope, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { apiUrl } from "@/lib/api"
+import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 
 const MONTHS_BG = ["Яну","Фев","Мар","Апр","Май","Юни","Юли","Авг","Сеп","Окт","Ное","Дек"]
 const DAYS_BG   = ["Нед","Пон","Вт","Ср","Чет","Пет","Съб"]
@@ -63,7 +65,9 @@ function ReviewModal({ vetId, vetName, onClose, onSaved }: { vetId: string; vetN
   )
 }
 
-export default function MyAppointmentsPage() {
+function MyAppointmentsPageInner() {
+  const searchParams  = useSearchParams()
+  const paymentStatus = searchParams.get("payment")
   const [appointments, setAppointments] = useState<any[]>([])
   const [loading, setLoading]           = useState(true)
   const [tab, setTab]                   = useState<"upcoming" | "past">("upcoming")
@@ -114,6 +118,20 @@ export default function MyAppointmentsPage() {
           <CalendarDays className="w-4 h-4" /> Запази нов час
         </Link>
       </div>
+
+      {/* Payment success banner */}
+      {paymentStatus === "success" && (
+        <div className="mb-6 bg-green-50 border border-green-200 rounded-2xl p-4 flex gap-3 items-start">
+          <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-bold text-green-800 text-sm">Плащането е успешно! Часът е потвърден.</p>
+            <p className="text-green-700 text-xs mt-1">
+              Ще получите имейл с потвърждение.{" "}
+              <span className="font-medium">Ако не го виждате, проверете папка Спам / Junk.</span>
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">
@@ -256,5 +274,13 @@ export default function MyAppointmentsPage() {
         />
       )}
     </div>
+  )
+}
+
+export default function MyAppointmentsPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-gray-400">Зарежда...</div>}>
+      <MyAppointmentsPageInner />
+    </Suspense>
   )
 }

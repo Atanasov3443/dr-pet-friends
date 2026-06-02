@@ -5,10 +5,15 @@ import { authenticate, AuthRequest } from "../../middleware/auth"
 const router = Router()
 
 router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
-  const userId  = req.user!.id
+  // Resolve actual DB user (handles session ID vs DB ID mismatch)
+  let dbUser = await db.user.findUnique({ where: { id: req.user!.id } })
+  if (!dbUser) dbUser = await db.user.findUnique({ where: { email: req.user!.email } })
+  if (!dbUser) { res.json([]); return }
+
+  const ownerId  = dbUser.id
   const upcoming = req.query.upcoming === "true"
 
-  const where: any = { ownerId: userId }
+  const where: any = { ownerId }
   if (upcoming) {
     where.date   = { gte: new Date() }
     where.status = { in: ["PENDING", "CONFIRMED"] }
