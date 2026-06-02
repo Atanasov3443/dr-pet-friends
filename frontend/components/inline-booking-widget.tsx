@@ -79,8 +79,7 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   function nextMonth() { if (calMonth === 11) { setCalYear(y => y+1); setCalMonth(0) } else setCalMonth(m => m+1) }
 
   const confirm = async () => {
-    if (!petName.trim()) { setError("Въведи името на любимеца"); return }
-    if (!date || !slot)  { setError("Избери дата и час"); return }
+    if (!date || !slot) { setError("Избери дата и час"); return }
     setSaving(true); setError("")
     const [h, m] = slot.split(":").map(Number)
     const dt = new Date(date); dt.setHours(h, m, 0, 0)
@@ -163,27 +162,8 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
           </div>
 
           <div>
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2 flex items-center gap-1.5"><PawPrint className="w-3.5 h-3.5" /> Ime на любимеца *</label>
-            <input value={petName} onChange={e => { setPetName(e.target.value); setError("") }}
-              placeholder="Рекс, Мица..."
-              className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#1083BD] ${error && !petName.trim() ? "border-red-300" : "border-gray-200"}`} />
-          </div>
-
-          <div>
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2">Вид животно</label>
-            <div className="grid grid-cols-3 gap-2">
-              {SPECIES.map(s => (
-                <button key={s.v} onClick={() => setPetSpecies(s.v)}
-                  className={`py-2 rounded-xl text-xs font-medium border transition-colors ${petSpecies === s.v ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]/40"}`}>
-                  {s.l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2">Бележки (симптоми, въпроси...)</label>
-            <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder="Опишете проблема..."
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2">Бележки — симптоми, въпроси</label>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={4} placeholder="Опишете симптомите или въпросите си..."
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#1083BD] resize-none" />
           </div>
 
