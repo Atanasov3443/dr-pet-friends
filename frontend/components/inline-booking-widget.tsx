@@ -303,10 +303,8 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     {slots.map(s => (
-                      <button key={s} onClick={() => setSlot(s)}
-                        className={`py-2.5 rounded-xl text-sm font-semibold border transition-colors ${
-                          slot === s ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]/30 hover:bg-blue-50/50"
-                        }`}>
+                      <button key={s} onClick={() => { setSlot(s); setStep("confirm") }}
+                        className="py-2.5 rounded-xl text-sm font-semibold border border-gray-200 text-gray-600 hover:border-[#1083BD] hover:bg-[#1083BD] hover:text-white transition-colors">
                         {s}
                       </button>
                     ))}
@@ -317,15 +315,6 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
           </div>
         </div>
 
-        {/* CTA */}
-        {date && slot && (
-          <div className="mt-5 pt-5 border-t border-gray-100">
-            <button onClick={() => setStep("confirm")}
-              className="w-full py-3.5 bg-[#EF3988] hover:bg-[#d42f77] text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-colors text-sm">
-              Продължи към потвърждение →
-            </button>
-          </div>
-        )}
       </div>
     </div>
   )
