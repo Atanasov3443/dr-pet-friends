@@ -22,8 +22,38 @@ export function EmergencyBanner() {
         <div className="container relative z-10 py-20">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
 
-            {/* Left — Content */}
-            <div>
+            {/* Left — Image */}
+            <div className="relative hidden lg:block order-1">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-[#1083BD]/10">
+                <img
+                  src="https://images.unsplash.com/photo-1548767797-d8c844163c4a?w=600&h=700&fit=crop&crop=center"
+                  alt="Ветеринар с котка"
+                  className="w-full h-[480px] object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1083BD]/20 to-transparent" />
+              </div>
+              <div className="absolute -bottom-4 -right-6 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3 border border-gray-100">
+                <div className="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center">
+                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                </div>
+                <div>
+                  <p className="font-black text-gray-900 text-sm">4.9 / 5.0</p>
+                  <p className="text-gray-400 text-xs">от 12 000+ отзива</p>
+                </div>
+              </div>
+              <div className="absolute -top-4 -left-4 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3 border border-gray-100">
+                <div className="w-10 h-10 rounded-xl bg-[#1083BD]/10 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-[#1083BD]" />
+                </div>
+                <div>
+                  <p className="font-black text-gray-900 text-sm">24/7 онлайн</p>
+                  <p className="text-gray-400 text-xs">запазване на час</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right — Content */}
+            <div className="order-2">
               <div className="inline-flex items-center gap-2 bg-[#1083BD]/10 border border-[#1083BD]/20 rounded-full px-4 py-1.5 mb-6">
                 <span className="w-2 h-2 rounded-full bg-[#1083BD] animate-pulse" />
                 <span className="text-[#1083BD] text-xs font-semibold uppercase tracking-widest">Без чакане по телефона</span>
@@ -81,41 +111,6 @@ export function EmergencyBanner() {
               </div>
             </div>
 
-            {/* Right — Image */}
-            <div className="relative hidden lg:block">
-              {/* Main image */}
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-[#1083BD]/10">
-                <img
-                  src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&h=700&fit=crop&crop=center"
-                  alt="Ветеринар с куче"
-                  className="w-full h-[480px] object-cover"
-                />
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1083BD]/20 to-transparent" />
-              </div>
-
-              {/* Floating card — rating */}
-              <div className="absolute -bottom-4 -left-6 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3 border border-gray-100">
-                <div className="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center">
-                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                </div>
-                <div>
-                  <p className="font-black text-gray-900 text-sm">4.9 / 5.0</p>
-                  <p className="text-gray-400 text-xs">от 12 000+ отзива</p>
-                </div>
-              </div>
-
-              {/* Floating card — online */}
-              <div className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3 border border-gray-100">
-                <div className="w-10 h-10 rounded-xl bg-[#1083BD]/10 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-[#1083BD]" />
-                </div>
-                <div>
-                  <p className="font-black text-gray-900 text-sm">24/7 онлайн</p>
-                  <p className="text-gray-400 text-xs">запазване на час</p>
-                </div>
-              </div>
-            </div>
 
           </div>
         </div>
