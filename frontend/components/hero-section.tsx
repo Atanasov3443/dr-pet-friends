@@ -179,7 +179,7 @@ export function HeroSection() {
             {/* Search box */}
             <div className="max-w-xl mx-auto lg:mx-0">
               <Link href="/search"
-                className="flex items-center justify-center gap-3 w-full py-5 bg-[#DAF467] hover:bg-[#c8e050] active:scale-95 text-[#191919] font-black text-xl rounded-2xl shadow-2xl shadow-black/20 transition-all">
+                className="flex items-center justify-center gap-3 w-full py-5 bg-[#DAF467] hover:bg-[#c8e050] active:scale-95 text-white font-black text-xl rounded-2xl shadow-2xl shadow-black/20 transition-all">
                 <Search className="w-6 h-6" /> Намери ветеринар
               </Link>
             </div>
