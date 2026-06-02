@@ -51,8 +51,8 @@ export function ForVetsSection() {
 
 
       <div className="absolute top-0 left-0 w-full leading-none pointer-events-none z-20">
-        <svg viewBox="0 0 1440 50" fill="#fdf2f8" preserveAspectRatio="none" className="w-full h-12 block">
-          <polygon points="0,0 1440,0 1440,50" />
+        <svg viewBox="0 0 1440 60" fill="#fdf2f8" preserveAspectRatio="none" className="w-full h-16 block">
+          <polygon points="0,0 1440,0 1440,60 0,60" />
         </svg>
       </div>
 
