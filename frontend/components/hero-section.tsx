@@ -176,19 +176,6 @@ export function HeroSection() {
               </p>
             </div>
 
-            {/* Trust badges */}
-            <div className="flex gap-3 justify-center lg:justify-start mb-6">
-              {[
-                { emoji: "🆓", text: "Безплатно" },
-                { emoji: "❤️", text: "За всеки любимец" },
-                { emoji: "📅", text: "24/7 онлайн" },
-              ].map((b) => (
-                <span key={b.text} className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 rounded-full px-3 py-1 text-white/80 text-xs font-medium whitespace-nowrap">
-                  {b.emoji} {b.text}
-                </span>
-              ))}
-            </div>
-
             {/* Search box */}
             <div className="max-w-xl mx-auto lg:mx-0">
               <div className="bg-white rounded-2xl p-3 shadow-2xl">
