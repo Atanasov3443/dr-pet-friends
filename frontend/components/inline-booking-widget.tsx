@@ -153,14 +153,6 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
         </div>
 
         <div className="p-6 space-y-5">
-          {/* Summary pill */}
-          <div className="bg-gray-50 rounded-xl p-4 grid grid-cols-2 gap-3 text-sm">
-            <div><span className="text-gray-400 text-xs block mb-0.5">Тип</span><span className="font-medium">{consultType === "ONLINE" ? "🖥️ Онлайн" : "🏥 На място"}</span></div>
-            <div><span className="text-gray-400 text-xs block mb-0.5">Услуга</span><span className="font-medium">{service?.name ?? "Общ преглед"}</span></div>
-            <div><span className="text-gray-400 text-xs block mb-0.5">Дата и час</span><span className="font-medium">{date?.getDate()} {date && MONTHS_SHORT[date.getMonth()]} · {slot}</span></div>
-            {service?.price && <div><span className="text-gray-400 text-xs block mb-0.5">Цена</span><span className="font-bold text-[#1083BD]">{service.price} лв.</span></div>}
-          </div>
-
           <div>
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2">Бележки — симптоми, въпроси</label>
             <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={4} placeholder="Опишете симптомите или въпросите си..."
