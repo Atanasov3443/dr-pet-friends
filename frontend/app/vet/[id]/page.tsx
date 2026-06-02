@@ -197,7 +197,7 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
             </div>
 
             {/* Booking widget — 2 cols */}
-            <div className="lg:col-span-2 lg:order-1">
+            <div className="lg:col-span-2 lg:order-1 flex flex-col">
               <InlineBookingWidget
                 vetId={vet.id}
                 vetName={vet.displayName}

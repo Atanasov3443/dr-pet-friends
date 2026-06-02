@@ -180,7 +180,7 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col h-full min-h-[520px]">
       {/* Header */}
       <div className="bg-[#1083BD] px-5 py-4">
         <div className="flex items-center gap-2 mb-1">
@@ -203,31 +203,31 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="p-6 flex-1 flex flex-col">
 
         {/* ── Step: Type ── */}
         {step === "type" && (
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-4">Избери тип консултация</p>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col flex-1 justify-center">
+            <p className="text-sm font-bold text-gray-500 mb-6 text-center">Избери тип консултация</p>
+            <div className="grid grid-cols-2 gap-4">
               <button onClick={() => { setConsultType("IN_CLINIC"); setStep(services.length > 0 ? "service" : "date") }}
-                className="flex flex-col items-center gap-3 p-5 border-2 border-gray-100 rounded-2xl hover:border-[#1083BD] hover:bg-blue-50/30 transition-all group">
-                <div className="w-12 h-12 rounded-xl bg-[#1083BD]/10 group-hover:bg-[#1083BD]/20 flex items-center justify-center transition-colors">
-                  <MapPin className="w-6 h-6 text-[#1083BD]" />
+                className="flex flex-col items-center gap-4 p-8 border-2 border-gray-100 rounded-2xl hover:border-[#1083BD] hover:bg-blue-50/30 transition-all group">
+                <div className="w-16 h-16 rounded-2xl bg-[#1083BD]/10 group-hover:bg-[#1083BD]/20 flex items-center justify-center transition-colors">
+                  <MapPin className="w-8 h-8 text-[#1083BD]" />
                 </div>
                 <div className="text-center">
-                  <p className="font-bold text-gray-900 text-sm">На място</p>
-                  <p className="text-gray-400 text-xs mt-0.5">Преглед в клиника</p>
+                  <p className="font-bold text-gray-900">На място</p>
+                  <p className="text-gray-400 text-sm mt-1">Преглед в клиника</p>
                 </div>
               </button>
               <button onClick={() => { setConsultType("ONLINE"); setStep(services.length > 0 ? "service" : "date") }}
-                className="flex flex-col items-center gap-3 p-5 border-2 border-gray-100 rounded-2xl hover:border-[#EF3988] hover:bg-pink-50/30 transition-all group">
-                <div className="w-12 h-12 rounded-xl bg-[#EF3988]/10 group-hover:bg-[#EF3988]/20 flex items-center justify-center transition-colors">
-                  <Video className="w-6 h-6 text-[#EF3988]" />
+                className="flex flex-col items-center gap-4 p-8 border-2 border-gray-100 rounded-2xl hover:border-[#EF3988] hover:bg-pink-50/30 transition-all group">
+                <div className="w-16 h-16 rounded-2xl bg-[#EF3988]/10 group-hover:bg-[#EF3988]/20 flex items-center justify-center transition-colors">
+                  <Video className="w-8 h-8 text-[#EF3988]" />
                 </div>
                 <div className="text-center">
-                  <p className="font-bold text-gray-900 text-sm">Онлайн</p>
-                  <p className="text-gray-400 text-xs mt-0.5">Видео консултация</p>
+                  <p className="font-bold text-gray-900">Онлайн</p>
+                  <p className="text-gray-400 text-sm mt-1">Видео консултация</p>
                 </div>
               </button>
             </div>
