@@ -56,7 +56,7 @@ router.post("/checkout", authenticate, async (req: AuthRequest, res: Response) =
       line_items: [{
         quantity: 1,
         price_data: {
-          currency:     "bgn",
+          currency:     "eur",
           unit_amount:  Math.round(amount * 100),
           product_data: {
             name:        `${appointment.service?.name ?? "Преглед"} — ${appointment.vet.displayName}`,

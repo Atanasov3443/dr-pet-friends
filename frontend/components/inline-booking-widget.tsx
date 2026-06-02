@@ -201,24 +201,25 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
       <div className="p-6">
         {/* Service selector */}
         {services.length > 0 && (
-          <div className="mb-5">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1.5">
-              <Stethoscope className="w-3.5 h-3.5" /> Услуга
-              <span className="text-red-400 font-bold ml-1">*</span>
-              {!service && <span className="text-red-400 text-xs font-normal ml-1">— изберете услуга</span>}
+          <div className={`mb-5 rounded-2xl p-4 border-2 transition-all ${!service ? "border-[#EF3988] bg-pink-50/40" : "border-gray-100 bg-white"}`}>
+            <p className="text-xs font-bold uppercase tracking-wide mb-3 flex items-center gap-1.5 ${!service ? 'text-[#EF3988]' : 'text-gray-400'}">
+              <Stethoscope className={`w-3.5 h-3.5 ${!service ? "text-[#EF3988]" : "text-gray-400"}`} />
+              <span className={!service ? "text-[#EF3988]" : "text-gray-400"}>
+                {!service ? "👆 Изберете услуга за да продължите" : "✓ Избрана услуга"}
+              </span>
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-1 gap-2">
               {services.map(s => (
                 <button key={s.id} onClick={() => setService(s)}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all ${
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all ${
                     service?.id === s.id
-                      ? "bg-[#1083BD] text-white border-[#1083BD] shadow-md"
-                      : "border-gray-300 text-gray-700 hover:border-[#1083BD] hover:text-[#1083BD]"
+                      ? "bg-[#1083BD] text-white border-[#1083BD] shadow-sm"
+                      : "border-gray-200 text-gray-700 hover:border-[#1083BD] hover:bg-blue-50/50"
                   }`}>
-                  {s.name} · {s.price} лв.
+                  <span>{s.name}</span>
+                  <span className={service?.id === s.id ? "text-white/80" : "text-[#1083BD] font-bold"}>{s.price} лв.</span>
                 </button>
               ))}
-              {services.length === 0 && <span className="text-xs text-gray-400">Няма добавени услуги</span>}
             </div>
           </div>
         )}
