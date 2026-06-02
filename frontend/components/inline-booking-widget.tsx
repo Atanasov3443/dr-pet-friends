@@ -210,18 +210,22 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
         </div>
 
         {/* Type toggle */}
-        <div className="flex gap-2">
+        <div className="flex gap-3 mt-1">
           <button onClick={() => setConsultType("IN_CLINIC")}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
-              consultType === "IN_CLINIC" ? "bg-white text-[#1083BD]" : "bg-white/20 text-white hover:bg-white/30"
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+              consultType === "IN_CLINIC"
+                ? "bg-white text-[#1083BD] shadow-md"
+                : "bg-white/15 text-white/80 hover:bg-white/25 border border-white/20"
             }`}>
-            <MapPin className="w-3.5 h-3.5" /> На място
+            <MapPin className="w-4 h-4" /> На място
           </button>
           <button onClick={() => setConsultType("ONLINE")}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
-              consultType === "ONLINE" ? "bg-white text-[#EF3988]" : "bg-white/20 text-white hover:bg-white/30"
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+              consultType === "ONLINE"
+                ? "bg-white text-[#EF3988] shadow-md"
+                : "bg-white/15 text-white/80 hover:bg-white/25 border border-white/20"
             }`}>
-            <Video className="w-3.5 h-3.5" /> Онлайн
+            <Video className="w-4 h-4" /> Онлайн
           </button>
         </div>
       </div>
