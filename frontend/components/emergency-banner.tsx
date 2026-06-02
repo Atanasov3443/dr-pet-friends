@@ -15,7 +15,7 @@ export function EmergencyBanner() {
     <section className="relative py-24 bg-gray-50 overflow-hidden">
       {/* Top diagonal */}
       <div className="absolute top-0 left-0 w-full leading-none pointer-events-none z-10">
-        <svg viewBox="0 0 1440 60" fill="#EF3988" preserveAspectRatio="none" className="w-full h-16 block">
+        <svg viewBox="0 0 1440 60" fill="#fdf2f8" preserveAspectRatio="none" className="w-full h-16 block">
           <polygon points="0,0 1440,0 1440,60" />
         </svg>
       </div>
