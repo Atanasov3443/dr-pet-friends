@@ -29,14 +29,24 @@ function emailWrapper(content: string, accentColor = "#1083BD") {
 
         <!-- Header -->
         <tr><td style="background:${accentColor};border-radius:16px 16px 0 0;padding:32px;text-align:center">
-          <div style="margin-bottom:10px">
-        <svg width="40" height="40" viewBox="0 0 100 100" fill="white" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="28" cy="22" r="12"/>
-          <circle cx="50" cy="14" r="12"/>
-          <circle cx="72" cy="22" r="12"/>
-          <ellipse cx="13" cy="43" rx="10" ry="13" transform="rotate(-20 13 43)"/>
-          <ellipse cx="87" cy="43" rx="10" ry="13" transform="rotate(20 87 43)"/>
-          <path d="M18 63 C8 83 20 99 36 99 C44 99 48 93 50 91 C52 93 56 99 64 99 C80 99 92 83 82 63 C74 47 62 41 50 41 C38 41 26 47 18 63Z"/>
+          <div style="margin-bottom:10px;display:inline-flex;gap:6px;align-items:flex-end">
+        <!-- Paw print 1 -->
+        <svg width="28" height="28" viewBox="0 0 50 50" fill="white" xmlns="http://www.w3.org/2000/svg" style="opacity:0.9">
+          <ellipse cx="10" cy="14" rx="5" ry="6" transform="rotate(-15 10 14)"/>
+          <ellipse cx="22" cy="9"  rx="5" ry="6"/>
+          <ellipse cx="34" cy="11" rx="5" ry="6" transform="rotate(15 34 11)"/>
+          <ellipse cx="24" cy="34" rx="12" ry="10"/>
+          <ellipse cx="10" cy="28" rx="6"  ry="7"  transform="rotate(-20 10 28)"/>
+          <ellipse cx="38" cy="28" rx="6"  ry="7"  transform="rotate(20 38 28)"/>
+        </svg>
+        <!-- Paw print 2 (slightly offset) -->
+        <svg width="22" height="22" viewBox="0 0 50 50" fill="white" xmlns="http://www.w3.org/2000/svg" style="opacity:0.7;margin-bottom:4px">
+          <ellipse cx="10" cy="14" rx="5" ry="6" transform="rotate(-15 10 14)"/>
+          <ellipse cx="22" cy="9"  rx="5" ry="6"/>
+          <ellipse cx="34" cy="11" rx="5" ry="6" transform="rotate(15 34 11)"/>
+          <ellipse cx="24" cy="34" rx="12" ry="10"/>
+          <ellipse cx="10" cy="28" rx="6"  ry="7"  transform="rotate(-20 10 28)"/>
+          <ellipse cx="38" cy="28" rx="6"  ry="7"  transform="rotate(20 38 28)"/>
         </svg>
       </div>
           <div style="color:white;font-size:24px;font-weight:900;letter-spacing:-0.5px">Dr. Pet Friend</div>
