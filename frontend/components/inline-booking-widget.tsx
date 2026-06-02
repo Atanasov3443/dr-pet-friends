@@ -1,23 +1,20 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { ChevronLeft, ChevronRight, Check, Clock, Stethoscope, PawPrint, CalendarCheck, Video, MapPin } from "lucide-react"
+import { ChevronLeft, ChevronRight, Check, Clock, Stethoscope, PawPrint, CalendarCheck, Video, MapPin, CreditCard } from "lucide-react"
 import { apiUrl } from "@/lib/api"
 
 type Service  = { id: string; name: string; price: number; duration: number }
 type Schedule = { dayOfWeek: number; startTime: string; endTime: string; isActive: boolean }
 
-const MONTHS_BG = ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"]
+const MONTHS_BG    = ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"]
 const MONTHS_SHORT = ["Яну","Фев","Мар","Апр","Май","Юни","Юли","Авг","Сеп","Окт","Ное","Дек"]
-const DAYS_BG = ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"]
-const SPECIES = [
-  { v: "DOG",    l: "🐕 Куче" },
-  { v: "CAT",    l: "🐈 Котка" },
-  { v: "BIRD",   l: "🦜 Птица" },
-  { v: "RABBIT", l: "🐇 Заек" },
-  { v: "EXOTIC", l: "🦎 Екзотично" },
-  { v: "OTHER",  l: "🐾 Друго" },
+const DAYS_BG      = ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"]
+const SPECIES      = [
+  { v: "DOG",    l: "🐕 Куче" }, { v: "CAT",    l: "🐈 Котка" },
+  { v: "BIRD",   l: "🦜 Птица" }, { v: "RABBIT", l: "🐇 Заек" },
+  { v: "EXOTIC", l: "🦎 Екзотично" }, { v: "OTHER",  l: "🐾 Друго" },
 ]
 
 function genSlots(start: string, end: string, duration: number): string[] {
@@ -35,10 +32,7 @@ function genSlots(start: string, end: string, duration: number): string[] {
   return slots
 }
 
-// Returns Monday-first day index (0=Mon … 6=Sun)
-function mondayFirst(d: Date) {
-  return (d.getDay() + 6) % 7
-}
+function mondayFirst(d: Date) { return (d.getDay() + 6) % 7 }
 
 function buildCalendar(year: number, month: number) {
   const firstDay  = new Date(year, month, 1)
@@ -55,75 +49,54 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   vetId: string; vetName: string; services: Service[]; schedule: Schedule[]
 }) {
   const router = useRouter()
-
   const today  = useMemo(() => { const d = new Date(); d.setHours(0,0,0,0); return d }, [])
+
   const [calYear,  setCalYear]  = useState(today.getFullYear())
   const [calMonth, setCalMonth] = useState(today.getMonth())
 
-  const [consultType, setConsultType] = useState<"IN_CLINIC" | "ONLINE" | null>(null)
-  const [service,    setService]    = useState<Service | null>(null)
-  const [date,       setDate]       = useState<Date | null>(null)
-  const [slot,       setSlot]       = useState("")
-  const [petName,    setPetName]    = useState("")
-  const [petSpecies, setPetSpecies] = useState("DOG")
-  const [notes,      setNotes]      = useState("")
-  const [step,       setStep]       = useState<"type" | "service" | "date" | "confirm" | "done">("type" as "type" | "service" | "date" | "confirm" | "done")
-  const [saving,       setSaving]       = useState(false)
-  const [error,        setError]        = useState("")
-  const [meetLink,     setMeetLink]     = useState("")
-  const [appointmentId, setAppointmentId] = useState("")
+  const [consultType, setConsultType] = useState<"IN_CLINIC" | "ONLINE">("IN_CLINIC")
+  const [service,     setService]     = useState<Service | null>(null)
+  const [date,        setDate]        = useState<Date | null>(null)
+  const [slot,        setSlot]        = useState("")
+  const [petName,     setPetName]     = useState("")
+  const [petSpecies,  setPetSpecies]  = useState("DOG")
+  const [notes,       setNotes]       = useState("")
+  const [step,        setStep]        = useState<"select" | "confirm" | "done">("select")
+  const [saving,      setSaving]      = useState(false)
+  const [error,       setError]       = useState("")
+  const [appointmentId,    setAppointmentId]    = useState("")
   const [appointmentPrice, setAppointmentPrice] = useState<number | null>(null)
-  const [payLoading,   setPayLoading]   = useState(false)
+  const [payLoading,  setPayLoading]  = useState(false)
 
-  const activeDays   = useMemo(() => new Set(schedule.filter(s => s.isActive).map(s => s.dayOfWeek)), [schedule])
-  const calCells     = useMemo(() => buildCalendar(calYear, calMonth), [calYear, calMonth])
-  const duration     = service?.duration ?? 30
-  const daySchedule  = date ? schedule.filter(s => s.isActive && s.dayOfWeek === date.getDay()) : []
-  const slots        = useMemo(() => daySchedule.flatMap(s => genSlots(s.startTime, s.endTime, duration)), [date, duration])
+  const activeDays  = useMemo(() => new Set(schedule.filter(s => s.isActive).map(s => s.dayOfWeek)), [schedule])
+  const calCells    = useMemo(() => buildCalendar(calYear, calMonth), [calYear, calMonth])
+  const duration    = service?.duration ?? 30
+  const daySchedule = date ? schedule.filter(s => s.isActive && s.dayOfWeek === date.getDay()) : []
+  const slots       = useMemo(() => daySchedule.flatMap(s => genSlots(s.startTime, s.endTime, duration)), [date, duration])
 
-  function isAvailable(d: Date) {
-    if (d <= today) return false
-    return activeDays.has(d.getDay())
-  }
-
-  function prevMonth() {
-    if (calMonth === 0) { setCalYear(y => y - 1); setCalMonth(11) }
-    else setCalMonth(m => m - 1)
-  }
-  function nextMonth() {
-    if (calMonth === 11) { setCalYear(y => y + 1); setCalMonth(0) }
-    else setCalMonth(m => m + 1)
-  }
+  function isAvailable(d: Date) { return d > today && activeDays.has(d.getDay()) }
+  function prevMonth() { if (calMonth === 0) { setCalYear(y => y-1); setCalMonth(11) } else setCalMonth(m => m-1) }
+  function nextMonth() { if (calMonth === 11) { setCalYear(y => y+1); setCalMonth(0) } else setCalMonth(m => m+1) }
 
   const confirm = async () => {
     if (!petName.trim()) { setError("Въведи името на любимеца"); return }
-    if (!date || !slot) return
+    if (!date || !slot)  { setError("Избери дата и час"); return }
     setSaving(true); setError("")
     const [h, m] = slot.split(":").map(Number)
     const dt = new Date(date); dt.setHours(h, m, 0, 0)
     try {
       const res = await fetch(apiUrl("/api/appointments"), {
-        method: "POST",
+        method: "POST", credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          vetId, serviceId: service?.id, date: dt.toISOString(),
-          petName: petName.trim(), petSpecies, notes,
-          consultationType: consultType ?? "IN_CLINIC",
-        }),
-        credentials: "include",
+        body: JSON.stringify({ vetId, serviceId: service?.id, date: dt.toISOString(), petName: petName.trim(), petSpecies, notes, consultationType: consultType }),
       })
       if (res.ok) {
         const data = await res.json()
-        if (data.meetLink) setMeetLink(data.meetLink)
         setAppointmentId(data.id ?? "")
         setAppointmentPrice(data.price ?? service?.price ?? null)
         setStep("done")
-      }
-      else if (res.status === 401) { router.push("/login") }
-      else {
-        const data = await res.json().catch(() => ({}))
-        setError(data.error ?? "Грешка при запазване.")
-      }
+      } else if (res.status === 401) { router.push("/login") }
+      else { const d = await res.json().catch(() => ({})); setError(d.error ?? "Грешка при запазване.") }
     } catch { setError("Сървърна грешка.") }
     finally { setSaving(false) }
   }
@@ -132,11 +105,7 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
     if (!appointmentId) return
     setPayLoading(true)
     try {
-      const res  = await fetch(apiUrl("/api/stripe/checkout"), {
-        method: "POST", credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ appointmentId }),
-      })
+      const res  = await fetch(apiUrl("/api/stripe/checkout"), { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ appointmentId }) })
       const data = await res.json()
       if (data.url) window.location.href = data.url
     } finally { setPayLoading(false) }
@@ -145,301 +114,214 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   // ── Done ──────────────────────────────────────────────────────────────────
   if (step === "done") {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center">
-        <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
-          <Check className="w-7 h-7 text-green-600" />
+      <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center flex flex-col items-center gap-4 min-h-[400px] justify-center">
+        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+          <Check className="w-8 h-8 text-green-600" />
         </div>
-        <h3 className="font-black text-gray-900 text-lg mb-1">Часът е запазен!</h3>
-        <p className="text-gray-500 text-sm mb-1">
-          {date && `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]} · ${slot}`}
-        </p>
-        {service && <p className="text-gray-400 text-xs mb-1">{service.name}</p>}
-        <p className="text-xs text-gray-400 mb-5">Ще получите имейл с потвърждение.</p>
+        <div>
+          <h3 className="font-black text-gray-900 text-xl mb-1">Часът е запазен!</h3>
+          <p className="text-gray-500 text-sm">{date && `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]} · ${slot}`}</p>
+          {service && <p className="text-gray-400 text-xs mt-0.5">{service.name}</p>}
+          <p className="text-xs text-gray-400 mt-2">Ще получите имейл с потвърждение.</p>
+        </div>
+        {appointmentPrice && appointmentPrice > 0 && (
+          <button onClick={startPayment} disabled={payLoading}
+            className="flex items-center gap-2 px-8 py-3 bg-[#10B83D] hover:bg-[#0da033] disabled:opacity-60 text-white rounded-xl font-bold transition-colors">
+            <CreditCard className="w-5 h-5" />
+            {payLoading ? "Зарежда..." : `Плати ${appointmentPrice} лв. онлайн`}
+          </button>
+        )}
+        <button onClick={() => router.push("/my/appointments")}
+          className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+          Виж моите часове →
+        </button>
+      </div>
+    )
+  }
 
-        <div className="space-y-2">
-          {appointmentPrice && appointmentPrice > 0 && (
-            <>
-              <button onClick={startPayment} disabled={payLoading}
-                className="flex items-center justify-center gap-2 w-full py-3 bg-[#10B83D] hover:bg-[#0da033] disabled:opacity-60 text-white rounded-xl text-sm font-bold transition-colors">
-                💳 {payLoading ? "Зарежда..." : `Плати ${appointmentPrice} лв. онлайн`}
-              </button>
-              {consultType === "ONLINE" && (
-                <p className="text-xs text-center text-gray-400">
-                  Линкът за видео консултацията ще бъде изпратен по имейл след плащане.
-                </p>
-              )}
-            </>
-          )}
-          <button onClick={() => router.push("/my/appointments")}
-            className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-bold transition-colors">
-            Виж моите часове
+  // ── Confirm ────────────────────────────────────────────────────────────────
+  if (step === "confirm") {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-[#1083BD] px-6 py-4 flex items-center gap-3">
+          <button onClick={() => setStep("select")} className="w-8 h-8 rounded-lg bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+            <ChevronLeft className="w-4 h-4 text-white" />
+          </button>
+          <div>
+            <h3 className="text-white font-bold text-sm">Потвърди часа</h3>
+            <p className="text-white/70 text-xs">{vetName} · {date?.getDate()} {date && MONTHS_SHORT[date.getMonth()]} · {slot}</p>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-5">
+          {/* Summary pill */}
+          <div className="bg-gray-50 rounded-xl p-4 grid grid-cols-2 gap-3 text-sm">
+            <div><span className="text-gray-400 text-xs block mb-0.5">Тип</span><span className="font-medium">{consultType === "ONLINE" ? "🖥️ Онлайн" : "🏥 На място"}</span></div>
+            <div><span className="text-gray-400 text-xs block mb-0.5">Услуга</span><span className="font-medium">{service?.name ?? "Общ преглед"}</span></div>
+            <div><span className="text-gray-400 text-xs block mb-0.5">Дата и час</span><span className="font-medium">{date?.getDate()} {date && MONTHS_SHORT[date.getMonth()]} · {slot}</span></div>
+            {service?.price && <div><span className="text-gray-400 text-xs block mb-0.5">Цена</span><span className="font-bold text-[#1083BD]">{service.price} лв.</span></div>}
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2 flex items-center gap-1.5"><PawPrint className="w-3.5 h-3.5" /> Ime на любимеца *</label>
+            <input value={petName} onChange={e => { setPetName(e.target.value); setError("") }}
+              placeholder="Рекс, Мица..."
+              className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#1083BD] ${error && !petName.trim() ? "border-red-300" : "border-gray-200"}`} />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2">Вид животно</label>
+            <div className="grid grid-cols-3 gap-2">
+              {SPECIES.map(s => (
+                <button key={s.v} onClick={() => setPetSpecies(s.v)}
+                  className={`py-2 rounded-xl text-xs font-medium border transition-colors ${petSpecies === s.v ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]/40"}`}>
+                  {s.l}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2">Бележки (симптоми, въпроси...)</label>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder="Опишете проблема..."
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#1083BD] resize-none" />
+          </div>
+
+          {error && <p className="text-xs text-red-600 bg-red-50 rounded-xl px-3 py-2">{error}</p>}
+
+          <button onClick={confirm} disabled={saving}
+            className="w-full py-3.5 bg-[#1083BD] hover:bg-[#0d6fa0] text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-60 transition-colors">
+            <Check className="w-4 h-4" /> {saving ? "Запазва..." : "Потвърди часа"}
           </button>
         </div>
       </div>
     )
   }
 
+  // ── Select (main view) ─────────────────────────────────────────────────────
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col h-full min-h-[520px]">
+    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
       {/* Header */}
-      <div className="bg-[#1083BD] px-5 py-4">
-        <div className="flex items-center gap-2 mb-1">
+      <div className="bg-[#1083BD] px-6 py-4">
+        <div className="flex items-center gap-2 mb-3">
           <CalendarCheck className="w-4 h-4 text-white" />
-          <h3 className="text-white font-bold text-sm">Запази час</h3>
+          <h3 className="text-white font-bold">Запази час</h3>
+          <span className="text-white/60 text-sm ml-1">· {vetName}</span>
         </div>
-        <p className="text-white/70 text-xs">{vetName}</p>
 
-        {/* Progress dots */}
-        <div className="flex gap-1.5 mt-3">
-          {(services.length > 0 ? ["type","service","date","confirm"] : ["type","date","confirm"]).map((s, i, arr) => {
-            const s2: string = step
-            const currentStep: string = s2 === "done" ? "confirm" : s2
-            const currentIdx  = arr.indexOf(currentStep)
-            return (
-            <div key={s} className={`flex-1 h-1 rounded-full transition-colors ${
-              i <= currentIdx ? "bg-white" : "bg-white/25"
-            }`} />
-          )})}
+        {/* Type toggle */}
+        <div className="flex gap-2">
+          <button onClick={() => setConsultType("IN_CLINIC")}
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+              consultType === "IN_CLINIC" ? "bg-white text-[#1083BD]" : "bg-white/20 text-white hover:bg-white/30"
+            }`}>
+            <MapPin className="w-3.5 h-3.5" /> На място
+          </button>
+          <button onClick={() => setConsultType("ONLINE")}
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+              consultType === "ONLINE" ? "bg-white text-[#EF3988]" : "bg-white/20 text-white hover:bg-white/30"
+            }`}>
+            <Video className="w-3.5 h-3.5" /> Онлайн
+          </button>
         </div>
       </div>
 
-      <div className="p-6 flex-1 flex flex-col">
-
-        {/* ── Step: Type ── */}
-        {step === "type" && (
-          <div className="flex flex-col flex-1 justify-center">
-            <p className="text-sm font-bold text-gray-500 mb-6 text-center">Избери тип консултация</p>
-            <div className="grid grid-cols-2 gap-4">
-              <button onClick={() => { setConsultType("IN_CLINIC"); setStep(services.length > 0 ? "service" : "date") }}
-                className="flex flex-col items-center gap-4 p-8 border-2 border-gray-100 rounded-2xl hover:border-[#1083BD] hover:bg-blue-50/30 transition-all group">
-                <div className="w-16 h-16 rounded-2xl bg-[#1083BD]/10 group-hover:bg-[#1083BD]/20 flex items-center justify-center transition-colors">
-                  <MapPin className="w-8 h-8 text-[#1083BD]" />
-                </div>
-                <div className="text-center">
-                  <p className="font-bold text-gray-900">На място</p>
-                  <p className="text-gray-400 text-sm mt-1">Преглед в клиника</p>
-                </div>
-              </button>
-              <button onClick={() => { setConsultType("ONLINE"); setStep(services.length > 0 ? "service" : "date") }}
-                className="flex flex-col items-center gap-4 p-8 border-2 border-gray-100 rounded-2xl hover:border-[#EF3988] hover:bg-pink-50/30 transition-all group">
-                <div className="w-16 h-16 rounded-2xl bg-[#EF3988]/10 group-hover:bg-[#EF3988]/20 flex items-center justify-center transition-colors">
-                  <Video className="w-8 h-8 text-[#EF3988]" />
-                </div>
-                <div className="text-center">
-                  <p className="font-bold text-gray-900">Онлайн</p>
-                  <p className="text-gray-400 text-sm mt-1">Видео консултация</p>
-                </div>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ── Step: Service ── */}
-        {step === "service" && (
-          <div>
-            {consultType && (
-              <div className={`flex items-center gap-2 mb-3 rounded-xl px-3 py-2 text-xs font-semibold ${consultType === "ONLINE" ? "bg-pink-50 text-[#EF3988]" : "bg-blue-50 text-[#1083BD]"}`}>
-                {consultType === "ONLINE" ? <Video className="w-3.5 h-3.5" /> : <MapPin className="w-3.5 h-3.5" />}
-                {consultType === "ONLINE" ? "Онлайн консултация" : "Преглед на място"}
-                <button onClick={() => setStep("type")} className="ml-auto text-xs opacity-60 hover:opacity-100">Промени</button>
-              </div>
-            )}
-            <p className="text-xs font-bold uppercase tracking-wide text-gray-400 flex items-center gap-1.5 mb-3">
-              <Stethoscope className="w-3.5 h-3.5" /> Избери услуга
-            </p>
-            <div className="space-y-2">
-              <button onClick={() => { setService(null); setStep("date") }}
-                className="w-full text-left p-3 rounded-xl border border-gray-200 hover:border-[#1083BD]/40 transition-colors">
-                <p className="font-semibold text-sm text-gray-900">Общ преглед</p>
-                <p className="text-xs text-gray-400">30 мин</p>
+      <div className="p-6">
+        {/* Service selector */}
+        {services.length > 0 && (
+          <div className="mb-5">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1.5"><Stethoscope className="w-3.5 h-3.5" /> Услуга</p>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => setService(null)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${!service ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]/40"}`}>
+                Общ преглед
               </button>
               {services.map(s => (
-                <button key={s.id} onClick={() => { setService(s); setStep("date") }}
-                  className="w-full text-left p-3 rounded-xl border border-gray-200 hover:border-[#1083BD]/40 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-sm text-gray-900">{s.name}</p>
-                      <p className="text-xs text-gray-400">{s.duration} мин</p>
-                    </div>
-                    <span className="text-[#1083BD] font-bold text-sm shrink-0">{s.price} лв.</span>
-                  </div>
+                <button key={s.id} onClick={() => setService(s)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${service?.id === s.id ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]/40"}`}>
+                  {s.name} · {s.price} лв.
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        {/* ── Step: Date ── */}
-        {step === "date" && (
+        {/* Calendar + Slots side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Calendar */}
           <div>
-            {/* Selected service pill */}
-            {service && (
-              <div className="flex items-center gap-2 mb-3 bg-blue-50 rounded-xl px-3 py-2">
-                <Stethoscope className="w-3.5 h-3.5 text-[#1083BD]" />
-                <span className="text-xs font-semibold text-[#1083BD]">{service.name}</span>
-                <button onClick={() => setStep("service")} className="ml-auto text-xs text-gray-400 hover:text-gray-600">Промени</button>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Calendar */}
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <button onClick={prevMonth} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
-                    <ChevronLeft className="w-4 h-4 text-gray-500" />
+            <div className="flex items-center justify-between mb-3">
+              <button onClick={prevMonth} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
+                <ChevronLeft className="w-4 h-4 text-gray-500" />
+              </button>
+              <span className="text-sm font-bold text-gray-900">{MONTHS_BG[calMonth]} {calYear}</span>
+              <button onClick={nextMonth} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
+                <ChevronRight className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            <div className="grid grid-cols-7 mb-1">
+              {DAYS_BG.map(d => <div key={d} className="text-center text-[10px] font-bold text-gray-400 py-1">{d}</div>)}
+            </div>
+            <div className="grid grid-cols-7 gap-0.5">
+              {calCells.map((d, i) => {
+                if (!d) return <div key={i} />
+                const avail    = isAvailable(d)
+                const selected = date?.toDateString() === d.toDateString()
+                const isToday  = d.toDateString() === today.toDateString()
+                return (
+                  <button key={i} disabled={!avail} onClick={() => { setDate(d); setSlot("") }}
+                    className={`h-9 w-full rounded-lg text-sm font-semibold transition-colors
+                      ${selected ? "bg-[#1083BD] text-white"
+                        : avail ? "hover:bg-[#1083BD]/10 text-gray-900"
+                        : "text-gray-300 cursor-not-allowed"}
+                      ${isToday && !selected ? "ring-1 ring-[#1083BD]/40" : ""}`}>
+                    {d.getDate()}
                   </button>
-                  <span className="text-sm font-bold text-gray-900">
-                    {MONTHS_BG[calMonth]} {calYear}
-                  </span>
-                  <button onClick={nextMonth} className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
-                    <ChevronRight className="w-4 h-4 text-gray-500" />
-                  </button>
-                </div>
-                <div className="grid grid-cols-7 mb-1">
-                  {DAYS_BG.map(d => (
-                    <div key={d} className="text-center text-[10px] font-bold text-gray-400 py-1">{d}</div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-7 gap-0.5">
-                  {calCells.map((d, i) => {
-                    if (!d) return <div key={i} />
-                    const avail    = isAvailable(d)
-                    const selected = date?.toDateString() === d.toDateString()
-                    const isToday  = d.toDateString() === today.toDateString()
-                    return (
-                      <button key={i} disabled={!avail} onClick={() => { setDate(d); setSlot("") }}
-                        className={`h-9 w-full rounded-lg text-sm font-semibold transition-colors
-                          ${selected ? "bg-[#1083BD] text-white"
-                            : avail ? "hover:bg-[#1083BD]/10 text-gray-900"
-                            : "text-gray-300 cursor-not-allowed"}
-                          ${isToday && !selected ? "ring-1 ring-[#1083BD]/40" : ""}`}>
-                        {d.getDate()}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
+                )
+              })}
+            </div>
+          </div>
 
-              {/* Time slots — appear on the right */}
-              <div className="flex flex-col">
-                {!date ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center text-gray-300 py-8 gap-2">
-                    <Clock className="w-10 h-10 opacity-30" />
-                    <p className="text-sm">Изберете дата от календара</p>
-                  </div>
+          {/* Time slots */}
+          <div className="flex flex-col">
+            {!date ? (
+              <div className="flex flex-col items-center justify-center h-full text-center gap-3 py-8">
+                <Clock className="w-10 h-10 text-gray-200" />
+                <p className="text-sm text-gray-300">Изберете дата</p>
+              </div>
+            ) : (
+              <>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5" /> {date.getDate()} {MONTHS_SHORT[date.getMonth()]}
+                </p>
+                {slots.length === 0 ? (
+                  <p className="text-sm text-gray-400 py-4">Няма свободни часове</p>
                 ) : (
-                  <>
-                    <p className="text-xs font-bold uppercase tracking-wide text-gray-400 flex items-center gap-1.5 mb-3">
-                      <Clock className="w-3.5 h-3.5" /> {date.getDate()} {MONTHS_SHORT[date.getMonth()]}
-                    </p>
-                    {slots.length === 0 ? (
-                      <p className="text-gray-400 text-sm py-3">Няма свободни часове</p>
-                    ) : (
-                      <div className="grid grid-cols-3 gap-2 flex-1 content-start">
-                        {slots.map(s => (
-                          <button key={s} onClick={() => setSlot(s)}
-                            className={`py-2.5 rounded-xl text-sm font-semibold border transition-colors ${
-                              slot === s ? "bg-[#1083BD] text-white border-[#1083BD]"
-                                         : "border-gray-200 hover:border-[#1083BD]/40 text-gray-700 hover:bg-blue-50/50"
-                            }`}>
-                            {s}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                    {slot && (
-                      <button onClick={() => setStep("confirm")}
-                        className="mt-4 w-full py-3 bg-[#EF3988] hover:bg-[#d42f77] text-white rounded-xl text-sm font-bold transition-colors">
-                        Продължи →
+                  <div className="grid grid-cols-3 gap-2">
+                    {slots.map(s => (
+                      <button key={s} onClick={() => setSlot(s)}
+                        className={`py-2.5 rounded-xl text-sm font-semibold border transition-colors ${
+                          slot === s ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]/30 hover:bg-blue-50/50"
+                        }`}>
+                        {s}
                       </button>
-                    )}
-                  </>
+                    ))}
+                  </div>
                 )}
-              </div>
-            </div>
-
-            {services.length > 0 && (
-              <button onClick={() => setStep("service")} className="mt-3 text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1">
-                <ChevronLeft className="w-3 h-3" /> Назад
-              </button>
+              </>
             )}
           </div>
-        )}
+        </div>
 
-        {/* ── Step: Confirm ── */}
-        {step === "confirm" && (
-          <div>
-            {/* Summary */}
-            <div className="bg-gray-50 rounded-xl p-3 mb-4 text-sm space-y-1.5">
-              <div className="flex justify-between text-gray-600">
-                <span>Услуга</span><span className="font-semibold">{service?.name ?? "Общ преглед"}</span>
-              </div>
-              <div className="flex justify-between text-gray-600">
-                <span>Дата</span>
-                <span className="font-semibold">{date && `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]}`}</span>
-              </div>
-              <div className="flex justify-between text-gray-600">
-                <span>Час</span><span className="font-semibold">{slot}</span>
-              </div>
-              {service?.price && (
-                <div className="flex justify-between text-gray-600 pt-1 border-t border-gray-200">
-                  <span>Цена</span><span className="font-bold text-[#1083BD]">{service.price} лв.</span>
-                </div>
-              )}
-            </div>
-
-            <p className="text-xs font-bold uppercase tracking-wide text-gray-400 flex items-center gap-1.5 mb-3">
-              <PawPrint className="w-3.5 h-3.5" /> За любимеца
-            </p>
-
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs font-semibold text-gray-500 block mb-1.5">Ime *</label>
-                <input value={petName} onChange={e => { setPetName(e.target.value); setError("") }}
-                  placeholder="Рекс, Мица..."
-                  className={`w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1083BD] text-gray-900 ${error && !petName.trim() ? "border-red-300 bg-red-50" : "border-gray-200"}`} />
-                {error && !petName.trim() && <p className="text-xs text-red-500 mt-1">{error}</p>}
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-gray-500 block mb-1.5">Вид</label>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {SPECIES.map(s => (
-                    <button key={s.v} onClick={() => setPetSpecies(s.v)}
-                      className={`py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                        petSpecies === s.v ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]/40"
-                      }`}>
-                      {s.l}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-gray-500 block mb-1.5">Бележки</label>
-                <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2}
-                  placeholder="Симптоми, въпроси..."
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1083BD] text-gray-900 resize-none" />
-              </div>
-            </div>
-
-            {error && petName.trim() && (
-              <p className="text-xs text-red-600 bg-red-50 rounded-xl px-3 py-2 mt-2">{error}</p>
-            )}
-
-            <div className="flex gap-2 mt-4">
-              <button onClick={() => setStep("date")}
-                className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-500 hover:bg-gray-50">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button onClick={confirm} disabled={saving}
-                className="flex-1 py-2.5 bg-[#1083BD] hover:bg-[#0d6fa0] text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-60 transition-colors">
-                <Check className="w-4 h-4" /> {saving ? "Запазва..." : "Потвърди часа"}
-              </button>
-            </div>
+        {/* CTA */}
+        {date && slot && (
+          <div className="mt-5 pt-5 border-t border-gray-100">
+            <button onClick={() => setStep("confirm")}
+              className="w-full py-3.5 bg-[#EF3988] hover:bg-[#d42f77] text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-colors text-sm">
+              Продължи към потвърждение →
+            </button>
           </div>
         )}
-
       </div>
     </div>
   )
