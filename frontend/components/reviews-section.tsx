@@ -105,7 +105,7 @@ export function ReviewsSection() {
     <section className="py-20 bg-pink-50 relative overflow-hidden">
       {/* Top diagonal from previous section */}
       <div className="absolute top-0 left-0 w-full leading-none pointer-events-none">
-        <svg viewBox="0 0 1440 50" fill="#fdf2f8" preserveAspectRatio="none" className="w-full h-12 block">
+        <svg viewBox="0 0 1440 50" fill="white" preserveAspectRatio="none" className="w-full h-12 block">
           <polygon points="0,0 1440,50 1440,0" />
         </svg>
       </div>
@@ -144,7 +144,7 @@ export function ReviewsSection() {
 
       {/* Bottom diagonal to next section */}
       <div className="absolute bottom-0 left-0 w-full leading-none pointer-events-none">
-        <svg viewBox="0 0 1440 50" fill="#fdf2f8" preserveAspectRatio="none" className="w-full h-12 block">
+        <svg viewBox="0 0 1440 50" fill="white" preserveAspectRatio="none" className="w-full h-12 block">
           <polygon points="0,50 1440,0 1440,50" />
         </svg>
       </div>
