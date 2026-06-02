@@ -196,8 +196,8 @@ export function HeroSection() {
                     />
                   </div>
                 </div>
-                <Link href="/search" className="mt-2 flex items-center justify-center gap-2 w-full h-11 bg-[#EF3988] hover:bg-[#d42f77] text-white font-semibold rounded-xl text-sm transition-colors">
-                  <Search className="w-4 h-4" /> Намери ветеринар
+                <Link href="/search" className="mt-2 flex items-center justify-center gap-2 w-full h-14 bg-[#EF3988] hover:bg-[#d42f77] active:scale-[0.98] text-white font-black rounded-xl text-lg tracking-wide shadow-lg shadow-[#EF3988]/30 transition-all">
+                  <Search className="w-5 h-5" /> Намери ветеринар
                 </Link>
               </div>
             </div>
