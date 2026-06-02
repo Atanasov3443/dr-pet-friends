@@ -50,6 +50,12 @@ export function ForVetsSection() {
 
 
 
+      <div className="absolute top-0 left-0 w-full leading-none pointer-events-none z-20">
+        <svg viewBox="0 0 1440 50" fill="#fdf2f8" preserveAspectRatio="none" className="w-full h-12 block">
+          <polygon points="0,0 1440,0 1440,50" />
+        </svg>
+      </div>
+
       <div className="container relative z-10 pt-16 pb-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
 
