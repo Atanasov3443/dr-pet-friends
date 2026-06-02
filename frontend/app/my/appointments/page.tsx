@@ -99,10 +99,30 @@ function MyAppointmentsPageInner() {
 
   useEffect(() => { load() }, [])
 
-  const now      = new Date()
-  const upcoming = appointments.filter(a => new Date(a.date) >= now && a.status !== "CANCELLED")
-  const past     = appointments.filter(a => new Date(a.date) < now  || a.status === "CANCELLED")
-  const list     = tab === "upcoming" ? upcoming : past
+  const now           = new Date()
+  const upcoming      = appointments.filter(a => new Date(a.date) >= now && a.status !== "CANCELLED")
+  const past          = appointments.filter(a => new Date(a.date) < now  || a.status === "CANCELLED")
+  const [calYear,  setCalYear]  = useState(now.getFullYear())
+  const [calMonth, setCalMonth] = useState(now.getMonth())
+  const [selDay,   setSelDay]   = useState<string | null>(null)
+
+  const apptDays = new Set(appointments.map(a => new Date(a.date).toDateString()))
+
+  const calCells = (() => {
+    const first   = new Date(calYear, calMonth, 1)
+    const last    = new Date(calYear, calMonth + 1, 0)
+    const pad     = (first.getDay() + 6) % 7
+    const cells: (Date|null)[] = []
+    for (let i = 0; i < pad; i++) cells.push(null)
+    for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(calYear, calMonth, d))
+    return cells
+  })()
+
+  const baseList  = tab === "upcoming" ? upcoming : past
+  const list      = selDay ? baseList.filter(a => new Date(a.date).toDateString() === selDay) : baseList
+
+  const MONTHS_FULL = ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"]
+  const DAYS_SHORT  = ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"]
 
   return (
     <div className="p-6 md:p-8 max-w-3xl">
@@ -132,6 +152,44 @@ function MyAppointmentsPageInner() {
           </div>
         </div>
       )}
+
+      {/* Mini Calendar */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={() => { if (calMonth === 0) { setCalYear(y=>y-1); setCalMonth(11) } else setCalMonth(m=>m-1) }}
+            className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors">‹</button>
+          <span className="font-bold text-gray-900 text-sm">{MONTHS_FULL[calMonth]} {calYear}</span>
+          <button onClick={() => { if (calMonth === 11) { setCalYear(y=>y+1); setCalMonth(0) } else setCalMonth(m=>m+1) }}
+            className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors">›</button>
+        </div>
+        <div className="grid grid-cols-7 mb-1">
+          {DAYS_SHORT.map(d => <div key={d} className="text-center text-[10px] font-bold text-gray-400 py-1">{d}</div>)}
+        </div>
+        <div className="grid grid-cols-7 gap-0.5">
+          {calCells.map((d, i) => {
+            if (!d) return <div key={i} />
+            const key      = d.toDateString()
+            const hasAppt  = apptDays.has(key)
+            const isToday  = key === now.toDateString()
+            const isSel    = selDay === key
+            return (
+              <button key={i} onClick={() => setSelDay(isSel ? null : key)}
+                className={`relative h-9 w-full rounded-lg text-xs font-semibold transition-colors
+                  ${isSel ? "bg-[#EF3988] text-white" : isToday ? "bg-[#1083BD]/10 text-[#1083BD]" : "hover:bg-gray-50 text-gray-700"}`}>
+                {d.getDate()}
+                {hasAppt && !isSel && (
+                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#EF3988]" />
+                )}
+              </button>
+            )
+          })}
+        </div>
+        {selDay && (
+          <button onClick={() => setSelDay(null)} className="mt-3 text-xs text-gray-400 hover:text-gray-600 w-full text-center">
+            × Изчисти избора
+          </button>
+        )}
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">
