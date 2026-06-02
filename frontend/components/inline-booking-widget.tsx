@@ -79,6 +79,7 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   function nextMonth() { if (calMonth === 11) { setCalYear(y => y+1); setCalMonth(0) } else setCalMonth(m => m+1) }
 
   const confirmAndPay = async () => {
+    if (!service) { setError("Избери услуга"); return }
     if (!date || !slot) { setError("Избери дата и час"); return }
     setSaving(true); setError("")
     const [h, m] = slot.split(":").map(Number)
@@ -106,10 +107,7 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
       if (payData.url) {
         window.location.href = payData.url
       } else {
-        // Stripe not configured — show done screen
-        setAppointmentId(appt.id)
-        setAppointmentPrice(appt.price ?? service?.price ?? null)
-        setStep("done")
+        setError(payData.error ?? "Грешка при плащане. Опитайте отново.")
       }
     } catch { setError("Сървърна грешка.") }
     finally { setSaving(false) }
@@ -206,16 +204,13 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
           <div className="mb-5">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1.5"><Stethoscope className="w-3.5 h-3.5" /> Услуга</p>
             <div className="flex flex-wrap gap-2">
-              <button onClick={() => setService(null)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${!service ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]/40"}`}>
-                Общ преглед
-              </button>
               {services.map(s => (
                 <button key={s.id} onClick={() => setService(s)}
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${service?.id === s.id ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]/40"}`}>
                   {s.name} · {s.price} лв.
                 </button>
               ))}
+              {services.length === 0 && <span className="text-xs text-gray-400">Няма добавени услуги</span>}
             </div>
           </div>
         )}
