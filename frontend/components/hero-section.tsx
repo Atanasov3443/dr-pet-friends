@@ -159,7 +159,7 @@ export function HeroSection() {
             <h1 className="font-display font-black text-5xl md:text-6xl lg:text-7xl xl:text-[88px] text-white leading-[0.95] mb-5 tracking-tight">
               Грижа за
               <br />
-              <span className="text-[#EF3988]">любимеца</span>
+              <span className="text-[#FF8EC8]">любимеца</span>
               <br />
               <span className="whitespace-nowrap">на едно място</span>
             </h1>
