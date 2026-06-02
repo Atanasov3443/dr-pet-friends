@@ -24,6 +24,8 @@ router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
     orderBy: { date: upcoming ? "asc" : "desc" },
   })
 
+
+
   res.json(appointments)
 })
 

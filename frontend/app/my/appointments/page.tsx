@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CalendarDays, Star, X, CreditCard, Clock, MapPin, Video, Stethoscope, PawPrint } from "lucide-react"
+import { CalendarDays, Star, X, CreditCard, Clock, Video, Stethoscope } from "lucide-react"
 import Link from "next/link"
 import { apiUrl } from "@/lib/api"
 
@@ -159,9 +159,10 @@ export default function MyAppointmentsPage() {
           {list.map((a: any) => {
             const d         = new Date(a.date)
             const s         = STATUS[a.status] ?? STATUS.PENDING
-            const canReview = a.status === "COMPLETED" && !reviewed.has(a.vetId)
-            const canPay    = (a.status === "PENDING" || a.status === "CONFIRMED") && (a.price ?? a.service?.price)
-            const isOnline  = a.consultationType === "ONLINE"
+            const canReview  = a.status === "COMPLETED" && !reviewed.has(a.vetId)
+            const canPay     = (a.status === "PENDING" || a.status === "CONFIRMED") && (a.price ?? a.service?.price)
+            const isOnline   = a.consultationType === "ONLINE"
+            const canJoin    = isOnline && a.status === "CONFIRMED" && a.meetLink
 
             return (
               <div key={a.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
@@ -216,8 +217,14 @@ export default function MyAppointmentsPage() {
                   </div>
 
                   {/* Actions */}
-                  {(canPay || canReview) && (
+                  {(canPay || canReview || canJoin) && (
                     <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-50">
+                      {canJoin && (
+                        <a href={a.meetLink} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 px-4 py-2 bg-[#1083BD] hover:bg-[#0d6fa0] text-white rounded-xl text-xs font-bold transition-colors cursor-pointer">
+                          <Video className="w-3.5 h-3.5" /> Влез в онлайн срещата
+                        </a>
+                      )}
                       {canPay && (
                         <button onClick={() => startPayment(a.id)} disabled={paying === a.id}
                           className="flex items-center gap-1.5 px-4 py-2 bg-[#10B83D] hover:bg-[#0da033] disabled:opacity-60 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer">
