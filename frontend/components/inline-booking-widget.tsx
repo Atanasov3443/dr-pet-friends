@@ -125,6 +125,9 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
           <p className="text-gray-500 text-sm">{date && `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]} · ${slot}`}</p>
           {service && <p className="text-gray-400 text-xs mt-0.5">{service.name}</p>}
           <p className="text-xs text-gray-400 mt-2">Ще получите имейл с потвърждение.</p>
+          <div className="mt-3 bg-yellow-50 border border-yellow-200 rounded-xl px-3 py-2 text-xs text-yellow-700">
+            📬 Ако не виждате имейла, проверете папка <strong>Спам / Junk</strong>.
+          </div>
         </div>
         <button onClick={() => router.push("/my/appointments")}
           className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
