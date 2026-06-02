@@ -130,15 +130,15 @@ export default async function VetProfilePage({ params }: { params: Promise<{ id:
                   <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4 text-[#1083BD]" /> Работно време
                   </h3>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
+                  <div className="space-y-1">
                     {[1,2,3,4,5,6,0].map(day => {
                       const slots   = scheduleByDay[day]
                       const isToday = day === todayDay
                       return (
-                        <div key={day} className={`flex items-center justify-between text-sm py-1 px-2 rounded-lg ${isToday ? "bg-[#1083BD]/5" : ""}`}>
-                          <span className={`font-medium ${isToday ? "text-[#1083BD]" : "text-gray-600"}`}>{DAYS[day]}</span>
+                        <div key={day} className={`flex items-center justify-between text-sm py-1.5 px-2 rounded-lg ${isToday ? "bg-[#1083BD]/5" : ""}`}>
+                          <span className={`font-medium shrink-0 w-24 ${isToday ? "text-[#1083BD]" : "text-gray-600"}`}>{DAYS[day]}</span>
                           {slots?.length ? (
-                            <span className="text-gray-500 text-xs">{slots.map((s: any) => `${s.startTime}–${s.endTime}`).join(", ")}</span>
+                            <span className="text-gray-500 text-xs text-right">{slots.map((s: any) => `${s.startTime}–${s.endTime}`).join(", ")}</span>
                           ) : (
                             <span className="text-gray-300 text-xs">Почивен</span>
                           )}
