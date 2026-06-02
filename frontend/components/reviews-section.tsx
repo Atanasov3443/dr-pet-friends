@@ -103,14 +103,8 @@ const duplicated = [...reviews, ...reviews]
 export function ReviewsSection() {
   return (
     <section className="py-20 bg-pink-50 relative overflow-hidden">
-      {/* Top diagonal from previous section */}
-      <div className="absolute top-0 left-0 w-full leading-none pointer-events-none">
-        <svg viewBox="0 0 1440 50" fill="white" preserveAspectRatio="none" className="w-full h-12 block">
-          <polygon points="0,0 1440,50 1440,0" />
-        </svg>
-      </div>
 
-      <div className="container relative z-10">
+<div className="container relative z-10">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-[#1083BD]/10 border border-[#1083BD]/20 rounded-full px-4 py-1.5 mb-4">
             <span className="w-2 h-2 rounded-full bg-[#1083BD] animate-pulse" />
