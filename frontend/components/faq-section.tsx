@@ -133,7 +133,6 @@ export function FAQSection() {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full leading-none pointer-events-none z-10"><svg viewBox="0 0 1440 50" fill="white" preserveAspectRatio="none" className="w-full h-12 block"><polygon points="0,50 1440,0 1440,50" /></svg></div>
     </section>
   )
 }
