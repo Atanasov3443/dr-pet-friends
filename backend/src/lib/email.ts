@@ -144,7 +144,7 @@ export async function sendAppointmentEmails(data: AppointmentEmailData) {
   `
 
   resend.emails.send({
-    from:    "Dr. Pet Friend <noreply@drpetfriends.bg>",
+    from:    "Dr. Pet Friend <onboarding@resend.dev>",
     to:      data.ownerEmail,
     subject: `✅ Запазен час — ${data.vetName} · ${timeStr}, ${dateStr}`,
     html:    emailWrapper(ownerContent, "#1083BD"),
@@ -172,7 +172,7 @@ export async function sendAppointmentEmails(data: AppointmentEmailData) {
   `
 
   resend.emails.send({
-    from:    "Dr. Pet Friend <noreply@drpetfriends.bg>",
+    from:    "Dr. Pet Friend <onboarding@resend.dev>",
     to:      data.vetEmail,
     subject: `📅 Нова резервация — ${data.petName} · ${timeStr}, ${dateStr}`,
     html:    emailWrapper(vetContent, "#EF3988"),
