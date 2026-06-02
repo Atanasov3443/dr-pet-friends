@@ -36,6 +36,8 @@ const carouselSlides = [
 
 export function HeroSection() {
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [searchQ,    setSearchQ]    = useState("")
+  const [searchCity, setSearchCity] = useState("")
   const [activeSlide, setActiveSlide] = useState(0)
   const [displaySlide, setDisplaySlide] = useState(0)
   const [typedText, setTypedText] = useState(carouselSlides[0].subtitle)
@@ -183,20 +185,27 @@ export function HeroSection() {
                   <div className="relative">
                     <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
                     <input
+                      value={searchQ}
+                      onChange={e => setSearchQ(e.target.value)}
                       placeholder="Специалност, д-р..."
                       className="w-full pl-9 pr-3 h-11 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-[#1083BD]/30"
-                      onKeyDown={(e) => { if (e.key === "Enter") window.location.href = `/search?q=${(e.target as HTMLInputElement).value}` }}
+                      onKeyDown={e => { if (e.key === "Enter") { const qs = new URLSearchParams(); if (searchQ) qs.set("q", searchQ); if (searchCity) qs.set("city", searchCity); window.location.href = `/search?${qs}` }}}
                     />
                   </div>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1083BD] w-4 h-4" />
                     <input
+                      value={searchCity}
+                      onChange={e => setSearchCity(e.target.value)}
                       placeholder="Град"
                       className="w-full pl-9 pr-3 h-11 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-[#1083BD]/30"
+                      onKeyDown={e => { if (e.key === "Enter") { const qs = new URLSearchParams(); if (searchQ) qs.set("q", searchQ); if (searchCity) qs.set("city", searchCity); window.location.href = `/search?${qs}` }}}
                     />
                   </div>
                 </div>
-                <Link href="/search" className="mt-2 flex items-center justify-center gap-2 w-full h-14 bg-[#EF3988] hover:bg-[#d42f77] active:scale-[0.98] text-white font-black rounded-xl text-lg tracking-wide shadow-lg shadow-[#EF3988]/30 transition-all">
+                <Link
+                  href={`/search?${new URLSearchParams({ ...(searchQ ? { q: searchQ } : {}), ...(searchCity ? { city: searchCity } : {}) })}`}
+                  className="mt-2 flex items-center justify-center gap-2 w-full h-14 bg-[#EF3988] hover:bg-[#d42f77] active:scale-[0.98] text-white font-black rounded-xl text-lg tracking-wide shadow-lg shadow-[#EF3988]/30 transition-all">
                   <Search className="w-5 h-5" /> Намери ветеринар
                 </Link>
               </div>
