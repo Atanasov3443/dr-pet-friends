@@ -78,36 +78,41 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   function prevMonth() { if (calMonth === 0) { setCalYear(y => y-1); setCalMonth(11) } else setCalMonth(m => m-1) }
   function nextMonth() { if (calMonth === 11) { setCalYear(y => y+1); setCalMonth(0) } else setCalMonth(m => m+1) }
 
-  const confirm = async () => {
+  const confirmAndPay = async () => {
     if (!date || !slot) { setError("Избери дата и час"); return }
     setSaving(true); setError("")
     const [h, m] = slot.split(":").map(Number)
     const dt = new Date(date); dt.setHours(h, m, 0, 0)
     try {
+      // 1. Create appointment
       const res = await fetch(apiUrl("/api/appointments"), {
         method: "POST", credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vetId, serviceId: service?.id, date: dt.toISOString(), petName: petName.trim(), petSpecies, notes, consultationType: consultType }),
+        body: JSON.stringify({ vetId, serviceId: service?.id, date: dt.toISOString(), petName: "Любимец", petSpecies, notes, consultationType: consultType }),
       })
-      if (res.ok) {
-        const data = await res.json()
-        setAppointmentId(data.id ?? "")
-        setAppointmentPrice(data.price ?? service?.price ?? null)
+      if (res.status === 401) { router.push("/login"); return }
+      if (!res.ok) { const d = await res.json().catch(() => ({})); setError(d.error ?? "Грешка при запазване."); return }
+
+      const appt = await res.json()
+
+      // 2. Immediately open Stripe checkout
+      const payRes  = await fetch(apiUrl("/api/stripe/checkout"), {
+        method: "POST", credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ appointmentId: appt.id }),
+      })
+      const payData = await payRes.json()
+
+      if (payData.url) {
+        window.location.href = payData.url
+      } else {
+        // Stripe not configured — show done screen
+        setAppointmentId(appt.id)
+        setAppointmentPrice(appt.price ?? service?.price ?? null)
         setStep("done")
-      } else if (res.status === 401) { router.push("/login") }
-      else { const d = await res.json().catch(() => ({})); setError(d.error ?? "Грешка при запазване.") }
+      }
     } catch { setError("Сървърна грешка.") }
     finally { setSaving(false) }
-  }
-
-  const startPayment = async () => {
-    if (!appointmentId) return
-    setPayLoading(true)
-    try {
-      const res  = await fetch(apiUrl("/api/stripe/checkout"), { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ appointmentId }) })
-      const data = await res.json()
-      if (data.url) window.location.href = data.url
-    } finally { setPayLoading(false) }
   }
 
   // ── Done ──────────────────────────────────────────────────────────────────
@@ -123,13 +128,6 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
           {service && <p className="text-gray-400 text-xs mt-0.5">{service.name}</p>}
           <p className="text-xs text-gray-400 mt-2">Ще получите имейл с потвърждение.</p>
         </div>
-        {appointmentPrice && appointmentPrice > 0 && (
-          <button onClick={startPayment} disabled={payLoading}
-            className="flex items-center gap-2 px-8 py-3 bg-[#10B83D] hover:bg-[#0da033] disabled:opacity-60 text-white rounded-xl font-bold transition-colors">
-            <CreditCard className="w-5 h-5" />
-            {payLoading ? "Зарежда..." : `Плати ${appointmentPrice} лв. онлайн`}
-          </button>
-        )}
         <button onClick={() => router.push("/my/appointments")}
           className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
           Виж моите часове →
@@ -161,9 +159,9 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
 
           {error && <p className="text-xs text-red-600 bg-red-50 rounded-xl px-3 py-2">{error}</p>}
 
-          <button onClick={confirm} disabled={saving}
-            className="w-full py-3.5 bg-[#1083BD] hover:bg-[#0d6fa0] text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-60 transition-colors">
-            <Check className="w-4 h-4" /> {saving ? "Запазва..." : "Потвърди часа"}
+          <button onClick={confirmAndPay} disabled={saving}
+            className="w-full py-3.5 bg-[#10B83D] hover:bg-[#0da033] text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-60 transition-colors">
+            💳 {saving ? "Зарежда плащане..." : `Плати и запази${service?.price ? ` · ${service.price} лв.` : ""}`}
           </button>
         </div>
       </div>
