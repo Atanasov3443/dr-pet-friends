@@ -124,7 +124,7 @@ export default function MyProfilePage() {
               <Mail className="w-3 h-3" /> Имейл
             </label>
             <input value={profile.email} disabled
-              className="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm bg-gray-50 text-gray-400 cursor-not-allowed" />
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-gray-50 text-gray-600 cursor-not-allowed" />
             <p className="text-xs text-gray-400 mt-1">Имейлът не може да се промени</p>
           </div>
 
