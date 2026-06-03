@@ -20,6 +20,7 @@ import dashMedicalRouter     from "./routes/dashboard/medical-records"
 import dashStatsRouter       from "./routes/dashboard/stats"
 import myMedicalRouter       from "./routes/my/medical-records"
 import myProfileRouter       from "./routes/my/profile"
+import myVaccinationsRouter  from "./routes/my/vaccinations"
 import uploadRouter          from "./routes/upload"
 import stripeRouter          from "./routes/stripe"
 import adminVetsRouter       from "./routes/admin/vets"
@@ -63,6 +64,7 @@ app.use("/api/my/appointments",      myAppointmentsRouter)
 app.use("/api/my/pets",              myPetsRouter)
 app.use("/api/my/medical-records",   myMedicalRouter)
 app.use("/api/my/profile",           myProfileRouter)
+app.use("/api/my/vaccinations",      myVaccinationsRouter)
 app.use("/api/upload",               uploadRouter)
 app.use("/api/stripe",               stripeRouter)
 app.use("/api/dashboard/appointments",    dashAppointmentsRouter)
