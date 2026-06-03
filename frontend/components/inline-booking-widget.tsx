@@ -292,7 +292,22 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
                   <Clock className="w-3.5 h-3.5" /> {date.getDate()} {MONTHS_SHORT[date.getMonth()]}
                 </p>
                 {slots.length === 0 ? (
-                  <p className="text-sm text-gray-400 py-4">Няма свободни часове</p>
+                  <div className="py-4 space-y-3">
+                    <p className="text-sm text-gray-400">Няма свободни часове за тази дата.</p>
+                    <button onClick={async () => {
+                      const res = await fetch(apiUrl("/api/my/waitlist"), {
+                        method: "POST", credentials: "include",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ vetId, date: date.toISOString() }),
+                      })
+                      const data = await res.json()
+                      if (res.ok) alert(`✅ Записан сте в опашката на позиция №${data.position}. Ще получите имейл при освободен час.`)
+                      else alert(data.error ?? "Грешка при записване в опашката")
+                    }}
+                      className="w-full py-2.5 border-2 border-dashed border-[#1083BD]/30 hover:border-[#1083BD] text-[#1083BD] text-xs font-bold rounded-xl transition-colors">
+                      🔔 Запиши ме в опашката
+                    </button>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     {slots.map(s => (

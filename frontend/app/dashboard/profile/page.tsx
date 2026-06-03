@@ -3,7 +3,8 @@
 import { apiUrl } from "@/lib/api"
 
 import { useEffect, useState } from "react"
-import { Save, User } from "lucide-react"
+import { Save, User, Camera, Upload } from "lucide-react"
+import { useRef } from "react"
 
 type Form = {
   displayName: string; specialty: string; bio: string
@@ -16,8 +17,25 @@ const empty: Form = { displayName: "", specialty: "", bio: "", image: "", phone:
 export default function ProfilePage() {
   const [form, setForm]     = useState<Form>(empty)
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving]   = useState(false)
-  const [saved, setSaved]     = useState(false)
+  const [saving,    setSaving]    = useState(false)
+  const [saved,     setSaved]     = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const fd = new FormData()
+    fd.append("image", file)
+    try {
+      const res  = await fetch(`/api/proxy/api/upload/image?folder=avatars`, { method: "POST", body: fd, credentials: "include" })
+      const data = await res.json()
+      if (data.url) setForm(f => ({ ...f, image: data.url }))
+      else alert(data.error ?? "Upload неуспешен")
+    } catch { alert("Upload неуспешен") }
+    finally { setUploading(false) }
+  }
   const [hasVet, setHasVet]   = useState(false)
 
   useEffect(() => {
@@ -105,9 +123,17 @@ export default function ProfilePage() {
                 className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1083BD] resize-none" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Снимка (URL)</label>
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Снимка</label>
+              <div className="flex gap-2 mb-2">
+                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-[#1083BD]/10 hover:bg-[#1083BD]/20 text-[#1083BD] rounded-lg text-xs font-medium transition-colors disabled:opacity-60">
+                  {uploading ? <><Upload className="w-3 h-3 animate-pulse" /> Качва...</> : <><Camera className="w-3 h-3" /> Качи снимка</>}
+                </button>
+                {form.image && <button type="button" onClick={() => setForm(f => ({...f, image: ""}))} className="text-xs text-red-400 hover:text-red-600">Премахни</button>}
+              </div>
               <input value={form.image} onChange={e => setForm(f => ({...f, image: e.target.value}))}
-                placeholder="https://..." type="url"
+                placeholder="или въведи URL: https://..."
                 className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1083BD]" />
               {form.image && (
                 <img src={form.image} alt="" className="mt-2 h-16 rounded-xl object-cover border border-gray-100"

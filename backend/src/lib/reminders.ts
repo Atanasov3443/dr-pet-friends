@@ -17,7 +17,7 @@ export async function sendReminders() {
     },
     include: {
       owner:   { select: { name: true, email: true } },
-      vet:     { select: { displayName: true, specialty: true } },
+      vet:     { select: { displayName: true, specialty: true, user: { select: { email: true } } } },
       pet:     { select: { name: true } },
       service: { select: { name: true } },
     },
@@ -66,6 +66,34 @@ export async function sendReminders() {
       subject: `Напомняне — ${appt.vet?.displayName} · ${timeStr}, ${dateStr}`,
       html:    emailWrapper(content, "#1083BD"),
     })
+
+    // Also send reminder to vet
+    const vetEmail = appt.vet?.user?.email
+    if (vetEmail) {
+      const vetRows = [
+        infoRow("", "Клиент",   appt.owner.name ?? "—"),
+        infoRow("", "Любимец",  appt.pet?.name ?? "—"),
+        infoRow("", "Услуга",   appt.service?.name ?? "Преглед"),
+        infoRow("", "Дата",     dateStr),
+        infoRow("", "Час",      timeStr, true),
+      ].join("")
+
+      const vetContent = `
+        <div style="margin-bottom:24px">
+          <h2 style="color:#111827;font-size:22px;font-weight:900;margin:0 0 8px">Напомняне за предстоящ преглед</h2>
+          <p style="color:#6b7280;font-size:14px;margin:0">Утре имате запазен час при вас:</p>
+        </div>
+        ${appointmentCard(vetRows)}
+        ${meetSection}
+        ${ctaButton("Отиди към Dashboard", "https://dr-pet-friends.pages.dev/dashboard/appointments", "#1083BD")}
+      `
+      resend.emails.send({
+        from:    "Dr. Pet Friend <onboarding@resend.dev>",
+        to:      vetEmail,
+        subject: `Напомняне — ${appt.owner.name ?? "Клиент"} · ${timeStr}, ${dateStr}`,
+        html:    emailWrapper(vetContent, "#EF3988"),
+      }).catch(() => {})
+    }
 
     await db.appointment.update({
       where: { id: appt.id },
