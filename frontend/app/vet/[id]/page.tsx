@@ -1,7 +1,31 @@
 export const dynamic = "force-dynamic"
 export const runtime = "edge"
 
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+
+const API_URL_META = process.env.NEXT_PUBLIC_API_URL ?? "https://dr-pet-friends-1.onrender.com"
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  try {
+    const res = await fetch(`${API_URL_META}/api/vets/${id}`, { cache: "no-store" })
+    if (!res.ok) return {}
+    const vet = await res.json()
+    const title = `${vet.displayName} — ${vet.specialty} | Dr. Pet Friend`
+    const description = vet.bio ?? `Запишете час при ${vet.displayName}, специалист по ${vet.specialty}. Онлайн резервации 24/7.`
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        images: vet.image ? [{ url: vet.image }] : [],
+        type: "profile",
+      },
+    }
+  } catch { return {} }
+}
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { MapPin, Phone, Star, Clock, Stethoscope, Shield, ChevronLeft } from "lucide-react"
@@ -10,12 +34,10 @@ import { InlineBookingWidget } from "@/components/inline-booking-widget"
 
 const DAYS = ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"]
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://dr-pet-friends-1.onrender.com"
-
 export default async function VetProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
 
-  const res = await fetch(`${API_URL}/api/vets/${id}`, { cache: "no-store" })
+  const res = await fetch(`${API_URL_META}/api/vets/${id}`, { cache: "no-store" })
   if (res.status === 404) notFound()
   if (!res.ok) notFound()
 

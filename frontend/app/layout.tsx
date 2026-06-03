@@ -18,6 +18,7 @@ const interTight = Inter_Tight({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://dr-pet-friends.pages.dev"),
   title: {
     default:  'Dr. Pet Friends — Намери ветеринар онлайн',
     template: '%s | Dr. Pet Friends',

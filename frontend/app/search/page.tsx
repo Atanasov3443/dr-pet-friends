@@ -159,9 +159,9 @@ function SearchPageInner() {
     }
   }, [])
 
-  useEffect(() => {
-    search({ q, city, specialty })
-  }, [])
+  // Run search once on mount with URL params
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { search({ q, city, specialty }) }, [])
 
   // Fetch clinics for map view
   useEffect(() => {
