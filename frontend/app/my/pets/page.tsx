@@ -318,35 +318,52 @@ export default function MyPetsPage() {
                   onCancel={() => setEditing(null)}
                 />
               ) : (
-                <div className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#1083BD]/10 flex items-center justify-center text-2xl shrink-0 overflow-hidden">
-                    {p.image
-                      ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
-                      : EMOJI[p.species] ?? "🐾"
-                    }
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900">
-                      {p.name}
-                      {p.gender === "MALE"   && <span className="ml-1.5 text-blue-400 text-sm">♂</span>}
-                      {p.gender === "FEMALE" && <span className="ml-1.5 text-pink-400 text-sm">♀</span>}
-                    </p>
-                    <div className="flex flex-wrap gap-x-3 text-xs text-gray-400 mt-0.5">
-                      {p.breed && <span>{p.breed}</span>}
-                      {p.weight != null && <span>{p.weight} кг</span>}
-                      {p.birthDate && <span>Роден: {new Date(p.birthDate).toLocaleDateString("bg-BG")}</span>}
+                <div className="bg-white rounded-2xl border border-gray-100 hover:shadow-md hover:border-[#1083BD]/20 transition-all overflow-hidden">
+                  <div className="flex items-center gap-4 p-5">
+                    {/* Avatar */}
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1083BD]/10 to-[#1083BD]/5 flex items-center justify-center text-3xl shrink-0 overflow-hidden">
+                      {p.image
+                        ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                        : (EMOJI[p.species] ?? "🐾")
+                      }
                     </div>
-                    {p.notes && <p className="text-xs text-gray-500 mt-1 italic">{p.notes}</p>}
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <button onClick={() => { setEditing(p); setShowForm(false) }}
-                      className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200">
-                      <Pencil className="w-3.5 h-3.5 text-gray-500" />
-                    </button>
-                    <button onClick={() => remove(p.id)}
-                      className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center hover:bg-red-100">
-                      <Trash2 className="w-3.5 h-3.5 text-red-500" />
-                    </button>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-black text-gray-900 text-base">
+                          {p.name}
+                        </p>
+                        {p.gender === "MALE"   && <span className="text-xs bg-blue-50 text-blue-500 px-2 py-0.5 rounded-full font-medium">♂ Мъжко</span>}
+                        {p.gender === "FEMALE" && <span className="text-xs bg-pink-50 text-pink-500 px-2 py-0.5 rounded-full font-medium">♀ Женско</span>}
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {p.breed && (
+                          <span className="text-xs bg-gray-50 border border-gray-100 text-gray-600 px-2.5 py-1 rounded-full">{p.breed}</span>
+                        )}
+                        {p.weight != null && (
+                          <span className="text-xs bg-gray-50 border border-gray-100 text-gray-600 px-2.5 py-1 rounded-full">⚖️ {p.weight} кг</span>
+                        )}
+                        {p.birthDate && (
+                          <span className="text-xs bg-gray-50 border border-gray-100 text-gray-600 px-2.5 py-1 rounded-full">
+                            🎂 {new Date(p.birthDate).toLocaleDateString("bg-BG", { day:"numeric", month:"long", year:"numeric" })}
+                          </span>
+                        )}
+                      </div>
+
+                      {p.notes && <p className="text-xs text-gray-400 mt-2 italic">💬 {p.notes}</p>}
+                    </div>
+
+                    <div className="flex flex-col gap-1.5 shrink-0">
+                      <button onClick={() => { setEditing(p); setShowForm(false) }}
+                        className="w-8 h-8 rounded-xl bg-[#1083BD]/10 hover:bg-[#1083BD]/20 flex items-center justify-center transition-colors">
+                        <Pencil className="w-3.5 h-3.5 text-[#1083BD]" />
+                      </button>
+                      <button onClick={() => remove(p.id)}
+                        className="w-8 h-8 rounded-xl bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors">
+                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
