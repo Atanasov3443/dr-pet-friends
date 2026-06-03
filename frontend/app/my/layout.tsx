@@ -27,7 +27,7 @@ export default function MyLayout({ children }: { children: React.ReactNode }) {
           {(session?.user as any)?.image ? (
             <img src={(session?.user as any).image} alt="" className="w-9 h-9 rounded-xl object-cover" />
           ) : (
-            <div className="w-9 h-9 rounded-xl bg-[#EF3988] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-[#1083BD] flex items-center justify-center">
               <Heart className="w-5 h-5 text-white" />
             </div>
           )}
@@ -45,7 +45,7 @@ export default function MyLayout({ children }: { children: React.ReactNode }) {
             <Link key={href} href={href} onClick={() => setOpen(false)}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
-                active ? "bg-[#EF3988] text-white" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                active ? "bg-[#1083BD] text-white" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               )}>
               <Icon className="w-4 h-4 shrink-0" />
               {label}
