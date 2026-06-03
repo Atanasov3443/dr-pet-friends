@@ -339,13 +339,14 @@ export default function MyPetsPage() {
                       {p.image ? (
                         <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
                       ) : (
-                        <div className={`w-full h-full flex flex-col items-center justify-center gap-0.5 ${petGradient(p.name)}`}>
-                          <span className="text-white font-black text-xl leading-none tracking-tight">
-                            {p.name.slice(0, 2).toUpperCase()}
-                          </span>
-                          <span className="text-white/60 text-[10px] leading-none">
-                            {EMOJI[p.species] ?? "🐾"}
-                          </span>
+                        <div className={`w-full h-full flex items-center justify-center ${petGradient(p.name)}`}>
+                          <svg viewBox="0 0 64 64" width="36" height="36" fill="white" opacity="0.9">
+                            <circle cx="20" cy="12" r="6"/>
+                            <circle cx="44" cy="12" r="6"/>
+                            <ellipse cx="9" cy="24" rx="7" ry="5" transform="rotate(-30 9 24)"/>
+                            <ellipse cx="55" cy="24" rx="7" ry="5" transform="rotate(30 55 24)"/>
+                            <path d="M14 36 C10 46 14 58 24 58 C28 58 30 54 32 52 C34 54 36 58 40 58 C50 58 54 46 50 36 C46 26 38 22 32 22 C26 22 18 26 14 36Z"/>
+                          </svg>
                         </div>
                       )}
                     </div>
