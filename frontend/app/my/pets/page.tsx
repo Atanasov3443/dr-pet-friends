@@ -21,6 +21,20 @@ const GENDER = [
 
 const EMOJI: Record<string, string> = { DOG:"🐕", CAT:"🐈", BIRD:"🦜", RABBIT:"🐇", EXOTIC:"🦎", OTHER:"🐾" }
 
+const GRADIENTS = [
+  "bg-gradient-to-br from-[#1083BD] to-[#0D67F7]",
+  "bg-gradient-to-br from-[#EF3988] to-[#d42f77]",
+  "bg-gradient-to-br from-[#10B83D] to-[#0a8c2e]",
+  "bg-gradient-to-br from-[#F97316] to-[#ea6c0a]",
+  "bg-gradient-to-br from-[#8B5CF6] to-[#7c3aed]",
+  "bg-gradient-to-br from-[#06B6D4] to-[#0891b2]",
+]
+
+function petGradient(name: string) {
+  const idx = name.charCodeAt(0) % GRADIENTS.length
+  return GRADIENTS[idx]
+}
+
 type PetData = { id?: string; name: string; species: string; gender: string; breed: string; birthDate: string; weight: string; notes: string; image?: string }
 
 function PetForm({ initial, onSave, onCancel }: {
@@ -321,11 +335,15 @@ export default function MyPetsPage() {
                 <div className="bg-white rounded-2xl border border-gray-100 hover:shadow-md hover:border-[#1083BD]/20 transition-all overflow-hidden">
                   <div className="flex items-center gap-4 p-5">
                     {/* Avatar */}
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1083BD]/10 to-[#1083BD]/5 flex items-center justify-center text-3xl shrink-0 overflow-hidden">
-                      {p.image
-                        ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
-                        : (EMOJI[p.species] ?? "🐾")
-                      }
+                    <div className="w-16 h-16 rounded-2xl shrink-0 overflow-hidden relative">
+                      {p.image ? (
+                        <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className={`w-full h-full flex flex-col items-center justify-center ${petGradient(p.name)}`}>
+                          <span className="text-3xl leading-none">{EMOJI[p.species] ?? "🐾"}</span>
+                          <span className="text-[9px] font-black text-white/80 mt-0.5 uppercase tracking-wide">{p.name.slice(0,4)}</span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex-1 min-w-0">
