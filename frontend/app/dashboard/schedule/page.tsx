@@ -2,20 +2,24 @@
 
 import { apiUrl } from "@/lib/api"
 import { useEffect, useState, useMemo } from "react"
-import { Save, Plus, Trash2, Clock, ChevronLeft, ChevronRight } from "lucide-react"
+import { Save, Plus, Trash2, Clock, ChevronLeft, ChevronRight, XCircle } from "lucide-react"
 
 const DAYS     = ["Понеделник","Вторник","Сряда","Четвъртък","Петък","Събота","Неделя"]
 const DAYS_SHORT = ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"]
 const MONTHS   = ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"]
 const HOURS    = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, "0")}:00`)
 
-type Slot = { id?: string; dayOfWeek: number; startTime: string; endTime: string; isActive: boolean }
+type Slot        = { id?: string; dayOfWeek: number; startTime: string; endTime: string; isActive: boolean }
+type Unavailable = { id: string; date: string; reason: string | null }
 type Appt = { id: string; date: string; status: string; owner: { name: string | null }; pet: { name: string } }
 
 export default function SchedulePage() {
-  const [slots,    setSlots]   = useState<Slot[]>([])
-  const [appts,    setAppts]   = useState<Appt[]>([])
-  const [loading,  setLoading] = useState(true)
+  const [slots,        setSlots]        = useState<Slot[]>([])
+  const [appts,        setAppts]        = useState<Appt[]>([])
+  const [unavailable,  setUnavailable]  = useState<Unavailable[]>([])
+  const [unavailDate,  setUnavailDate]  = useState("")
+  const [unavailReason,setUnavailReason]= useState("")
+  const [loading,      setLoading]      = useState(true)
   const [saving,   setSaving]  = useState(false)
   const [saved,    setSaved]   = useState(false)
   const [calYear,  setCalYear]  = useState(new Date().getFullYear())
@@ -26,9 +30,11 @@ export default function SchedulePage() {
     Promise.all([
       fetch(apiUrl("/api/dashboard/schedule"), { credentials: "include" }).then(r => r.json()),
       fetch(apiUrl("/api/dashboard/appointments"), { credentials: "include" }).then(r => r.json()),
-    ]).then(([sc, ap]) => {
+      fetch(apiUrl("/api/dashboard/unavailability"), { credentials: "include" }).then(r => r.json()),
+    ]).then(([sc, ap, un]) => {
       setSlots(Array.isArray(sc) ? sc : [])
       setAppts(Array.isArray(ap) ? ap : [])
+      setUnavailable(Array.isArray(un) ? un : [])
       setLoading(false)
     })
   }, [])
@@ -179,6 +185,55 @@ export default function SchedulePage() {
             </>
           )}
         </div>
+      </div>
+
+      {/* Unavailability — days off */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-6 max-w-3xl">
+        <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <XCircle className="w-4 h-4 text-red-400" /> Неработни дни (отпуск, болничен)
+        </h3>
+        <div className="flex gap-3 mb-4 flex-wrap">
+          <input type="date" value={unavailDate} onChange={e => setUnavailDate(e.target.value)}
+            className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#1083BD]" />
+          <input value={unavailReason} onChange={e => setUnavailReason(e.target.value)}
+            placeholder="Причина (отпуск, болничен...)"
+            className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#1083BD]" />
+          <button onClick={async () => {
+            if (!unavailDate) return
+            const res = await fetch(apiUrl("/api/dashboard/unavailability"), {
+              method: "POST", credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ date: unavailDate, reason: unavailReason }),
+            })
+            if (res.ok) {
+              const d = await res.json()
+              setUnavailable(u => [...u.filter(x => x.date.slice(0,10) !== unavailDate), d].sort((a,b) => a.date.localeCompare(b.date)))
+              setUnavailDate(""); setUnavailReason("")
+            }
+          }} className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-bold transition-colors">
+            + Добави
+          </button>
+        </div>
+        {unavailable.length === 0 ? (
+          <p className="text-xs text-gray-400">Няма маркирани неработни дни</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {unavailable.map(u => (
+              <div key={u.id} className="flex items-center gap-2 bg-red-50 border border-red-100 rounded-xl px-3 py-1.5 text-xs">
+                <span className="font-semibold text-red-700">{new Date(u.date).toLocaleDateString("bg-BG", { day:"numeric", month:"short" })}</span>
+                {u.reason && <span className="text-red-500">{u.reason}</span>}
+                <button onClick={async () => {
+                  await fetch(apiUrl("/api/dashboard/unavailability"), {
+                    method: "DELETE", credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ date: u.date }),
+                  })
+                  setUnavailable(prev => prev.filter(x => x.id !== u.id))
+                }} className="text-red-400 hover:text-red-600 ml-1">×</button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Weekly schedule */}

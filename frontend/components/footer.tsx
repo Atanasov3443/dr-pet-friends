@@ -23,9 +23,9 @@ const footerLinks = {
     { label: "Регистрация",   href: "/register" },
   ],
   legal: [
-    { label: "Условия за ползване", href: "/" },
-    { label: "Поверителност",       href: "/" },
-    { label: "Бисквитки",           href: "/" },
+    { label: "Условия за ползване", href: "/terms" },
+    { label: "Поверителност",       href: "/privacy" },
+    { label: "Бисквитки",           href: "/privacy#cookies" },
   ],
 }
 

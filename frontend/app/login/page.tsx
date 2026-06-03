@@ -134,7 +134,8 @@ export default function LoginPage() {
               </div>
 
               <p className="text-center text-sm text-gray-400 mt-8">
-                Нямаш акаунт?{" "}
+                <Link href="/forgot-password" className="text-gray-400 hover:text-gray-600 text-xs">Забравена парола?</Link>
+                {" · "}Нямаш акаунт?{" "}
                 <Link href="/register" className="text-[#1083BD] font-semibold hover:underline">Регистрирай се</Link>
               </p>
               <p className="text-center text-sm text-gray-400 mt-2">
@@ -213,7 +214,8 @@ export default function LoginPage() {
               </form>
 
               <p className="text-center text-sm text-gray-400 mt-6">
-                Нямаш акаунт?{" "}
+                <Link href="/forgot-password" className="text-gray-400 hover:text-gray-600 text-xs">Забравена парола?</Link>
+                {" · "}Нямаш акаунт?{" "}
                 <Link href="/register" className="text-[#1083BD] font-semibold hover:underline">Регистрирай се</Link>
               </p>
               {role === "vet" && (

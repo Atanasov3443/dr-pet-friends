@@ -18,7 +18,8 @@ import dashProfileRouter     from "./routes/dashboard/profile"
 import dashScheduleRouter    from "./routes/dashboard/schedule"
 import dashMedicalRouter     from "./routes/dashboard/medical-records"
 import dashStatsRouter       from "./routes/dashboard/stats"
-import dashPatientsRouter    from "./routes/dashboard/patients"
+import dashPatientsRouter      from "./routes/dashboard/patients"
+import dashUnavailabilityRouter from "./routes/dashboard/unavailability"
 import myMedicalRouter       from "./routes/my/medical-records"
 import myProfileRouter       from "./routes/my/profile"
 import myVaccinationsRouter  from "./routes/my/vaccinations"
@@ -36,6 +37,7 @@ import adminStatsRouter      from "./routes/admin/stats"
 import adminSeedRouter       from "./routes/admin/seed"
 import registerRouter        from "./routes/register"
 import authRouter            from "./routes/auth"
+import authPasswordRouter    from "./routes/auth-password"
 import contentRouter         from "./routes/content"
 
 const app  = express()
@@ -80,6 +82,7 @@ app.use("/api/dashboard/schedule",       dashScheduleRouter)
 app.use("/api/dashboard/medical-records", dashMedicalRouter)
 app.use("/api/dashboard/stats",           dashStatsRouter)
 app.use("/api/dashboard/patients",        dashPatientsRouter)
+app.use("/api/dashboard/unavailability",  dashUnavailabilityRouter)
 app.use("/api/admin/vets",           adminVetsRouter)
 app.use("/api/admin/clinics",        adminClinicsRouter)
 app.use("/api/admin/users",          adminUsersRouter)
@@ -88,6 +91,7 @@ app.use("/api/admin/content",        adminContentRouter)
 app.use("/api/admin/stats",          adminStatsRouter)
 app.use("/api/admin/seed",           adminSeedRouter)
 app.use("/api/auth",                 authRouter)
+app.use("/api/auth",                 authPasswordRouter)
 app.use("/api/content",              contentRouter)
 app.use("/api/register",             registerRouter)
 

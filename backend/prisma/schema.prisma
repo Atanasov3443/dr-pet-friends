@@ -131,6 +131,15 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique @default(cuid())
+  expires   DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
 // ─── Core Platform ───────────────────────────────────────────────────────────
 
 model Vet {

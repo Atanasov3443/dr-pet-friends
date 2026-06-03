@@ -3,6 +3,7 @@ import { Inter, Inter_Tight } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { NavigationLoader } from '@/components/navigation-loader'
 import { AuthSessionProvider } from '@/components/session-provider'
+import { CookieBanner } from '@/components/cookie-banner'
 import './globals.css'
 
 const inter = Inter({ 
@@ -69,6 +70,7 @@ export default function RootLayout({
         <AuthSessionProvider>
           <NavigationLoader />
           {children}
+          <CookieBanner />
           {process.env.NODE_ENV === 'production' && <Analytics />}
         </AuthSessionProvider>
       </body>
