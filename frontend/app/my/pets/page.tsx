@@ -335,13 +335,17 @@ export default function MyPetsPage() {
                 <div className="bg-white rounded-2xl border border-gray-100 hover:shadow-md hover:border-[#1083BD]/20 transition-all overflow-hidden">
                   <div className="flex items-center gap-4 p-5">
                     {/* Avatar */}
-                    <div className="w-16 h-16 rounded-2xl shrink-0 overflow-hidden relative">
+                    <div className="w-16 h-16 rounded-2xl shrink-0 overflow-hidden">
                       {p.image ? (
                         <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
                       ) : (
-                        <div className={`w-full h-full flex flex-col items-center justify-center ${petGradient(p.name)}`}>
-                          <span className="text-3xl leading-none">{EMOJI[p.species] ?? "🐾"}</span>
-                          <span className="text-[9px] font-black text-white/80 mt-0.5 uppercase tracking-wide">{p.name.slice(0,4)}</span>
+                        <div className={`w-full h-full flex flex-col items-center justify-center gap-0.5 ${petGradient(p.name)}`}>
+                          <span className="text-white font-black text-xl leading-none tracking-tight">
+                            {p.name.slice(0, 2).toUpperCase()}
+                          </span>
+                          <span className="text-white/60 text-[10px] leading-none">
+                            {EMOJI[p.species] ?? "🐾"}
+                          </span>
                         </div>
                       )}
                     </div>
