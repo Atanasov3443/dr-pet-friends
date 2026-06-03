@@ -236,7 +236,8 @@ function MyAppointmentsPageInner() {
             const d         = new Date(a.date)
             const s         = STATUS[a.status] ?? STATUS.PENDING
             const canReview  = a.status === "COMPLETED" && !reviewed.has(a.vetId)
-            const canPay     = (a.status === "PENDING" || a.status === "CONFIRMED") && (a.price ?? a.service?.price)
+            const isPaid     = a.payment?.status === "PAID"
+            const canPay     = !isPaid && (a.status === "PENDING" || a.status === "CONFIRMED") && (a.price ?? a.service?.price)
             const isOnline   = a.consultationType === "ONLINE"
             const canJoin    = isOnline && a.status === "CONFIRMED" && a.meetLink
 
@@ -293,8 +294,13 @@ function MyAppointmentsPageInner() {
                   </div>
 
                   {/* Actions */}
-                  {(canPay || canReview || canJoin) && (
+                  {(canPay || canReview || canJoin || isPaid) && (
                     <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-50">
+                      {isPaid && (
+                        <span className="flex items-center gap-1.5 px-4 py-2 bg-green-50 text-green-700 rounded-xl text-xs font-bold">
+                          ✅ Платено
+                        </span>
+                      )}
                       {canJoin && (
                         <a href={a.meetLink} target="_blank" rel="noopener noreferrer"
                           className="flex items-center gap-1.5 px-4 py-2 bg-[#1083BD] hover:bg-[#0d6fa0] text-white rounded-xl text-xs font-bold transition-colors cursor-pointer">

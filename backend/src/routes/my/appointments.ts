@@ -25,6 +25,7 @@ router.get("/", authenticate, async (req: AuthRequest, res: Response) => {
       vet:     { select: { displayName: true, specialty: true, image: true, clinic: { select: { name: true, city: true } } } },
       pet:     { select: { name: true, species: true } },
       service: { select: { name: true, price: true } },
+      payment: { select: { status: true } },
     },
     orderBy: { date: upcoming ? "asc" : "desc" },
   })
