@@ -97,7 +97,25 @@ function MyAppointmentsPageInner() {
     } finally { setPaying(null) }
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    load()
+    // If returning from successful Stripe payment, verify all pending payments
+    if (paymentStatus === "success") {
+      setTimeout(async () => {
+        const appts = await fetch(apiUrl("/api/my/appointments"), { credentials: "include" }).then(r => r.json()).catch(() => [])
+        if (!Array.isArray(appts)) return
+        const pending = appts.filter((a: any) => a.payment && a.payment.status !== "PAID" && a.payment.stripeSessionId)
+        for (const a of pending) {
+          await fetch(apiUrl("/api/stripe/verify"), {
+            method: "POST", credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ appointmentId: a.id }),
+          })
+        }
+        load()
+      }, 1500)
+    }
+  }, [])
 
   const now           = new Date()
   const upcoming      = appointments.filter(a => new Date(a.date) >= now && a.status !== "CANCELLED")

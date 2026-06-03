@@ -82,6 +82,30 @@ router.post("/checkout", authenticate, async (req: AuthRequest, res: Response) =
   }
 })
 
+// POST /api/stripe/verify — check if session was paid and update appointment
+router.post("/verify", authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!process.env.STRIPE_SECRET_KEY) { res.json({ ok: false }); return }
+    const stripe = getStripe()
+    const { appointmentId } = req.body
+    if (!appointmentId) { res.status(400).json({ error: "appointmentId required" }); return }
+
+    const payment = await db.payment.findUnique({ where: { appointmentId } })
+    if (!payment?.stripeSessionId) { res.json({ paid: false }); return }
+    if (payment.status === "PAID") { res.json({ paid: true }); return }
+
+    // Check with Stripe
+    const session = await stripe.checkout.sessions.retrieve(payment.stripeSessionId)
+    if (session.payment_status === "paid") {
+      await db.payment.update({ where: { appointmentId }, data: { status: "PAID", stripePaymentId: session.payment_intent as string } })
+      await db.appointment.update({ where: { id: appointmentId }, data: { status: "CONFIRMED" } })
+      res.json({ paid: true })
+    } else {
+      res.json({ paid: false })
+    }
+  } catch { res.json({ paid: false }) }
+})
+
 // POST /api/stripe/webhook — raw body required
 router.post("/webhook", async (req: Request, res: Response) => {
   const sig    = req.headers["stripe-signature"] as string
