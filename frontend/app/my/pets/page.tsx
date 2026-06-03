@@ -245,12 +245,12 @@ export default function MyPetsPage() {
 
   const remove = async (id: string) => {
     if (!confirm("Изтрий любимеца?")) return
-    // Optimistic update — remove from UI immediately
-    setPets(prev => prev.filter(p => p.id !== id))
     const res = await fetch(apiUrl("/api/my/pets"), { credentials: "include", method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
-    if (!res.ok) {
-      // Revert if failed
-      load()
+    if (res.ok) {
+      setPets(prev => prev.filter(p => p.id !== id))
+    } else {
+      const data = await res.json().catch(() => ({}))
+      alert(data.error ?? "Грешка при изтриване")
     }
   }
 

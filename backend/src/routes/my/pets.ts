@@ -86,8 +86,16 @@ router.delete("/", authenticate, async (req: AuthRequest, res: Response) => {
   const pet = await db.pet.findFirst({ where: { id, ownerId: user.id } })
   if (!pet) { res.status(404).json({ error: "Not found" }); return }
 
-  await db.pet.delete({ where: { id } })
-  res.json({ ok: true })
+  try {
+    await db.pet.delete({ where: { id } })
+    res.json({ ok: true })
+  } catch (e: any) {
+    if (e?.cause?.originalCode === "23001" || e?.message?.includes("foreign key")) {
+      res.status(409).json({ error: "Не може да изтриете любимец с записани часове. Първо откажете или изтрийте свързаните резервации." })
+    } else {
+      res.status(500).json({ error: "Грешка при изтриване" })
+    }
+  }
 })
 
 export default router
