@@ -335,28 +335,14 @@ export default function MyPetsPage() {
                 <div className="bg-white rounded-2xl border border-gray-100 hover:shadow-md hover:border-[#1083BD]/20 transition-all overflow-hidden">
                   <div className="flex items-center gap-4 p-5">
                     {/* Avatar */}
-                    <div className="w-16 h-16 rounded-2xl shrink-0 overflow-hidden">
+                    <div className="w-24 h-16 rounded-2xl shrink-0 overflow-hidden">
                       {p.image ? (
                         <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
                       ) : (
-                        <div className={`w-full h-full flex items-center justify-center ${petGradient(p.name)}`}>
-                          <svg viewBox="0 0 100 100" width="40" height="40" fill="white" opacity="0.92" xmlns="http://www.w3.org/2000/svg">
-                            {/* Ears */}
-                            <ellipse cx="28" cy="28" rx="14" ry="18" transform="rotate(-15 28 28)"/>
-                            <ellipse cx="72" cy="28" rx="14" ry="18" transform="rotate(15 72 28)"/>
-                            {/* Head */}
-                            <circle cx="50" cy="52" r="30"/>
-                            {/* Snout */}
-                            <ellipse cx="50" cy="66" rx="16" ry="11"/>
-                            {/* Nose */}
-                            <ellipse cx="50" cy="61" rx="7" ry="5" fill="rgba(0,0,0,0.25)"/>
-                            {/* Eyes */}
-                            <circle cx="38" cy="48" r="4" fill="rgba(0,0,0,0.3)"/>
-                            <circle cx="62" cy="48" r="4" fill="rgba(0,0,0,0.3)"/>
-                            {/* Eye shine */}
-                            <circle cx="40" cy="46" r="1.5" fill="white"/>
-                            <circle cx="64" cy="46" r="1.5" fill="white"/>
-                          </svg>
+                        <div className={`w-full h-full flex items-center justify-center px-2 ${petGradient(p.name)}`}>
+                          <span className="text-white font-black text-lg leading-tight text-center break-all">
+                            {p.name}
+                          </span>
                         </div>
                       )}
                     </div>
