@@ -80,7 +80,8 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
         isOnline,
         meetLink:      meetLink ?? undefined,
         appointmentId: appointment.id,
-      }).catch(() => {})
+      }).then(() => console.log(`✉️ Email sent to ${user.email}`))
+        .catch((err) => console.error("Email error:", err?.message))
     }
 
     res.json(appointment)
