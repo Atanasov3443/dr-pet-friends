@@ -51,7 +51,7 @@ export default function ApplyPage() {
     setSaving(true)
     setError("")
     try {
-      await fetch(apiUrl("/api/profile-request"), {
+      const res = await fetch(apiUrl("/api/profile-request"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -66,6 +66,11 @@ export default function ApplyPage() {
           type:       "VET",
         }),
       })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error ?? "Грешка при изпращане. Опитайте отново.")
+        return
+      }
       setSubmitted(true)
     } catch {
       setError("Грешка при изпращане")

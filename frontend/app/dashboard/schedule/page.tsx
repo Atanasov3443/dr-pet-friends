@@ -120,23 +120,28 @@ export default function SchedulePage() {
           <div className="grid grid-cols-7 gap-0.5">
             {calCells.map((d, i) => {
               if (!d) return <div key={i} />
-              const weekDay  = (d.getDay() + 6) % 7
-              const isActive = activeWeekDays.has(weekDay)
-              const key      = d.toDateString()
-              const dayAppts = apptDays[key] ?? []
-              const isToday  = d.toDateString() === today.toDateString()
-              const isSel    = selDay === key
-              const isPast   = d < today
+              const weekDay    = (d.getDay() + 6) % 7
+              const isActive   = activeWeekDays.has(weekDay)
+              const key        = d.toDateString()
+              const dayAppts   = apptDays[key] ?? []
+              const isToday    = d.toDateString() === today.toDateString()
+              const isSel      = selDay === key
+              const isPast     = d < today
+              const isUnavail  = unavailable.some(u => new Date(u.date).toDateString() === key)
 
               return (
-                <button key={i} onClick={() => setSelDay(isSel ? null : key)}
+                <button key={i}
+                  disabled={isUnavail}
+                  onClick={() => !isUnavail && setSelDay(isSel ? null : key)}
+                  title={isUnavail ? (unavailable.find(u => new Date(u.date).toDateString() === key)?.reason ?? "Неработен ден") : undefined}
                   className={`relative h-10 w-full rounded-lg text-xs font-semibold transition-colors flex flex-col items-center justify-center gap-0.5
-                    ${isSel ? "bg-[#1083BD] text-white"
+                    ${isUnavail ? "bg-red-50 text-red-300 cursor-not-allowed line-through"
+                    : isSel ? "bg-[#1083BD] text-white"
                     : isToday ? "ring-2 ring-[#1083BD] text-[#1083BD]"
                     : isActive && !isPast ? "bg-blue-50 text-[#1083BD] hover:bg-blue-100"
                     : "text-gray-400"}`}>
                   <span>{d.getDate()}</span>
-                  {dayAppts.length > 0 && (
+                  {dayAppts.length > 0 && !isUnavail && (
                     <span className={`w-1 h-1 rounded-full ${isSel ? "bg-white" : "bg-[#EF3988]"}`} />
                   )}
                 </button>
@@ -145,8 +150,9 @@ export default function SchedulePage() {
           </div>
 
           {/* Legend */}
-          <div className="flex gap-4 mt-4 pt-3 border-t border-gray-50 text-xs text-gray-400">
+          <div className="flex flex-wrap gap-4 mt-4 pt-3 border-t border-gray-50 text-xs text-gray-400">
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-blue-50 border border-blue-200" /> Работен</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-red-50 border border-red-200" /> Неработен</span>
             <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#EF3988]" /> Резервации</span>
           </div>
         </div>
