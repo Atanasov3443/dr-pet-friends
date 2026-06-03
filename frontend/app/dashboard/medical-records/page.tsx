@@ -61,9 +61,22 @@ export default function MedicalRecordsPage() {
       {loading ? (
         <div className="text-center py-16 text-gray-400">Зарежда...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
-          <FileText className="w-10 h-10 mx-auto mb-3 opacity-30" />
-          <p>{search ? "Няма намерени записи" : "Все още няма медицински записи"}</p>
+        <div className="text-center py-16">
+          <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+            <FileText className="w-8 h-8 text-gray-300" />
+          </div>
+          <p className="text-gray-500 font-medium mb-2">{search ? "Няма намерени записи" : "Все още няма медицински записи"}</p>
+          {!search && (
+            <>
+              <p className="text-gray-400 text-sm max-w-sm mx-auto mb-5">
+                Медицинските записи се попълват след преглед. Отиди в <strong>Резервации</strong>, избери завършен час и кликни "Медицински запис".
+              </p>
+              <a href="/dashboard/appointments"
+                className="inline-flex items-center gap-2 bg-[#1083BD] hover:bg-[#0d6fa0] text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors">
+                Отиди към Резервации →
+              </a>
+            </>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
