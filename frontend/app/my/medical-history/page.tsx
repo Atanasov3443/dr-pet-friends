@@ -8,6 +8,7 @@ type Pet    = { id: string; name: string; species: string; breed: string | null;
 type Vacc   = { id: string; name: string; date: string; nextDate: string | null; notes: string | null }
 type Entry  = { id: string; type: string; date: string; title: string; data: string | null; notes: string | null; nextDate: string | null }
 type MedRec = { id: string; diagnosis: string | null; treatment: string | null; medications: string | null; notes: string | null; weight: number | null; temperature: number | null; nextVisit: string | null; createdAt: string; vet: { displayName: string; specialty: string }; appointment: { date: string } }
+type Appt   = { id: string; date: string; status: string; consultationType: string; vet: { displayName: string; specialty: string }; pet: { id: string; name: string }; service: { name: string; price: number } | null }
 
 const SPECIES_EMOJI: Record<string, string> = { DOG:"🐶", CAT:"🐱", BIRD:"🦜", RABBIT:"🐰", EXOTIC:"🦎", OTHER:"🐾" }
 
@@ -143,6 +144,7 @@ export default function MedicalHistoryPage() {
   const [vaccs,     setVaccs]     = useState<Vacc[]>([])
   const [entries,   setEntries]   = useState<Entry[]>([])
   const [records,   setRecords]   = useState<MedRec[]>([])
+  const [appts,     setAppts]     = useState<Appt[]>([])
   const [tab,       setTab]       = useState("info")
   const [loading,   setLoading]   = useState(false)
   const [showForm,  setShowForm]  = useState(false)
@@ -161,10 +163,13 @@ export default function MedicalHistoryPage() {
       fetch(apiUrl(`/api/my/vaccinations?petId=${pet.id}`), { credentials: "include" }).then(r => r.json()),
       fetch(apiUrl(`/api/my/health-entries?petId=${pet.id}`), { credentials: "include" }).then(r => r.json()),
       fetch(apiUrl(`/api/my/medical-records?petId=${pet.id}`), { credentials: "include" }).then(r => r.json()),
-    ]).then(([v, e, m]) => {
+      fetch(apiUrl("/api/my/appointments"), { credentials: "include" }).then(r => r.json()),
+    ]).then(([v, e, m, a]) => {
       setVaccs(Array.isArray(v) ? v : [])
       setEntries(Array.isArray(e) ? e : [])
       setRecords(Array.isArray(m) ? m : [])
+      // Filter appointments for this pet
+      setAppts(Array.isArray(a) ? a.filter((x: Appt) => x.pet?.id === pet.id) : [])
       setLoading(false)
     }).catch(() => setLoading(false))
   }, [pet])
@@ -364,7 +369,29 @@ export default function MedicalHistoryPage() {
             {/* ПРЕГЛЕДИ */}
             {tab === "records" && (
               <div className="space-y-3">
-                {records.length === 0 ? <div className="text-center py-10 text-gray-300 text-sm">Няма медицински записи от прегледи</div> : records.map(r => (
+                {appts.length === 0 && records.length === 0 && <div className="text-center py-10 text-gray-300 text-sm">Няма посещения при ветеринар</div>}
+
+                {/* Upcoming appointments */}
+                {appts.filter(a => new Date(a.date) >= new Date() && a.status !== "CANCELLED").map(a => (
+                  <div key={a.id} className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex gap-3 items-start">
+                    <div className="w-10 h-10 rounded-xl bg-[#1083BD]/10 flex items-center justify-center shrink-0">
+                      <CalendarDays className="w-5 h-5 text-[#1083BD]" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-semibold text-gray-900 text-sm">{a.vet?.displayName}</p>
+                        <span className="text-xs text-[#1083BD] font-medium">{new Date(a.date).toLocaleDateString("bg-BG", { day:"numeric", month:"long" })} · {new Date(a.date).toLocaleTimeString("bg-BG", { hour:"2-digit", minute:"2-digit" })}</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5">{a.vet?.specialty}{a.service ? ` · ${a.service.name}` : ""}</p>
+                      <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-medium ${a.status === "CONFIRMED" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
+                        {a.status === "CONFIRMED" ? "Потвърден" : "Чакащ"}{a.consultationType === "ONLINE" ? " · Онлайн" : ""}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Past appointments & medical records */}
+                {records.length === 0 && appts.filter(a => new Date(a.date) < new Date() || a.status === "CANCELLED").length === 0 ? null : records.map(r => (
                   <div key={r.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                     <button onClick={() => setExpanded(expanded === r.id ? null : r.id)} className="w-full text-left p-4 flex items-start gap-3 hover:bg-gray-50/50 transition-colors">
                       <Stethoscope className="w-4 h-4 text-[#1083BD] mt-0.5 shrink-0" />
