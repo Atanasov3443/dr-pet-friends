@@ -60,7 +60,8 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
         date:             new Date(date),
         notes:            notes || null,
         price:            service?.price ?? null,
-        status:           "PENDING",
+        // In-clinic = auto-CONFIRMED (pay at vet), Online = PENDING until paid
+        status:           isOnline ? "PENDING" : "CONFIRMED",
         consultationType: isOnline ? "ONLINE" : "IN_CLINIC",
         meetLink,
       },

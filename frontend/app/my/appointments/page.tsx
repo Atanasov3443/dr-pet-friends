@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CalendarDays, Star, X, CreditCard, Clock, Video, Stethoscope, CheckCircle } from "lucide-react"
+import { CalendarDays, Star, X, CreditCard, Clock, Video, Stethoscope, CheckCircle, XCircle } from "lucide-react"
 import Link from "next/link"
 import { apiUrl } from "@/lib/api"
 import { useSearchParams } from "next/navigation"
@@ -73,7 +73,8 @@ function MyAppointmentsPageInner() {
   const [tab, setTab]                   = useState<"upcoming" | "past">("upcoming")
   const [reviewTarget, setReviewTarget] = useState<{ vetId: string; vetName: string } | null>(null)
   const [reviewed, setReviewed]         = useState<Set<string>>(new Set())
-  const [paying, setPaying]             = useState<string | null>(null)
+  const [paying,    setPaying]    = useState<string | null>(null)
+  const [cancelling, setCancelling] = useState<string | null>(null)
 
   const load = () => {
     setLoading(true)
@@ -255,9 +256,11 @@ function MyAppointmentsPageInner() {
             const s         = STATUS[a.status] ?? STATUS.PENDING
             const canReview  = a.status === "COMPLETED" && !reviewed.has(a.vetId)
             const isPaid     = a.payment?.status === "PAID"
-            const canPay     = !isPaid && (a.status === "PENDING" || a.status === "CONFIRMED") && (a.price ?? a.service?.price)
+            const canPay     = !isPaid && a.status === "PENDING" && (a.price ?? a.service?.price)
             const isOnline   = a.consultationType === "ONLINE"
             const canJoin    = isOnline && a.status === "CONFIRMED" && a.meetLink
+            const hoursUntil = (new Date(a.date).getTime() - Date.now()) / 3600000
+            const canCancel  = a.status !== "CANCELLED" && a.status !== "COMPLETED" && hoursUntil > 0
 
             return (
               <div key={a.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
@@ -312,7 +315,7 @@ function MyAppointmentsPageInner() {
                   </div>
 
                   {/* Actions */}
-                  {(canPay || canReview || canJoin || isPaid) && (
+                  {(canPay || canReview || canJoin || isPaid || canCancel) && (
                     <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-50">
                       {isPaid && (
                         <span className="flex items-center gap-1.5 px-4 py-2 bg-green-50 text-green-700 rounded-xl text-xs font-bold">
@@ -330,6 +333,33 @@ function MyAppointmentsPageInner() {
                           className="flex items-center gap-1.5 px-4 py-2 bg-[#10B83D] hover:bg-[#0da033] disabled:opacity-60 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer">
                           <CreditCard className="w-3.5 h-3.5" />
                           {paying === a.id ? "Зарежда..." : `Плати ${a.price ?? a.service?.price} лв.`}
+                        </button>
+                      )}
+                      {canCancel && (
+                        <button onClick={async () => {
+                          const msg = hoursUntil > 24
+                            ? `Откажи часа? ${isPaid ? "Сумата ще бъде върната автоматично." : ""}`
+                            : "Откажи часа? По-малко от 24ч до прегледа — без връщане на сумата."
+                          if (!confirm(msg)) return
+                          setCancelling(a.id)
+                          const res = await fetch(apiUrl("/api/my/cancel"), {
+                            method: "POST", credentials: "include",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ appointmentId: a.id }),
+                          })
+                          const data = await res.json()
+                          setCancelling(null)
+                          if (res.ok) {
+                            if (data.refunded) alert("Часът е отказан. Сумата ще бъде върната в рамките на 3-5 работни дни.")
+                            else alert("Часът е отказан.")
+                            load()
+                          } else {
+                            alert(data.error ?? "Грешка при отказ")
+                          }
+                        }} disabled={cancelling === a.id}
+                          className="flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-bold transition-colors cursor-pointer disabled:opacity-60">
+                          <XCircle className="w-3.5 h-3.5" />
+                          {cancelling === a.id ? "Отказва..." : hoursUntil > 24 ? "Откажи час" : "Откажи (без връщане)"}
                         </button>
                       )}
                       {canReview && (

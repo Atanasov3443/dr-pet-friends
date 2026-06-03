@@ -96,18 +96,25 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
 
       const appt = await res.json()
 
-      // 2. Immediately open Stripe checkout
-      const payRes  = await fetch(apiUrl("/api/stripe/checkout"), {
-        method: "POST", credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ appointmentId: appt.id }),
-      })
-      const payData = await payRes.json()
+      // 2. For ONLINE → Stripe payment. For IN_CLINIC → done (pay at vet)
+      if (consultType === "ONLINE") {
+        const payRes  = await fetch(apiUrl("/api/stripe/checkout"), {
+          method: "POST", credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ appointmentId: appt.id }),
+        })
+        const payData = await payRes.json()
 
-      if (payData.url) {
-        window.location.href = payData.url
+        if (payData.url) {
+          window.location.href = payData.url
+        } else {
+          setError(payData.error ?? "Грешка при плащане. Опитайте отново.")
+        }
       } else {
-        setError(payData.error ?? "Грешка при плащане. Опитайте отново.")
+        // In-clinic: show done screen (already CONFIRMED)
+        setAppointmentId(appt.id)
+        setAppointmentPrice(null) // no online payment needed
+        setStep("done")
       }
     } catch { setError("Сървърна грешка.") }
     finally { setSaving(false) }
@@ -125,7 +132,12 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
           <p className="text-gray-500 text-sm">{date && `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]} · ${slot}`}</p>
           {service && <p className="text-gray-400 text-xs mt-0.5">{service.name}</p>}
           <p className="text-xs text-gray-400 mt-2">Ще получите имейл с потвърждение.</p>
-          <div className="mt-3 bg-yellow-50 border border-yellow-200 rounded-xl px-3 py-2 text-xs text-yellow-700">
+          {consultType === "IN_CLINIC" && (
+            <div className="mt-3 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 text-xs text-blue-700 font-medium">
+              💳 Плащането се извършва на място при ветеринара.
+            </div>
+          )}
+          <div className="mt-2 bg-yellow-50 border border-yellow-200 rounded-xl px-3 py-2 text-xs text-yellow-700">
             📬 Ако не виждате имейла, проверете папка <strong>Спам / Junk</strong>.
           </div>
         </div>

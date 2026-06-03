@@ -23,6 +23,8 @@ import myMedicalRouter       from "./routes/my/medical-records"
 import myProfileRouter       from "./routes/my/profile"
 import myVaccinationsRouter  from "./routes/my/vaccinations"
 import myHealthEntriesRouter from "./routes/my/health-entries"
+import myCancelRouter        from "./routes/my/cancel"
+import myWaitlistRouter      from "./routes/my/waitlist"
 import uploadRouter          from "./routes/upload"
 import stripeRouter          from "./routes/stripe"
 import adminVetsRouter       from "./routes/admin/vets"
@@ -68,6 +70,8 @@ app.use("/api/my/medical-records",   myMedicalRouter)
 app.use("/api/my/profile",           myProfileRouter)
 app.use("/api/my/vaccinations",      myVaccinationsRouter)
 app.use("/api/my/health-entries",    myHealthEntriesRouter)
+app.use("/api/my/cancel",            myCancelRouter)
+app.use("/api/my/waitlist",          myWaitlistRouter)
 app.use("/api/upload",               uploadRouter)
 app.use("/api/stripe",               stripeRouter)
 app.use("/api/dashboard/appointments",    dashAppointmentsRouter)
