@@ -39,13 +39,14 @@ export default function SchedulePage() {
 
   const save = async () => {
     setSaving(true)
-    await fetch(apiUrl("/api/dashboard/schedule"), {
+    const res = await fetch(apiUrl("/api/dashboard/schedule"), {
       credentials: "include", method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ slots }),
     })
-    setSaving(false); setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+    setSaving(false)
+    if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 3000) }
+    else alert("Грешка при запазване. Опитайте отново.")
   }
 
   // Calendar helpers

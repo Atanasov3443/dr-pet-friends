@@ -88,9 +88,9 @@ export default function PatientsPage() {
   )
 
   return (
-    <div className="p-8 flex gap-6 h-full">
+    <div className="p-4 md:p-8 flex flex-col lg:flex-row gap-6 min-h-full">
       {/* Patient list */}
-      <div className={`flex flex-col ${selected ? "w-80 shrink-0" : "flex-1"}`}>
+      <div className={`flex flex-col ${selected ? "lg:w-80 lg:shrink-0" : "flex-1"}`}>
         <div className="flex items-center justify-between mb-5">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Пациенти</h1>
@@ -196,7 +196,7 @@ export default function PatientsPage() {
 
       {/* Patient detail */}
       {selected && (
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto min-w-0">
           <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
             {/* Header */}
             <div className="bg-gradient-to-r from-[#1083BD] to-[#0D67F7] p-6 flex items-center gap-4">

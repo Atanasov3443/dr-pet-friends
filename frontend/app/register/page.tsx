@@ -46,21 +46,26 @@ export default function RegisterPage() {
       return
     }
 
-    const res = await fetch(apiUrl("/api/register"), {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ name, email, password }),
-    })
+    try {
+      const res = await fetch(apiUrl("/api/register"), {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ name, email, password }),
+      })
 
-    const data = await res.json()
-    setLoading(false)
+      const data = await res.json().catch(() => ({}))
+      setLoading(false)
 
-    if (!res.ok) {
-      setError(data.error ?? "Грешка при регистрация.")
-      return
+      if (!res.ok) {
+        setError(data.error ?? "Грешка при регистрация.")
+        return
+      }
+
+      await signIn("credentials", { email, password, callbackUrl: "/" })
+    } catch {
+      setLoading(false)
+      setError("Сървърна грешка. Опитайте отново.")
     }
-
-    await signIn("credentials", { email, password, callbackUrl: "/" })
   }
 
   return (

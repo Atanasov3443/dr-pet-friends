@@ -10,7 +10,7 @@ import { InlineBookingWidget } from "@/components/inline-booking-widget"
 
 const DAYS = ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"]
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://dr-pet-friends-1.onrender.com"
 
 export default async function VetProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

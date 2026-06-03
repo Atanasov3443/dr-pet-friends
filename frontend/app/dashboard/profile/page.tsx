@@ -21,7 +21,7 @@ export default function ProfilePage() {
   const [hasVet, setHasVet]   = useState(false)
 
   useEffect(() => {
-    fetch(apiUrl("/api/dashboard/profile"))
+    fetch(apiUrl("/api/dashboard/profile"), { credentials: "include" })
       .then(r => r.json())
       .then(data => {
         if (data.vet) {
@@ -94,7 +94,7 @@ export default function ProfilePage() {
         {/* Form */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-6">
           <div className="space-y-5">
-            <Field label="Пълно Д-р Вашето Лобановски *" value={form.displayName}
+            <Field label="Показвано Ime (напр. Д-р Мария Иванова) *" value={form.displayName}
               onChange={v => setForm(f => ({...f, displayName: v}))} placeholder="Д-р Иван Петров" />
             <Field label="Специалност *" value={form.specialty}
               onChange={v => setForm(f => ({...f, specialty: v}))} placeholder="Кардиология, Хирургия, Обща практика..." />

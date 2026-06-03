@@ -377,11 +377,11 @@ function SearchPageInner() {
 
       {/* Results — Map view */}
       {viewMode === "map" && (
-        <div className="flex" style={{ height: "calc(100vh - 160px)" }}>
+        <div className="flex flex-col md:flex-row" style={{ height: "calc(100vh - 160px)" }}>
           <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
           {/* Sidebar */}
-          <div className="w-72 bg-white border-r border-gray-100 overflow-y-auto flex flex-col shrink-0">
+          <div className="w-full md:w-72 h-48 md:h-full bg-white border-b md:border-b-0 md:border-r border-gray-100 overflow-y-auto flex flex-col shrink-0">
             {selClinic ? (
               <div className="p-5 flex flex-col gap-3">
                 <button onClick={() => setSelClinic(null)} className="text-xs text-gray-400 hover:text-gray-600 text-left flex items-center gap-1">

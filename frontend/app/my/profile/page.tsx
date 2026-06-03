@@ -114,7 +114,7 @@ export default function MyProfilePage() {
 
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 flex items-center gap-1">
-              <User className="w-3 h-3" /> Ime
+              <User className="w-3 h-3" /> Пълно Иme
             </label>
             <input value={name} onChange={e => setName(e.target.value)}
               placeholder="Иван Иванов"

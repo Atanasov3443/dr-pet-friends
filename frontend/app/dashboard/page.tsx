@@ -93,7 +93,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats in hero */}
-        <div className="relative grid grid-cols-4 gap-3 mt-5">
+        <div className="relative grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
           {[
             { label: "Рейтинг",    value: profile.rating.toFixed(1) + "★" },
             { label: "Отзиви",     value: profile.reviewCount },

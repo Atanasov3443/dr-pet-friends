@@ -243,14 +243,14 @@ export default function MedicalHistoryPage() {
         </div>
       )}
 
-      <div className="flex gap-6">
-        {/* Left sidebar — tabs */}
-        <div className="w-44 shrink-0 space-y-1">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+        {/* Tabs — horizontal on mobile, vertical sidebar on desktop */}
+        <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible md:w-44 md:shrink-0 pb-1 md:pb-0">
           {TABS.map(t => {
             const Icon = t.icon
             return (
               <button key={t.id} onClick={() => { setTab(t.id); setShowForm(false) }}
-                className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${tab === t.id ? "bg-[#1083BD] text-white" : "text-gray-600 hover:bg-gray-100"}`}>
+                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors shrink-0 md:w-full md:text-left ${tab === t.id ? "bg-[#1083BD] text-white" : "text-gray-600 hover:bg-gray-100"}`}>
                 <Icon className="w-4 h-4 shrink-0" /> {t.label}
               </button>
             )

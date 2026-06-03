@@ -29,11 +29,15 @@ function ReviewModal({ vetId, vetName, onClose, onSaved }: { vetId: string; vetN
 
   const submit = async () => {
     setSaving(true)
-    await fetch(apiUrl("/api/reviews"), {
-      method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
-      body: JSON.stringify({ vetId, rating, comment }),
-    })
-    setSaving(false); onSaved(); onClose()
+    try {
+      const res = await fetch(apiUrl("/api/reviews"), {
+        method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include",
+        body: JSON.stringify({ vetId, rating, comment }),
+      })
+      setSaving(false)
+      if (res.ok) { onSaved(); onClose() }
+      else { const d = await res.json().catch(() => ({})); alert(d.error ?? "Грешка при изпращане") }
+    } catch { setSaving(false); alert("Сървърна грешка. Опитайте отново.") }
   }
 
   return (

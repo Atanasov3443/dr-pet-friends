@@ -58,10 +58,16 @@ export function Navbar() {
                 <User className="w-3.5 h-3.5" /> Вход
               </Link>
             )}
-            {/* Mobile — just icon */}
-            <Link href="/search" className="md:hidden p-2 text-white">
-              <CalendarCheck className="w-5 h-5" />
-            </Link>
+            {/* Mobile — login icon if not logged in */}
+            {!session ? (
+              <Link href="/login" className="md:hidden p-2 text-white">
+                <User className="w-5 h-5" />
+              </Link>
+            ) : (
+              <Link href="/search" className="md:hidden p-2 text-white">
+                <CalendarCheck className="w-5 h-5" />
+              </Link>
+            )}
           </div>
 
         </div>

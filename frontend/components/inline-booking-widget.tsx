@@ -71,10 +71,12 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   const activeDays  = useMemo(() => new Set(schedule.filter(s => s.isActive).map(s => s.dayOfWeek)), [schedule])
   const calCells    = useMemo(() => buildCalendar(calYear, calMonth), [calYear, calMonth])
   const duration    = service?.duration ?? 30
-  const daySchedule = date ? schedule.filter(s => s.isActive && s.dayOfWeek === date.getDay()) : []
+  // Backend stores dayOfWeek as Monday=0..Sunday=6; JS getDay() returns Sunday=0..Saturday=6
+  const toMondayFirst = (d: Date) => (d.getDay() + 6) % 7
+  const daySchedule = date ? schedule.filter(s => s.isActive && s.dayOfWeek === toMondayFirst(date)) : []
   const slots       = useMemo(() => daySchedule.flatMap(s => genSlots(s.startTime, s.endTime, duration)), [date, duration])
 
-  function isAvailable(d: Date) { return d > today && activeDays.has(d.getDay()) }
+  function isAvailable(d: Date) { return d > today && activeDays.has(toMondayFirst(d)) }
   function prevMonth() { if (calMonth === 0) { setCalYear(y => y-1); setCalMonth(11) } else setCalMonth(m => m-1) }
   function nextMonth() { if (calMonth === 11) { setCalYear(y => y+1); setCalMonth(0) } else setCalMonth(m => m+1) }
 
@@ -174,7 +176,9 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
 
           <button onClick={confirmAndPay} disabled={saving}
             className="w-full py-3.5 bg-[#10B83D] hover:bg-[#0da033] text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-60 transition-colors">
-            💳 {saving ? "Зарежда плащане..." : `Плати и запази${service?.price ? ` · ${service.price} лв.` : ""}`}
+            {saving ? "Запазва..." : consultType === "ONLINE"
+              ? `💳 Плати и запази${service?.price ? ` · ${service.price} лв.` : ""}`
+              : `✓ Запази час${service?.price ? ` · ${service.price} лв. (на място)` : ""}`}
           </button>
         </div>
       </div>
