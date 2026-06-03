@@ -35,6 +35,12 @@ function petGradient(name: string) {
   return GRADIENTS[idx]
 }
 
+const COLORS1 = ["#1083BD","#EF3988","#10B83D","#F97316","#8B5CF6","#06B6D4"]
+const COLORS2 = ["#0D67F7","#d42f77","#0a8c2e","#ea6c0a","#7c3aed","#0891b2"]
+
+function petColor1(name: string) { return COLORS1[name.charCodeAt(0) % COLORS1.length] }
+function petColor2(name: string) { return COLORS2[name.charCodeAt(0) % COLORS2.length] }
+
 type PetData = { id?: string; name: string; species: string; gender: string; breed: string; birthDate: string; weight: string; notes: string; image?: string }
 
 function PetForm({ initial, onSave, onCancel }: {
@@ -335,15 +341,34 @@ export default function MyPetsPage() {
                 <div className="bg-white rounded-2xl border border-gray-100 hover:shadow-md hover:border-[#1083BD]/20 transition-all overflow-hidden">
                   <div className="flex items-center gap-4 p-5">
                     {/* Avatar */}
-                    <div className="w-24 h-16 rounded-2xl shrink-0 overflow-hidden">
+                    <div className="w-16 h-16 shrink-0 relative">
                       {p.image ? (
-                        <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className={`w-full h-full flex items-center justify-center px-2 ${petGradient(p.name)}`}>
-                          <span className="text-white font-black text-lg leading-tight text-center break-all">
-                            {p.name}
-                          </span>
+                        <div className="w-full h-full" style={{ clipPath: "url(#pawClip)" }}>
+                          <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
                         </div>
+                      ) : (
+                        <svg viewBox="0 0 100 100" width="64" height="64" xmlns="http://www.w3.org/2000/svg">
+                          <defs>
+                            <linearGradient id={`pg-${p.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor={petColor1(p.name)} />
+                              <stop offset="100%" stopColor={petColor2(p.name)} />
+                            </linearGradient>
+                          </defs>
+                          {/* Toe pads */}
+                          <ellipse cx="28" cy="22" rx="11" ry="13" fill={`url(#pg-${p.id})`} transform="rotate(-15 28 22)"/>
+                          <ellipse cx="50" cy="15" rx="11" ry="13" fill={`url(#pg-${p.id})`}/>
+                          <ellipse cx="72" cy="22" rx="11" ry="13" fill={`url(#pg-${p.id})`} transform="rotate(15 72 22)"/>
+                          <ellipse cx="15" cy="42" rx="9" ry="12" fill={`url(#pg-${p.id})`} transform="rotate(-25 15 42)"/>
+                          <ellipse cx="85" cy="42" rx="9" ry="12" fill={`url(#pg-${p.id})`} transform="rotate(25 85 42)"/>
+                          {/* Main pad */}
+                          <ellipse cx="50" cy="72" rx="28" ry="22" fill={`url(#pg-${p.id})`}/>
+                          {/* Name text */}
+                          <text x="50" y="77" textAnchor="middle" fill="white" fontWeight="900"
+                            fontSize={p.name.length > 5 ? "11" : p.name.length > 3 ? "13" : "16"}
+                            fontFamily="system-ui, sans-serif">
+                            {p.name.slice(0, 6)}
+                          </text>
+                        </svg>
                       )}
                     </div>
 
