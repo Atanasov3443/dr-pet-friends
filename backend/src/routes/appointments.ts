@@ -8,7 +8,7 @@ const router = Router()
 router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id
-    const { vetId, serviceId, date, petName, petSpecies, notes, consultationType } = req.body
+    const { vetId, serviceId, date, petName, petSpecies, notes, consultationType, petId: existingPetId } = req.body
 
     if (!vetId || !date) {
       res.status(400).json({ error: "Липсват задължителни полета" })
@@ -35,10 +35,14 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
 
     const ownerId = dbUser.id
 
-    let pet = await db.pet.findFirst({ where: { ownerId, name: petName } })
+    // Use existing pet if provided, otherwise find/create by name
+    let pet = existingPetId
+      ? await db.pet.findFirst({ where: { id: existingPetId, ownerId } })
+      : await db.pet.findFirst({ where: { ownerId, name: petName } })
+
     if (!pet) {
       pet = await db.pet.create({
-        data: { ownerId, name: petName || "Любимец", species: petSpecies || "DOG" },
+        data: { ownerId, name: petName || "Любимец", species: petSpecies || "OTHER" },
       })
     }
 

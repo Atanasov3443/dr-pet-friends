@@ -55,6 +55,8 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   const [calMonth, setCalMonth] = useState(today.getMonth())
 
   const [consultType, setConsultType] = useState<"IN_CLINIC" | "ONLINE">("IN_CLINIC")
+  const [userPets,    setUserPets]    = useState<{id:string;name:string;species:string}[]>([])
+  const [selectedPet, setSelectedPet] = useState<string>("")
   const [service,     setService]     = useState<Service | null>(null)
   const [date,        setDate]        = useState<Date | null>(null)
   const [slot,        setSlot]        = useState("")
@@ -67,6 +69,14 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   const [appointmentId,    setAppointmentId]    = useState("")
   const [appointmentPrice, setAppointmentPrice] = useState<number | null>(null)
   const [payLoading,  setPayLoading]  = useState(false)
+
+  // Load user's pets on mount
+  useMemo(() => {
+    fetch(apiUrl("/api/my/pets"), { credentials: "include" })
+      .then(r => r.ok ? r.json() : [])
+      .then(data => { if (Array.isArray(data)) setUserPets(data.filter((p:any) => p.name !== "Любимец")) })
+      .catch(() => {})
+  }, [])
 
   const activeDays  = useMemo(() => new Set(schedule.filter(s => s.isActive).map(s => s.dayOfWeek)), [schedule])
   const calCells    = useMemo(() => buildCalendar(calYear, calMonth), [calYear, calMonth])
@@ -91,7 +101,7 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
       const res = await fetch(apiUrl("/api/appointments"), {
         method: "POST", credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vetId, serviceId: service?.id, date: dt.toISOString(), petName: "Любимец", petSpecies, notes, consultationType: consultType }),
+        body: JSON.stringify({ vetId, serviceId: service?.id, date: dt.toISOString(), petName: "Любимец", petSpecies, notes, consultationType: consultType, petId: selectedPet || undefined }),
       })
       if (res.status === 401) { router.push("/login"); return }
       if (!res.ok) { const d = await res.json().catch(() => ({})); setError(d.error ?? "Грешка при запазване."); return }
@@ -165,10 +175,27 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
           </div>
         </div>
 
-        <div className="p-6 space-y-5">
+        <div className="p-6 space-y-4">
+          {userPets.length > 0 && (
+            <div>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2">За кой любимец?</label>
+              <div className="flex flex-wrap gap-2">
+                {userPets.map(p => (
+                  <button key={p.id} type="button" onClick={() => setSelectedPet(selectedPet === p.id ? "" : p.id)}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-colors ${selectedPet === p.id ? "bg-[#1083BD] text-white border-[#1083BD]" : "border-gray-200 text-gray-600 hover:border-[#1083BD]"}`}>
+                    🐾 {p.name}
+                  </button>
+                ))}
+                <button type="button" onClick={() => setSelectedPet("")}
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-colors ${!selectedPet ? "bg-gray-100 text-gray-700 border-gray-300" : "border-gray-200 text-gray-400"}`}>
+                  Нов
+                </button>
+              </div>
+            </div>
+          )}
           <div>
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2">Бележки — симптоми, въпроси</label>
-            <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={4} placeholder="Опишете симптомите или въпросите си..."
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Опишете симптомите или въпросите си..."
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#1083BD] resize-none" />
           </div>
 

@@ -5,7 +5,12 @@ import { authenticate, AuthRequest } from "../middleware/auth"
 const router = Router()
 
 router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
-  const userId = req.user!.id
+  // Resolve actual DB user
+  let user = await db.user.findUnique({ where: { id: req.user!.id } })
+  if (!user) user = await db.user.findUnique({ where: { email: req.user!.email } })
+  if (!user) { res.status(401).json({ error: "Не е намерен потребител" }); return }
+  const userId = user.id
+
   const { vetId, rating, comment } = req.body
 
   if (!vetId || !rating) { res.status(400).json({ error: "Липсват полета" }); return }
