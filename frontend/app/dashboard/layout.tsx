@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           )}
           <div className="min-w-0">
             <p className="font-bold text-sm text-gray-900 truncate">{(session?.user as any)?.name ?? "Ветеринар"}</p>
-            <p className="text-xs text-gray-400">Моят профил</p>
+            <p className="text-xs text-gray-400">Профил на ветеринар</p>
           </div>
         </div>
       </div>

@@ -33,7 +33,7 @@ export default function MyLayout({ children }: { children: React.ReactNode }) {
           )}
           <div className="min-w-0">
             <p className="font-bold text-sm text-gray-900 truncate">{(session?.user as any)?.name ?? "Собственик"}</p>
-            <p className="text-xs text-gray-400">Моят акаунт</p>
+            <p className="text-xs text-gray-400">Профил на потребител</p>
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function MyLayout({ children }: { children: React.ReactNode }) {
   )
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex bg-[#EFF6FF]">
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-64 bg-white border-r border-gray-100 flex-col">
         <SidebarContent />
