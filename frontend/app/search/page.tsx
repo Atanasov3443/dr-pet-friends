@@ -292,7 +292,7 @@ function SearchPageInner() {
                   </div>
                 </div>
               </div>
-              <button onClick={handleSearch}
+              <button onClick={() => { handleSearch(); setShowFilters(false) }}
                 className="mt-4 w-full py-2.5 bg-[#1083BD] text-white rounded-xl text-sm font-semibold hover:bg-[#0d6fa0] transition-colors">
                 Приложи филтри
               </button>

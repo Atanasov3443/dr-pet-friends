@@ -71,7 +71,7 @@ export function InlineBookingWidget({ vetId, vetName, services, schedule }: {
   const [payLoading,  setPayLoading]  = useState(false)
 
   // Load user's pets on mount
-  useMemo(() => {
+  useEffect(() => {
     fetch(apiUrl("/api/my/pets"), { credentials: "include" })
       .then(r => r.ok ? r.json() : [])
       .then(data => { if (Array.isArray(data)) setUserPets(data.filter((p:any) => p.name !== "Любимец")) })
