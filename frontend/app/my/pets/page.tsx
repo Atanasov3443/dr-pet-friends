@@ -245,8 +245,13 @@ export default function MyPetsPage() {
 
   const remove = async (id: string) => {
     if (!confirm("Изтрий любимеца?")) return
-    await fetch(apiUrl("/api/my/pets"), { credentials: "include", method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
-    load()
+    // Optimistic update — remove from UI immediately
+    setPets(prev => prev.filter(p => p.id !== id))
+    const res = await fetch(apiUrl("/api/my/pets"), { credentials: "include", method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
+    if (!res.ok) {
+      // Revert if failed
+      load()
+    }
   }
 
   const emptyForm: PetData = { name: "", species: "DOG", gender: "", breed: "", birthDate: "", weight: "", notes: "" }
