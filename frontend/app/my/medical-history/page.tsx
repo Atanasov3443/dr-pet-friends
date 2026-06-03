@@ -168,8 +168,8 @@ export default function MedicalHistoryPage() {
       setVaccs(Array.isArray(v) ? v : [])
       setEntries(Array.isArray(e) ? e : [])
       setRecords(Array.isArray(m) ? m : [])
-      // Filter appointments for this pet
-      setAppts(Array.isArray(a) ? a.filter((x: Appt) => x.pet?.id === pet.id) : [])
+      // Show all appointments (not filtered by pet — pet may be auto-created "Любимец")
+      setAppts(Array.isArray(a) ? a : [])
       setLoading(false)
     }).catch(() => setLoading(false))
   }, [pet])
@@ -218,12 +218,18 @@ export default function MedicalHistoryPage() {
 
       {/* Pet selector */}
       <div className="flex flex-wrap gap-2 mb-6">
-        {pets.map(p => (
+        {pets.filter(p => p.name !== "Любимец").map(p => (
           <button key={p.id} onClick={() => { setPet(p); setShowForm(false); setExpanded(null) }}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${pet?.id === p.id ? "bg-[#EF3988] text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-[#EF3988]"}`}>
             {SPECIES_EMOJI[p.species] ?? "🐾"} {p.name}
           </button>
         ))}
+        {/* Section divider if there are auto-created pets */}
+        {pets.some(p => p.name === "Любимец") && (
+          <span className="flex items-center gap-1 px-3 py-2 text-xs text-gray-400 border border-dashed border-gray-200 rounded-full">
+            + Именувай любимеца си в <a href="/my/pets" className="text-[#EF3988] hover:underline">Моите любимци</a>
+          </span>
+        )}
       </div>
 
       {/* Reminders banner */}
@@ -382,7 +388,7 @@ export default function MedicalHistoryPage() {
                         <p className="font-semibold text-gray-900 text-sm">{a.vet?.displayName}</p>
                         <span className="text-xs text-[#1083BD] font-medium">{new Date(a.date).toLocaleDateString("bg-BG", { day:"numeric", month:"long" })} · {new Date(a.date).toLocaleTimeString("bg-BG", { hour:"2-digit", minute:"2-digit" })}</span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-0.5">{a.vet?.specialty}{a.service ? ` · ${a.service.name}` : ""}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{a.vet?.specialty}{a.service ? ` · ${a.service.name}` : ""}{a.pet?.name && a.pet.name !== "Любимец" ? ` · 🐾 ${a.pet.name}` : ""}</p>
                       <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-medium ${a.status === "CONFIRMED" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
                         {a.status === "CONFIRMED" ? "Потвърден" : "Чакащ"}{a.consultationType === "ONLINE" ? " · Онлайн" : ""}
                       </span>
