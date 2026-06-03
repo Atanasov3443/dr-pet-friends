@@ -54,6 +54,15 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum HealthEntryType {
+  DEWORMING
+  MEDICATION
+  PROCEDURE
+  WEIGHT
+  ALLERGY
+  NOTE
+}
+
 enum NotificationType {
   APPOINTMENT_CONFIRMED
   APPOINTMENT_CANCELLED
@@ -217,12 +226,15 @@ model Pet {
   birthDate DateTime?
   weight    Float?
   image     String?
+  color     String?
+  microchip String?
   notes     String?    @db.Text
 
-  owner          User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner          User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   appointments   Appointment[]
   vaccinations   Vaccination[]
   medicalRecords MedicalRecord[]
+  healthEntries  PetHealthEntry[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -253,6 +265,19 @@ model Appointment {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PetHealthEntry {
+  id        String          @id @default(cuid())
+  petId     String
+  type      HealthEntryType
+  date      DateTime
+  title     String
+  data      String?         @db.Text
+  notes     String?         @db.Text
+  nextDate  String?
+  pet       Pet             @relation(fields: [petId], references: [id], onDelete: Cascade)
+  createdAt DateTime        @default(now())
 }
 
 model Vaccination {
