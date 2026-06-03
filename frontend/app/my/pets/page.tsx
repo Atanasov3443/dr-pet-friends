@@ -234,9 +234,15 @@ export default function MyPetsPage() {
         const data = await res.json().catch(() => ({}))
         return data.error ?? "Грешка при запазване"
       }
+      const saved = await res.json()
       setShowForm(false)
       setEditing(null)
-      load()
+      // Update state without full reload
+      if (form.id) {
+        setPets(prev => prev.map(p => p.id === form.id ? saved : p))
+      } else {
+        setPets(prev => [...prev, saved])
+      }
       return null
     } catch {
       return "Сървърна грешка. Опитай отново."

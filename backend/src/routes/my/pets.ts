@@ -87,14 +87,16 @@ router.delete("/", authenticate, async (req: AuthRequest, res: Response) => {
   if (!pet) { res.status(404).json({ error: "Not found" }); return }
 
   try {
+    // Remove related records first to avoid FK violations
+    await db.medicalRecord.deleteMany({ where: { petId: id } })
+    await db.vaccination.deleteMany({ where: { petId: id } })
+    await db.petHealthEntry.deleteMany({ where: { petId: id } })
+    await db.appointment.deleteMany({ where: { petId: id } })
     await db.pet.delete({ where: { id } })
     res.json({ ok: true })
   } catch (e: any) {
-    if (e?.cause?.originalCode === "23001" || e?.message?.includes("foreign key")) {
-      res.status(409).json({ error: "Не може да изтриете любимец с записани часове. Първо откажете или изтрийте свързаните резервации." })
-    } else {
-      res.status(500).json({ error: "Грешка при изтриване" })
-    }
+    console.error("Pet delete error:", e?.message)
+    res.status(500).json({ error: "Грешка при изтриване" })
   }
 })
 
