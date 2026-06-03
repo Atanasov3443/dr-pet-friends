@@ -41,6 +41,18 @@ const COLORS2 = ["#0D67F7","#d42f77","#0a8c2e","#ea6c0a","#7c3aed","#0891b2"]
 function petColor1(name: string) { return COLORS1[name.charCodeAt(0) % COLORS1.length] }
 function petColor2(name: string) { return COLORS2[name.charCodeAt(0) % COLORS2.length] }
 
+const SPECIES_LABELS: Record<string, string> = {
+  DOG: "Куче", CAT: "Котка", BIRD: "Птица",
+  RABBIT: "Заек", EXOTIC: "Екзотично", OTHER: "Любимец"
+}
+
+function petTypeLabel(species: string, breed: string | null) {
+  if (breed && breed.trim() && species === "OTHER") {
+    return breed.split(" ")[0].slice(0, 8)
+  }
+  return SPECIES_LABELS[species] ?? "Любимец"
+}
+
 type PetData = { id?: string; name: string; species: string; gender: string; breed: string; birthDate: string; weight: string; notes: string; image?: string }
 
 function PetForm({ initial, onSave, onCancel }: {
@@ -347,7 +359,7 @@ export default function MyPetsPage() {
                       ) : (
                         <div className={`w-full h-full flex flex-col items-center justify-center gap-1 ${petGradient(p.name)}`}>
                           <span className="text-white font-black text-sm leading-tight text-center px-1 capitalize">
-                            {(p.breed || "Любимец").split(" ")[0].slice(0, 7)}
+                            {petTypeLabel(p.species, p.breed)}
                           </span>
                         </div>
                       )}
