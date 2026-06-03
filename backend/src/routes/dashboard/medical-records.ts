@@ -89,4 +89,57 @@ router.post("/", authenticate, requireRole("VET", "CLINIC_ADMIN", "ADMIN"), asyn
   }
 })
 
+// POST /api/dashboard/medical-records/standalone
+// Vet creates a record without an appointment (walk-in patient)
+router.post("/standalone", authenticate, requireRole("VET", "CLINIC_ADMIN", "ADMIN"), async (req: AuthRequest, res: Response) => {
+  try {
+    const vetId = await getVetId(req.user!.id)
+    const { petName, petSpecies, ownerName, diagnosis, treatment, medications, notes, weight, temperature, nextVisit, date } = req.body
+
+    if (!petName) { res.status(400).json({ error: "Името на пациента е задължително" }); return }
+
+    // Find or create owner user placeholder
+    let owner = await db.user.findFirst({ where: { name: ownerName || "Пациент" } })
+    if (!owner) {
+      owner = await db.user.create({
+        data: { email: `patient_${Date.now()}@drpetfriend.internal`, name: ownerName || "Пациент", role: "OWNER" }
+      })
+    }
+
+    // Create pet
+    const pet = await db.pet.create({
+      data: { ownerId: owner.id, name: petName, species: petSpecies || "OTHER" }
+    })
+
+    // Create stub appointment
+    const vet = await db.vet.findUnique({ where: { id: vetId } })
+    const appointment = await db.appointment.create({
+      data: {
+        ownerId: owner.id, vetId, petId: pet.id,
+        date:    date ? new Date(date) : new Date(),
+        status:  "COMPLETED",
+      }
+    })
+
+    // Create medical record
+    const record = await db.medicalRecord.create({
+      data: {
+        appointmentId: appointment.id,
+        petId: pet.id, vetId,
+        diagnosis:   diagnosis   ?? null,
+        treatment:   treatment   ?? null,
+        medications: medications ?? null,
+        notes:       notes       ?? null,
+        weight:      weight      != null ? Number(weight)      : null,
+        temperature: temperature != null ? Number(temperature) : null,
+        nextVisit:   nextVisit   ? new Date(nextVisit) : null,
+      }
+    })
+
+    res.json(record)
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message ?? "Грешка" })
+  }
+})
+
 export default router
