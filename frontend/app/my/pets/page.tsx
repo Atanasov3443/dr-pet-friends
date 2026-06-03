@@ -341,34 +341,15 @@ export default function MyPetsPage() {
                 <div className="bg-white rounded-2xl border border-gray-100 hover:shadow-md hover:border-[#1083BD]/20 transition-all overflow-hidden">
                   <div className="flex items-center gap-4 p-5">
                     {/* Avatar */}
-                    <div className="w-16 h-16 shrink-0 relative">
+                    <div className="w-16 h-16 rounded-2xl shrink-0 overflow-hidden">
                       {p.image ? (
-                        <div className="w-full h-full" style={{ clipPath: "url(#pawClip)" }}>
-                          <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
-                        </div>
+                        <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
                       ) : (
-                        <svg viewBox="0 0 100 100" width="64" height="64" xmlns="http://www.w3.org/2000/svg">
-                          <defs>
-                            <linearGradient id={`pg-${p.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                              <stop offset="0%" stopColor={petColor1(p.name)} />
-                              <stop offset="100%" stopColor={petColor2(p.name)} />
-                            </linearGradient>
-                          </defs>
-                          {/* Toe pads */}
-                          <ellipse cx="28" cy="22" rx="11" ry="13" fill={`url(#pg-${p.id})`} transform="rotate(-15 28 22)"/>
-                          <ellipse cx="50" cy="15" rx="11" ry="13" fill={`url(#pg-${p.id})`}/>
-                          <ellipse cx="72" cy="22" rx="11" ry="13" fill={`url(#pg-${p.id})`} transform="rotate(15 72 22)"/>
-                          <ellipse cx="15" cy="42" rx="9" ry="12" fill={`url(#pg-${p.id})`} transform="rotate(-25 15 42)"/>
-                          <ellipse cx="85" cy="42" rx="9" ry="12" fill={`url(#pg-${p.id})`} transform="rotate(25 85 42)"/>
-                          {/* Main pad */}
-                          <ellipse cx="50" cy="72" rx="28" ry="22" fill={`url(#pg-${p.id})`}/>
-                          {/* Name text */}
-                          <text x="50" y="77" textAnchor="middle" fill="white" fontWeight="900"
-                            fontSize={p.name.length > 5 ? "11" : p.name.length > 3 ? "13" : "16"}
-                            fontFamily="system-ui, sans-serif">
-                            {p.name.slice(0, 6)}
-                          </text>
-                        </svg>
+                        <div className={`w-full h-full flex flex-col items-center justify-center gap-1 ${petGradient(p.name)}`}>
+                          <span className="text-white font-black text-sm leading-tight text-center px-1 capitalize">
+                            {(p.breed || "Любимец").split(" ")[0].slice(0, 7)}
+                          </span>
+                        </div>
                       )}
                     </div>
 
