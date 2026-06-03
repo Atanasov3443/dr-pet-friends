@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
-import { LayoutDashboard, User, CalendarDays, Clock, LogOut, ChevronRight, Stethoscope, Menu, X, FileText, BarChart2 } from "lucide-react"
+import { LayoutDashboard, User, CalendarDays, Clock, LogOut, ChevronRight, Stethoscope, Menu, X, FileText, PawPrint } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 
@@ -12,8 +12,8 @@ const nav = [
   { href: "/dashboard/profile",      label: "Мой профил", icon: User            },
   { href: "/dashboard/schedule",     label: "График",     icon: Clock           },
   { href: "/dashboard/appointments",    label: "Резервации",     icon: CalendarDays },
+  { href: "/dashboard/patients",        label: "Пациенти",       icon: PawPrint     },
   { href: "/dashboard/medical-records", label: "Медицински зап.", icon: FileText     },
-  { href: "/dashboard/finance",         label: "Финанси",        icon: BarChart2    },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
