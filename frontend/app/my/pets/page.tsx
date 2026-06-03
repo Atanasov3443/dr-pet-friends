@@ -340,12 +340,22 @@ export default function MyPetsPage() {
                         <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className={`w-full h-full flex items-center justify-center ${petGradient(p.name)}`}>
-                          <svg viewBox="0 0 64 64" width="36" height="36" fill="white" opacity="0.9">
-                            <circle cx="20" cy="12" r="6"/>
-                            <circle cx="44" cy="12" r="6"/>
-                            <ellipse cx="9" cy="24" rx="7" ry="5" transform="rotate(-30 9 24)"/>
-                            <ellipse cx="55" cy="24" rx="7" ry="5" transform="rotate(30 55 24)"/>
-                            <path d="M14 36 C10 46 14 58 24 58 C28 58 30 54 32 52 C34 54 36 58 40 58 C50 58 54 46 50 36 C46 26 38 22 32 22 C26 22 18 26 14 36Z"/>
+                          <svg viewBox="0 0 100 100" width="40" height="40" fill="white" opacity="0.92" xmlns="http://www.w3.org/2000/svg">
+                            {/* Ears */}
+                            <ellipse cx="28" cy="28" rx="14" ry="18" transform="rotate(-15 28 28)"/>
+                            <ellipse cx="72" cy="28" rx="14" ry="18" transform="rotate(15 72 28)"/>
+                            {/* Head */}
+                            <circle cx="50" cy="52" r="30"/>
+                            {/* Snout */}
+                            <ellipse cx="50" cy="66" rx="16" ry="11"/>
+                            {/* Nose */}
+                            <ellipse cx="50" cy="61" rx="7" ry="5" fill="rgba(0,0,0,0.25)"/>
+                            {/* Eyes */}
+                            <circle cx="38" cy="48" r="4" fill="rgba(0,0,0,0.3)"/>
+                            <circle cx="62" cy="48" r="4" fill="rgba(0,0,0,0.3)"/>
+                            {/* Eye shine */}
+                            <circle cx="40" cy="46" r="1.5" fill="white"/>
+                            <circle cx="64" cy="46" r="1.5" fill="white"/>
                           </svg>
                         </div>
                       )}
