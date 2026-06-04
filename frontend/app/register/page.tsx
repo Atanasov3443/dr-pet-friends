@@ -176,9 +176,10 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <div className="relative flex items-center justify-center my-3">
-            <span className="w-full border-t border-white/20" />
-            <span className="px-3 text-xs text-white/50 absolute whitespace-nowrap">или продължи с</span>
+          <div className="flex items-center gap-3 my-3">
+            <span className="flex-1 border-t border-white/20" />
+            <span className="text-xs text-white/50 whitespace-nowrap">или продължи с</span>
+            <span className="flex-1 border-t border-white/20" />
           </div>
 
           <button onClick={() => signIn("google", { callbackUrl: "/" })}
