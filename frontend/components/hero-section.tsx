@@ -15,7 +15,7 @@ const carouselSlides = [
     description: "Грижа, на която можете да се доверите. Намерете най-добрите ветеринарни специалисти.",
   },
   {
-    src: "https://images.unsplash.com/photo-1514984879728-be0aff75a6e8?w=800&h=1000&fit=crop&crop=center",
+    src: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&h=1000&fit=crop&crop=center",
     alt: "Домашен любимец",
     subtitle: "Груминг салони с реални отзиви",
     description: "Изберете най-добрия груминг салон за вашия любимец за секунди.",
