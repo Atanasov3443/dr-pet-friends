@@ -1,6 +1,14 @@
 export const revalidate = 300  // Revalidate every 5 minutes (ISR)
 export const runtime   = "edge"
 
+export async function generateStaticParams() {
+  try {
+    const res  = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "https://dr-pet-friends-1.onrender.com"}/api/vets`, { next: { revalidate: 3600 } })
+    const vets = await res.json()
+    return Array.isArray(vets) ? vets.map((v: { id: string }) => ({ id: v.id })) : []
+  } catch { return [] }
+}
+
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
