@@ -9,13 +9,13 @@ import Link from "next/link"
 
 const carouselSlides = [
   {
-    src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&h=1000&fit=crop&crop=center",
+    src: "/Untitled%20design%20(1).png",
     alt: "Ветеринар с кученце",
     subtitle: "Вашият домашен любимец е наш приятел!",
     description: "Грижа, на която можете да се доверите. Намерете най-добрите ветеринарни специалисти.",
   },
   {
-    src: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&h=1000&fit=crop&crop=center",
+    src: "/4.png",
     alt: "Домашен любимец",
     subtitle: "Груминг салони с реални отзиви",
     description: "Изберете най-добрия груминг салон за вашия любимец за секунди.",
