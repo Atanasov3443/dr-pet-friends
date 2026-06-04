@@ -1,10 +1,15 @@
 import { Router, Request, Response } from "express"
 import { db } from "../lib/db"
+import { cacheGet, cacheSet, TTL } from "../lib/cache"
 
 const router = Router()
 
 router.get("/:id", async (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params
+
+  const cacheKey = `vet:${id}`
+  const cached   = await cacheGet(cacheKey)
+  if (cached) { res.json(cached); return }
 
   try {
     const vet = await db.vet.findUnique({
@@ -18,11 +23,9 @@ router.get("/:id", async (req: Request<{ id: string }>, res: Response) => {
       },
     })
 
-    if (!vet) {
-      res.status(404).json({ error: "Not found" })
-      return
-    }
+    if (!vet) { res.status(404).json({ error: "Not found" }); return }
 
+    await cacheSet(cacheKey, vet, TTL.VET)
     res.json(vet)
   } catch {
     res.status(500).json({ error: "Server error" })

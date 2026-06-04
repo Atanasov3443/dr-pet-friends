@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express"
 import { db } from "../lib/db"
+import { cacheGet, cacheSet, TTL } from "../lib/cache"
 
 const router = Router()
 
@@ -14,7 +15,11 @@ const FALLBACK_CLINICS = [
 ]
 
 router.get("/", async (req: Request, res: Response) => {
-  const type = (req.query.type as string) ?? ""
+  const type     = (req.query.type as string) ?? ""
+  const cacheKey = `clinics:${type}`
+  const cached   = await cacheGet(cacheKey)
+  if (cached) { res.json(cached); return }
+
   try {
     const clinics = await db.clinic.findMany({
       where: {
@@ -25,11 +30,13 @@ router.get("/", async (req: Request, res: Response) => {
     })
 
     if (clinics.length === 0) {
-      res.json(FALLBACK_CLINICS.filter(c => !type || c.type === type.toUpperCase()))
+      const fallback = FALLBACK_CLINICS.filter(c => !type || c.type === type.toUpperCase())
+      await cacheSet(cacheKey, fallback, TTL.CLINICS)
+      res.json(fallback)
       return
     }
 
-    res.json(clinics.map(c => ({
+    const result = clinics.map(c => ({
       id:          c.id,
       name:        c.name,
       specialty:   c.description ?? "",
@@ -41,7 +48,9 @@ router.get("/", async (req: Request, res: Response) => {
       lat:         c.lat ?? 42.6977,
       lng:         c.lng ?? 23.3219,
       type:        c.type,
-    })))
+    }))
+    await cacheSet(cacheKey, result, TTL.CLINICS)
+    res.json(result)
   } catch {
     res.json(FALLBACK_CLINICS)
   }

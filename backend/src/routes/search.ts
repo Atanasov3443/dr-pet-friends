@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express"
 import { db } from "../lib/db"
+import { cacheGet, cacheSet, TTL } from "../lib/cache"
 
 const router = Router()
 
@@ -8,6 +9,11 @@ router.get("/", async (req: Request, res: Response) => {
   const city      = (req.query.city     as string) ?? ""
   const type      = (req.query.type     as string) ?? ""
   const specialty = (req.query.specialty as string) ?? ""
+
+  // Cache key based on query params
+  const cacheKey = `search:${q}:${city}:${specialty}:${type}`
+  const cached   = await cacheGet(cacheKey)
+  if (cached) { res.json(cached); return }
 
   try {
     const vets = await db.vet.findMany({
@@ -34,6 +40,7 @@ router.get("/", async (req: Request, res: Response) => {
       orderBy: [{ rating: "desc" }, { reviewCount: "desc" }],
       take: 50,
     })
+    await cacheSet(cacheKey, vets, TTL.SEARCH)
     res.json(vets)
   } catch {
     res.json([])

@@ -1,6 +1,7 @@
 import { Router, Response } from "express"
 import { db } from "../lib/db"
 import { authenticate, AuthRequest } from "../middleware/auth"
+import { cacheDel } from "../lib/cache"
 
 const router = Router()
 
@@ -31,6 +32,8 @@ router.post("/", authenticate, async (req: AuthRequest, res: Response) => {
     data: { userId, vetId, rating, comment: comment || null },
   })
   await recalcVetRating(vetId)
+  await cacheDel(`vet:${vetId}`)  // Invalidate vet cache after review
+  await cacheDel(`search:`)       // Invalidate search cache
   res.json(review)
 })
 
