@@ -58,7 +58,8 @@ app.use("/api/stripe/webhook", express.raw({ type: "application/json" }))
 app.use(express.json())
 app.use(cookieParser())
 
-app.get("/health", (_req, res) => res.json({ ok: true }))
+app.get("/health", (_req, res) => res.json({ ok: true, ts: Date.now() }))
+app.get("/ping",   (_req, res) => res.json({ pong: true }))
 
 app.use("/api/vets",                 vetsRouter)
 app.use("/api/search",               searchRouter)

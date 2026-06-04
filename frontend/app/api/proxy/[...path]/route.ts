@@ -18,17 +18,17 @@ async function handler(req: NextRequest) {
   const hasBody = req.method !== "GET" && req.method !== "HEAD"
   const body    = hasBody ? await req.arrayBuffer() : undefined
 
-  // Retry up to 3 times with increasing delays (handles Render cold start)
+  // Retry up to 3 times with increasing delays (handles Render cold start ~30s)
   for (let attempt = 0; attempt < 3; attempt++) {
     if (attempt > 0) {
-      await new Promise(r => setTimeout(r, attempt * 3000))
+      await new Promise(r => setTimeout(r, attempt * 5000)) // 5s, 10s between retries
     }
     try {
       const res = await fetch(url, {
         method:  req.method,
         headers,
         body:    body ? body : undefined,
-        signal:  AbortSignal.timeout(25000),
+        signal:  AbortSignal.timeout(35000), // 35s — enough for cold start
       })
 
       const resHeaders = new Headers()

@@ -1,5 +1,5 @@
-export const dynamic = "force-dynamic"
-export const runtime = "edge"
+export const revalidate = 300  // Revalidate every 5 minutes (ISR)
+export const runtime   = "edge"
 
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
