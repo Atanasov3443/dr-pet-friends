@@ -88,7 +88,7 @@ export default function RegisterPage() {
       <section className="hidden md:flex flex-1 relative p-6 items-stretch z-10">
         <div className="relative w-full rounded-3xl overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=1000&fit=crop"
+            src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&h=1000&fit=crop&crop=center"
             alt="" className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1083BD]/80 via-transparent to-transparent" />
