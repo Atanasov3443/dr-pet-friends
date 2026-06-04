@@ -85,7 +85,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Left — image */}
-      <section className="hidden md:flex md:max-w-sm lg:max-w-md relative p-4 items-stretch z-10">
+      <section className="hidden md:flex flex-1 relative p-4 items-stretch z-10">
         <div className="relative w-full rounded-3xl overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=1000&fit=crop"
