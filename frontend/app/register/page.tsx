@@ -105,84 +105,80 @@ export default function RegisterPage() {
       </section>
 
       {/* Right — form */}
-      <section className="flex-1 flex items-center justify-center p-8 md:p-12 relative z-10">
-        <div className="w-full max-w-md bg-white/10 backdrop-blur-xl rounded-3xl p-8 md:p-10">
+      <section className="flex-1 flex items-center justify-center p-4 md:p-8 relative z-10">
+        <div className="w-full max-w-md bg-white/10 backdrop-blur-xl rounded-3xl p-6">
 
-          <div className="mb-8">
-            <Logo variant="light" size="md" />
+          <div className="mb-4 flex items-center justify-between">
+            <Logo variant="light" size="sm" />
           </div>
 
-          <h1 className="font-display font-black text-4xl text-white leading-tight mb-2">
+          <h1 className="font-display font-black text-3xl text-white leading-tight mb-1">
             Създай акаунт
           </h1>
-          <p className="text-white/60 text-sm mb-4">
+          <p className="text-white/60 text-xs mb-3">
             Регистрация за собственици на домашни любимци
           </p>
 
           {/* Vet redirect notice */}
-          <div className="bg-white/10 border border-white/20 rounded-2xl px-4 py-3 mb-6 flex items-center justify-between gap-3">
+          <div className="bg-white/10 border border-white/20 rounded-xl px-3 py-2 mb-4 flex items-center justify-between gap-3">
             <p className="text-white/70 text-xs">Ветеринар или клиника?</p>
-            <a href="/apply" className="flex items-center gap-1 text-[#DAF467] text-xs font-bold hover:underline whitespace-nowrap">
+            <a href="/apply" className="text-[#DAF467] text-xs font-bold hover:underline whitespace-nowrap">
               Кандидатствай тук →
             </a>
           </div>
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-3" onSubmit={handleSubmit}>
             <div>
-              <label className="text-xs font-semibold text-white/60 uppercase tracking-wide block mb-1.5">Име</label>
-              <div className="rounded-2xl border border-gray-200/20 bg-white/10 focus-within:border-white/40 transition-colors">
-                <input name="name" type="text" placeholder="Вашето пълно име" required
-                  className="w-full bg-transparent text-sm p-3.5 rounded-2xl focus:outline-none text-white placeholder:text-white/40" />
+              <label className="text-xs font-semibold text-white/60 uppercase tracking-wide block mb-1">Иme</label>
+              <div className="rounded-xl border border-gray-200/20 bg-white/10 focus-within:border-white/40 transition-colors">
+                <input name="name" type="text" placeholder="Вашето пълно иme" required
+                  className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white placeholder:text-white/40" />
               </div>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-white/60 uppercase tracking-wide block mb-1.5">Имейл адрес</label>
-              <div className="rounded-2xl border border-gray-200/20 bg-white/10 focus-within:border-white/40 transition-colors">
+              <label className="text-xs font-semibold text-white/60 uppercase tracking-wide block mb-1">Имейл</label>
+              <div className="rounded-xl border border-gray-200/20 bg-white/10 focus-within:border-white/40 transition-colors">
                 <input name="email" type="email" placeholder="вашият@имейл.com" required
-                  className="w-full bg-transparent text-sm p-3.5 rounded-2xl focus:outline-none text-white placeholder:text-white/40" />
+                  className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white placeholder:text-white/40" />
               </div>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-white/60 uppercase tracking-wide block mb-1.5">Парола</label>
-              <div className="rounded-2xl border border-gray-200/20 bg-white/10 focus-within:border-white/40 transition-colors">
+              <label className="text-xs font-semibold text-white/60 uppercase tracking-wide block mb-1">Парола</label>
+              <div className="rounded-xl border border-gray-200/20 bg-white/10 focus-within:border-white/40 transition-colors">
                 <div className="relative">
                   <input name="password" type={showPassword ? "text" : "password"} placeholder="Минимум 8 символа" required
-                    className="w-full bg-transparent text-sm p-3.5 pr-12 rounded-2xl focus:outline-none text-white placeholder:text-white/40" />
+                    className="w-full bg-transparent text-sm p-3 pr-10 rounded-xl focus:outline-none text-white placeholder:text-white/40" />
                   <button type="button" onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-3 flex items-center">
-                    {showPassword
-                      ? <EyeOff className="w-4 h-4 text-white/50 hover:text-white" />
-                      : <Eye    className="w-4 h-4 text-white/50 hover:text-white" />}
+                    {showPassword ? <EyeOff className="w-4 h-4 text-white/50" /> : <Eye className="w-4 h-4 text-white/50" />}
                   </button>
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-white/60 uppercase tracking-wide block mb-1.5">Потвърди паролата</label>
-              <div className="rounded-2xl border border-gray-200/20 bg-white/10 focus-within:border-white/40 transition-colors">
+              <label className="text-xs font-semibold text-white/60 uppercase tracking-wide block mb-1">Потвърди паролата</label>
+              <div className="rounded-xl border border-gray-200/20 bg-white/10 focus-within:border-white/40 transition-colors">
                 <input name="confirm" type="password" placeholder="Повтори паролата" required
-                  className="w-full bg-transparent text-sm p-3.5 rounded-2xl focus:outline-none text-white placeholder:text-white/40" />
+                  className="w-full bg-transparent text-sm p-3 rounded-xl focus:outline-none text-white placeholder:text-white/40" />
               </div>
             </div>
 
             {error && (
-              <div className="bg-red-500/20 border border-red-400/30 rounded-xl px-4 py-2.5 text-red-200 text-sm text-center">
-                {error}
-              </div>
+              <div className="bg-red-500/20 border border-red-400/30 rounded-xl px-3 py-2 text-red-200 text-xs text-center">{error}</div>
             )}
 
             <button type="submit" disabled={loading}
-              className="w-full rounded-2xl bg-[#EF3988] hover:bg-[#d42f77] py-3.5 font-semibold text-white transition-colors text-sm flex items-center justify-center gap-2 disabled:opacity-60">
+              className="w-full rounded-xl bg-[#EF3988] hover:bg-[#d42f77] py-3 font-semibold text-white transition-colors text-sm flex items-center justify-center gap-2 disabled:opacity-60">
               {loading ? "Регистрация..." : <><ArrowRight className="w-4 h-4" /> Създай акаунт</>}
             </button>
           </form>
 
-          <div className="relative flex items-center justify-center my-5">
+          <div className="relative flex items-center justify-center my-3">
             <span className="w-full border-t border-white/20" />
-            <span className="px-4 text-xs text-white/50 absolute whitespace-nowrap">или продължи с</span>
+            <span className="px-3 text-xs text-white/50 absolute whitespace-nowrap">или продължи с</span>
           </div>
 
           <button onClick={() => signIn("google", { callbackUrl: "/" })}
