@@ -80,8 +80,8 @@ export default function RegisterPage() {
       <div className="absolute top-[10%] right-[3%] z-20 hidden xl:block">
         <PawSticker color="pink" icon="heart" rotation={-12} />
       </div>
-      <div className="absolute bottom-[15%] left-[2%] z-20 hidden xl:block">
-        <Sticker text="PURRRR" color="lime" rotation={8} size="md" />
+      <div className="absolute top-[8%] left-[2%] z-20 hidden xl:block">
+        <Sticker text="WOOF 🐶" color="lime" rotation={-6} size="md" />
       </div>
 
       {/* Left — image */}
