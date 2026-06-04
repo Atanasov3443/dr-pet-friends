@@ -103,7 +103,9 @@ export default function ApplyPage() {
       {/* Header */}
       <div className="bg-[#1083BD] text-white py-16">
         <div className="container max-w-4xl">
-          <Link href="/" className="text-white/70 hover:text-white text-sm mb-6 inline-block">← Начална страница</Link>
+          <div className="mb-6">
+            <Link href="/" className="text-white/70 hover:text-white text-sm inline-flex items-center gap-1.5">← Начална страница</Link>
+          </div>
           <div className="inline-flex items-center gap-2 bg-white/20 border border-white/30 rounded-full px-4 py-1.5 mb-4">
             <Stethoscope className="w-3.5 h-3.5" />
             <span className="text-xs font-semibold uppercase tracking-widest">За специалисти</span>
