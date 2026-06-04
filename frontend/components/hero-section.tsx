@@ -9,7 +9,7 @@ import Link from "next/link"
 
 const carouselSlides = [
   {
-    src: "/Untitled%20design%20(1).png",
+    src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&h=1000&fit=crop&crop=center",
     alt: "Ветеринар с кученце",
     subtitle: "Вашият домашен любимец е наш приятел!",
     description: "Грижа, на която можете да се доверите. Намерете най-добрите ветеринарни специалисти.",
