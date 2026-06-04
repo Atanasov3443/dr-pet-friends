@@ -1,12 +1,8 @@
 ﻿"use client"
 
-import { apiUrl } from "@/lib/api"
-
-import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Stethoscope, CheckCircle, Users, CalendarCheck, Star, Shield } from "lucide-react"
+import { Stethoscope, Users, CalendarCheck, Star, Shield, ArrowRight, FileText } from "lucide-react"
 import { GlowCard } from "@/components/ui/spotlight-card"
+import Link from "next/link"
 
 const benefits = [
   { icon: Users,         label: "50 000+",     sub: "собственици на любимци" },
@@ -16,25 +12,6 @@ const benefits = [
 ]
 
 export function ForVetsSection() {
-  const [submitted, setSubmitted] = useState(false)
-  const [form, setForm] = useState({ name: "", clinic: "", city: "", phone: "", email: "" })
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    await fetch(apiUrl("/api/profile-request"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name:       form.name,
-        email:      form.email,
-        phone:      form.phone,
-        clinicName: form.clinic,
-        city:       form.city,
-        type:       "VET",
-      }),
-    })
-    setSubmitted(true)
-  }
 
   return (
     <section className="relative bg-[#EF3988] overflow-hidden">
@@ -90,77 +67,28 @@ export function ForVetsSection() {
             </div>
           </div>
 
-          {/* Right — form card */}
-          <GlowCard customSize glowColor="purple" className="bg-white/10 backdrop-blur-md rounded-3xl p-4 w-full border border-white/20">
-            {submitted ? (
-              <div className="flex flex-col items-center text-center gap-4 py-12">
-                <div className="w-16 h-16 rounded-full bg-[#10B83D] flex items-center justify-center">
-                  <CheckCircle className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="font-display font-black text-2xl text-[#191919]">Получихме заявката!</h3>
-                <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
-                  Ще се свържем с вас до 24 часа за да обясним условията на партньорство.
-                </p>
-              </div>
-            ) : (
-              <>
-                <h3 className="font-display font-black text-lg text-white mb-0.5">Заяви своя профил</h3>
-                <p className="text-white/70 text-xs mb-3">Попълнете формата и ние ще се свържем с вас.</p>
+          {/* Right — CTA card */}
+          <GlowCard customSize glowColor="purple" className="bg-white/10 backdrop-blur-md rounded-3xl p-8 w-full border border-white/20 flex flex-col items-center justify-center text-center gap-6">
+            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
+              <FileText className="w-8 h-8 text-white" />
+            </div>
 
-                <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-3 w-fit">
-                  <Stethoscope className="w-4 h-4 text-white" />
-                  <span className="text-white text-xs font-semibold">Ветеринар / Клиника</span>
-                </div>
+            <div>
+              <h3 className="font-display font-black text-2xl text-white mb-2">Заяви своя профил</h3>
+              <p className="text-white/70 text-sm leading-relaxed max-w-xs mx-auto">
+                Попълни пълната форма с вашите данни, специалност и снимка на лиценза. Ще се свържем с вас до 24 часа.
+              </p>
+            </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
-                  {(() => {
-                    const inputCls = "h-8 rounded-xl border-gray-200 focus-visible:ring-[#1083BD] focus-visible:border-[#1083BD]"
-                    const labelCls = "text-xs font-semibold uppercase tracking-wide block mb-1"
-                    const labelStyle = { color: "rgba(255,255,255,0.9)" }
-                    return (
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="col-span-2">
-                      <label className={labelCls} style={labelStyle}>Вашето име</label>
-                      <Input placeholder="Д-р Иванова" value={form.name}
-                        onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required
-                        className={inputCls} />
-                    </div>
-                    <div className="col-span-2">
-                      <label className={labelCls} style={labelStyle}>Клиника / Практика</label>
-                      <Input placeholder="Вет клиника Здраве"
-                        value={form.clinic} onChange={e => setForm(f => ({ ...f, clinic: e.target.value }))} required
-                        className={inputCls} />
-                    </div>
-                    <div>
-                      <label className={labelCls} style={labelStyle}>Град</label>
-                      <Input placeholder="София" value={form.city}
-                        onChange={e => setForm(f => ({ ...f, city: e.target.value }))} required
-                        className={inputCls} />
-                    </div>
-                    <div>
-                      <label className={labelCls} style={labelStyle}>Телефон</label>
-                      <Input placeholder="+359 88..." value={form.phone}
-                        onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} required
-                        className={inputCls} />
-                    </div>
-                    <div className="col-span-2">
-                      <label className={labelCls} style={labelStyle}>Имейл</label>
-                      <Input type="email" placeholder="email@example.com" value={form.email}
-                        onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required
-                        className={inputCls} />
-                    </div>
-                  </div>
-                    )
-                  })()}
-
-                  <Button type="submit"
-                    className="h-9 rounded-xl font-bold text-white bg-[#1083BD] hover:bg-[#0a6fa0]">
-                    Изпрати заявка
-                  </Button>
-                  <p className="text-white/70 text-xs text-center">Ще се свържем с вас до 24 часа.</p>
-                </form>
-              </>
-            )}
+            <div className="flex flex-col gap-2 w-full max-w-xs">
+              <Link href="/apply"
+                className="flex items-center justify-center gap-2 w-full py-4 bg-white hover:bg-gray-50 text-[#EF3988] font-black rounded-2xl text-base transition-all hover:scale-105 active:scale-95 shadow-lg">
+                <Stethoscope className="w-5 h-5" />
+                Кандидатствай сега
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <p className="text-white/50 text-xs">Безплатно · без скрити такси · отговор до 24ч</p>
+            </div>
           </GlowCard>
 
         </div>
