@@ -115,9 +115,17 @@ export default function RegisterPage() {
           <h1 className="font-display font-black text-4xl text-white leading-tight mb-2">
             Създай акаунт
           </h1>
-          <p className="text-white/60 text-sm mb-8">
-            Присъедини се и намери грижа за любимеца си
+          <p className="text-white/60 text-sm mb-4">
+            Регистрация за собственици на домашни любимци
           </p>
+
+          {/* Vet redirect notice */}
+          <div className="bg-white/10 border border-white/20 rounded-2xl px-4 py-3 mb-6 flex items-center justify-between gap-3">
+            <p className="text-white/70 text-xs">Ветеринар или клиника?</p>
+            <a href="/apply" className="flex items-center gap-1 text-[#DAF467] text-xs font-bold hover:underline whitespace-nowrap">
+              Кандидатствай тук →
+            </a>
+          </div>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>

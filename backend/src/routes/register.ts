@@ -35,7 +35,8 @@ router.post("/", async (req: Request, res: Response) => {
 
     const hashed = await bcrypt.hash(password, 12)
     await db.user.create({
-      data: { name: name.trim(), email: email.toLowerCase().trim(), password: hashed },
+      // Always OWNER — vets must apply via /apply and get approved by admin
+      data: { name: name.trim(), email: email.toLowerCase().trim(), password: hashed, role: "OWNER" },
     })
 
     res.status(201).json({ ok: true })
