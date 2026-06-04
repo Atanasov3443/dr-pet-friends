@@ -4,6 +4,23 @@ import { cacheGet, cacheSet, TTL } from "../lib/cache"
 
 const router = Router()
 
+// GET /api/vets — list all active vets (for sitemap)
+router.get("/", async (_req: Request, res: Response) => {
+  const cacheKey = "vets:all"
+  const cached   = await cacheGet(cacheKey)
+  if (cached) { res.json(cached); return }
+
+  try {
+    const vets = await db.vet.findMany({
+      where:   { isActive: true },
+      select:  { id: true, displayName: true, specialty: true, updatedAt: true },
+      orderBy: { rating: "desc" },
+    })
+    await cacheSet(cacheKey, vets, TTL.VETS)
+    res.json(vets)
+  } catch { res.json([]) }
+})
+
 router.get("/:id", async (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params
 

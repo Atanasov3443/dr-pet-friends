@@ -94,16 +94,27 @@ router.post("/", authenticate, requireRole("VET", "CLINIC_ADMIN", "ADMIN"), asyn
 router.post("/standalone", authenticate, requireRole("VET", "CLINIC_ADMIN", "ADMIN"), async (req: AuthRequest, res: Response) => {
   try {
     const vetId = await getVetId(req.user!.id)
-    const { petName, petSpecies, ownerName, diagnosis, treatment, medications, notes, weight, temperature, nextVisit, date } = req.body
+    const { petName, petSpecies, ownerName, ownerEmail, ownerPhone, diagnosis, treatment, medications, notes, weight, temperature, nextVisit, date } = req.body
 
     if (!petName) { res.status(400).json({ error: "Името на пациента е задължително" }); return }
 
-    // Find or create owner user placeholder
-    let owner = await db.user.findFirst({ where: { name: ownerName || "Пациент" } })
+    // Find or create owner — prefer by email if provided
+    let owner = ownerEmail
+      ? await db.user.findUnique({ where: { email: ownerEmail } })
+      : await db.user.findFirst({ where: { name: ownerName || "Пациент" } })
+
     if (!owner) {
       owner = await db.user.create({
-        data: { email: `patient_${Date.now()}@drpetfriend.internal`, name: ownerName || "Пациент", role: "OWNER" }
+        data: {
+          email: ownerEmail || `patient_${Date.now()}@drpetfriend.internal`,
+          name:  ownerName || "Пациент",
+          phone: ownerPhone || null,
+          role:  "OWNER",
+        }
       })
+    } else if (ownerPhone && !owner.phone) {
+      // Update phone if missing
+      await db.user.update({ where: { id: owner.id }, data: { phone: ownerPhone } })
     }
 
     // Create pet
