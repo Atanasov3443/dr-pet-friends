@@ -69,7 +69,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden bg-[#1083BD]">
+    <div className="h-screen flex flex-col md:flex-row relative overflow-hidden bg-[#1083BD]">
 
       {/* Background blobs */}
       <svg className="absolute -top-20 -right-40 w-[500px] h-[500px] pointer-events-none opacity-15" viewBox="0 0 800 800" fill="none">
@@ -85,7 +85,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Left — image */}
-      <section className="hidden md:flex flex-1 relative p-4 items-stretch z-10">
+      <section className="hidden md:flex flex-1 relative p-4 py-4 items-stretch z-10">
         <div className="relative w-full rounded-3xl overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=1000&fit=crop"
